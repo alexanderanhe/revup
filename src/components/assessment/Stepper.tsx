@@ -1,4 +1,4 @@
-import { Question } from "../../pages/Assessment"
+import { Question } from "@/lib/definitions";
 
 type StepperProps = {
   steps: Question[],
