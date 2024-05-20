@@ -4,6 +4,7 @@ import { useState } from "react";
 import Welcome from "@/components/assessment/Welcome";
 import Quizz from "@/components/assessment/Quizz";
 import { Question } from "@/lib/definitions";
+import Thankyou from "@/components/assessment/Thankyou";
 
 const quizz: Question[] = [
   {
@@ -69,7 +70,8 @@ const AssessmentPage = () => {
   return (
     <>
       {selected < 0 && <Welcome handleStart={handleClick} /> }
-      {selected >= 0 && <Quizz quizz={quizz} selected={selected} formState={[form, setForm]} setSelected={setSelected} /> }
+      {selected >= 0 && selected <= quizz.length && <Quizz quizz={quizz} selected={selected} formState={[form, setForm]} setSelected={setSelected} /> }
+      {selected === quizz.length + 1 && <Thankyou /> }
     </>
   )
 }

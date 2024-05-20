@@ -18,10 +18,8 @@ const Welcome = ({ handleStart }: WelcomeProps) => {
 
   return (
     <Section title="Bienvenido a la evaluación de entrenamiento" buttons={buttons}>
-      <>
-          <p>Para poder recomendarte un programa de entrenamiento personalizado, necesitamos saber un poco más sobre ti.</p>
-          <p>Por favor, responde las siguientes preguntas:</p>
-      </>
+      <p>Para poder recomendarte un programa de entrenamiento personalizado, necesitamos saber un poco más sobre ti.</p>
+      <p>Por favor, responde las siguientes preguntas:</p>
     </Section>
   )
 }

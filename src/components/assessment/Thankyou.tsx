@@ -6,6 +6,7 @@ const Thankyou = () => {
   return (
     <Section title="Gracias por completar la evaluación" buttons={[
         <Link
+          key={"nextConfirm"}
           href='/'
           className="btn btn-primary w-full"
         >

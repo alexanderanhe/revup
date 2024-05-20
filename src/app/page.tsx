@@ -19,7 +19,7 @@ export default function Home() {
             <p>We are using cookies for no reason.</p>
             <div className="card-actions justify-end">
               <button className="btn btn-primary">Skip</button>
-              <button className="btn btn-ghost">Let's try</button>
+              <button className="btn btn-ghost">Let&apos;s try</button>
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import QuizzItem from "./QuizzItem"
 import Section from "./Section"
 import Stepper from "./Stepper"
@@ -17,7 +16,7 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
 
   const handleSubmit = () => {
     console.log('submit', form);
-    redirect("/");
+    setSelected(selected + 1);
   }
   const handleChangeAnswers = () => {
     setSelected(0);
@@ -35,7 +34,7 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
             header={header}
           />
       ) }
-      { selected === 6 &&
+      { selected === quizz.length &&
         <Section title="Confirma tus respuestas" header={header} buttons={[
             <button
               key="nextConfirm"
