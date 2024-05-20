@@ -10,7 +10,7 @@ const Stats = () => {
   const workoutProgressStyles = {
     "--value": progress,
     "--size": "4rem"
-  }
+  } as React.CSSProperties
 
   useEffect(() => {
     const hasAssessmentLS = localStorage.getItem('hasAssessment');
