@@ -11,7 +11,7 @@ const Stepper = ({ steps, form, selected, setSelected }: StepperProps) => {
 
   const handleClick = (index: number) => () => setSelected(index);
   return (
-    <section className="flex items-center justify-center min-h-0 m-0">
+    <section className="flex items-center justify-center m-0">
       <ol className="flex items-center w-full">
         {steps.map(({key, title}: Question, index: number) => 
           <li

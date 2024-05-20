@@ -17,6 +17,7 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
   const handleSubmit = () => {
     console.log('submit', form);
     setSelected(selected + 1);
+    localStorage.setItem('hasAssessment', 'true');
   }
   const handleChangeAnswers = () => {
     setSelected(0);
