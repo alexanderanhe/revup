@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Squares2X2Icon, FilmIcon, ClockIcon, CalendarDaysIcon, Cog6ToothIcon, Bars3Icon } from "@heroicons/react/24/outline"
 import Footer from "./Footer";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export type MenuNavLinks = {
   name: string,
@@ -67,7 +68,12 @@ const Header = () => {
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 mask mask-squircle">
-                  <img alt="Tailwind CSS Navbar component" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                  <Image
+                    width={40}
+                    height={40}
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                    alt="Brayan Angulo"
+                  />
                 </div>
               </div>
               <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">

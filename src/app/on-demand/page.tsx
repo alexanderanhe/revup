@@ -1,6 +1,7 @@
 'use client'
 
 import { Fragment, useState } from "react"
+import Image from "next/image"
 import LayoutContent from "@/components/templates/LayoutContent"
 
 const tabs = [
@@ -12,37 +13,37 @@ const tabs = [
         id: 1,
         title: 'Yoga',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/coiWR0gT8Cw-unsplash.webp'
+        image: '/images/coiWR0gT8Cw-unsplash.webp'
       },
       {
         id: 2,
         title: 'Peso',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/fS3tGOkp0xY-unsplash.webp'
+        image: '/images/fS3tGOkp0xY-unsplash.webp'
       },
       {
         id: 3,
         title: 'Yoga',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/coiWR0gT8Cw-unsplash.webp'
+        image: '/images/coiWR0gT8Cw-unsplash.webp'
       },
       {
         id: 4,
         title: 'Peso',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/fS3tGOkp0xY-unsplash.webp'
+        image: '/images/fS3tGOkp0xY-unsplash.webp'
       },
       {
         id: 5,
         title: 'Yoga',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/coiWR0gT8Cw-unsplash.webp'
+        image: '/images/coiWR0gT8Cw-unsplash.webp'
       },
       {
         id: 6,
         title: 'Peso',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/fS3tGOkp0xY-unsplash.webp'
+        image: '/images/fS3tGOkp0xY-unsplash.webp'
       },
     ]
   },
@@ -54,13 +55,13 @@ const tabs = [
         id: 1,
         title: 'Yoga',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/coiWR0gT8Cw-unsplash.webp'
+        image: '/images/coiWR0gT8Cw-unsplash.webp'
       },
       {
         id: 2,
         title: 'Peso',
         description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-        image: '/fS3tGOkp0xY-unsplash.webp'
+        image: '/images/fS3tGOkp0xY-unsplash.webp'
       }
     ]
   },
@@ -92,7 +93,15 @@ const OnDemandPage = () => {
                 <div className="grid grid-cols-autofit gap-4 w-full">
                   { content.map(({id, title, description, image}) => (
                     <div key={`card${id}`} className="card w-full shadow-xl image-full">
-                      <figure className="aspect-square"><img className="w-full" src={image} alt={title} /></figure>
+                      <figure className="aspect-square">
+                        <Image
+                          src={image}
+                          alt={title}
+                          width={300}
+                          height={300}
+                          className="w-full"
+                        />
+                      </figure>
                       <div className="card-body items-center text-center">
                         <h2 className="card-title">{ title }</h2>
                         <p>{ description }</p>

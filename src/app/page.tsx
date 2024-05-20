@@ -1,7 +1,6 @@
-// import Image from "next/image";
+import Image from "next/image";
 import Stats from "@/components/home/Stats";
 import LayoutContent from "@/components/templates/LayoutContent";
-import ThemeToggle from "@/components/utils/ThemeToggle";
 
 export default function Home() {
   return (
@@ -13,7 +12,7 @@ export default function Home() {
       </section>
       <Stats />
 
-      <section className="full-width justify-items-center bg-[url('/0Wra5YYVQJE-unsplash.webp')] bg-center">
+      <section className="full-width justify-items-center bg-[url('/images/0Wra5YYVQJE-unsplash.webp')] bg-center">
         <div className="card max-w-96 glass text-neutral-content">
           <div className="card-body items-center text-center">
             <h2 className="card-title">Try celebrity training program</h2>
@@ -28,7 +27,13 @@ export default function Home() {
 
       <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
-          <figure><img src="/coiWR0gT8Cw-unsplash.webp" alt="Shoes" /></figure>
+          <figure>
+            <Image
+              width={300}
+              height={300}
+              src="/images/coiWR0gT8Cw-unsplash.webp"
+              alt="Shoes"
+            /></figure>
           <div className="card-body items-center text-center">
             <h2 className="card-title">Yoga!</h2>
             <p>El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.</p>
@@ -38,7 +43,13 @@ export default function Home() {
           </div>
         </div>
         <div className="card shadow-xl image-full">
-          <figure><img src="/fS3tGOkp0xY-unsplash.webp" alt="Shoes" /></figure>
+          <figure>
+            <Image
+              width={300}
+              height={300}
+              src="/images/fS3tGOkp0xY-unsplash.webp"
+              alt="Shoes"
+            /></figure>
           <div className="card-body items-center text-center">
             <h2 className="card-title">Peso</h2>
             <p>El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.</p>

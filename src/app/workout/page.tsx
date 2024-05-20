@@ -2,7 +2,7 @@ import LayoutContent from "@/components/templates/LayoutContent"
 
 const WorkoutPage = () => {
   return (
-    <LayoutContent title="Workout" bg="bg-[url('/wXBK9JrM0iU-unsplash.webp')]">
+    <LayoutContent title="Workout" bg="bg-[url('/images/wXBK9JrM0iU-unsplash.webp')]">
       <section className="grid grid-cols-autofit place-items-center">
         <div className="card max-w-96 glass">
           <div className="card-body">
