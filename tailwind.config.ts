@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 const config: Config = {
   content: [
@@ -8,13 +9,22 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      fontFamily: {
+        "montserrat": ['Montserrat', ...defaultTheme.fontFamily.sans],
+        "jersey10": ['"Jersey 10"', ...defaultTheme.fontFamily.sans],
+        "synemono": ['"Syne Mono"', ...defaultTheme.fontFamily.mono],
+      },
+      gridTemplateColumns: {
+        'autofit': 'repeat(auto-fit, minmax(300px, 1fr))',
       },
     },
+    backgroundImage: {
+      'workout': "url('/wXBK9JrM0iU-unsplash.webp')",
+    }
   },
-  plugins: [],
+  daisyui: {
+    themes: ['light', 'dark', 'pastel', 'cmyk'],
+  },
+  plugins: [require('@tailwindcss/typography'), require('daisyui')],
 };
 export default config;
