@@ -21,7 +21,7 @@ const Footer = ({ menuNavLinks }: FooterProps) => {
               className={`btn ${pathname === href ? "grid grid-cols-[auto_1fr] place-items-center col-span-2" : 'btn-ghost btn-square [&>span]:hidden'}`}
             >
               <Icon className="size-5" />
-              <span className="text-xs">{name}</span>
+              <span className="text-xs whitespace-nowrap">{name}</span>
             </Link>
           ))}
         </div>

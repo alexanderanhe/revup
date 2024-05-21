@@ -28,7 +28,7 @@ export default function LayoutContent({ title, bg, children, className }: Props)
     <div className={'min-h-screen'}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center`} />}
       <Header />
-      <main className={`content-grid grid-rows-[auto] place-items-start min-h-[80vh] space-y-6 mb-24 ${className}`}>
+      <main className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start min-h-[80vh] space-y-6 mb-24 ${className}`}>
         { title && <h1 className="text-xl font-bold">{ title }</h1> }
         { children }
       </main>

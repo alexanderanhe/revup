@@ -9,7 +9,7 @@ const Stats = () => {
   const progress = 70;
   const workoutProgressStyles = {
     "--value": progress,
-    "--size": "4rem"
+    "--size": "3.2rem"
   } as React.CSSProperties
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Stats = () => {
               <h2>Progreso del Ejercicios</h2>
               <p>12 rutinas restantes</p>
             </div>
-            <div className="radial-progress text-white text-lg font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
+            <div className="radial-progress text-white text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
           </section>
           <section>
             <h2>Weekly stats</h2>

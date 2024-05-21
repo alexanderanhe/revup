@@ -3,11 +3,13 @@
 import { Fragment, useState } from "react"
 import Image from "next/image"
 import LayoutContent from "@/components/templates/LayoutContent"
+import Card from "@/components/utils/Card"
 
 const tabs = [
   {
     id: 'all',
     title: 'Todos',
+    contentType: '2',
     content: [
       {
         id: 1,
@@ -50,6 +52,7 @@ const tabs = [
   {
     id: 'resources',
     title: 'Recursos',
+    contentType: '2',
     content: [
       {
         id: 1,
@@ -68,11 +71,26 @@ const tabs = [
   {
     id: 'workout',
     title: 'Ejecicios',
-    content: []
+    contentType: 'autofit',
+    content: [
+      {
+        id: 1,
+        title: 'Yoga',
+        description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
+        image: '/images/coiWR0gT8Cw-unsplash.webp'
+      },
+      {
+        id: 2,
+        title: 'Peso',
+        description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
+        image: '/images/fS3tGOkp0xY-unsplash.webp'
+      }
+    ]
   },
   {
     id: 'programs',
     title: 'Programas',
+    contentType: 'autofit',
     content: []
   }
 ]
@@ -86,30 +104,13 @@ const OnDemandPage = () => {
     <LayoutContent title="On-demand" className="grid-rows-[auto_1fr] place-items-start">
       <section className="grid place-items-start p-0">
         <div role="tablist" className="tabs tabs-bordered w-full overflow-auto">
-          {tabs.map(({id, title, content}) => (
+          {tabs.map(({id, title, content, contentType}) => (
             <Fragment key={id}>
               <input type="radio" name="tab-ondemand" role="tab" className="tab" aria-label={title} checked={activeTab === id} onChange={handleChange(id)} />
               <div role="tabpanel" className="tab-content py-4">
-                <div className="grid grid-cols-autofit gap-4 w-full">
-                  { content.map(({id, title, description, image}) => (
-                    <div key={`card${id}`} className="card w-full shadow-xl image-full">
-                      <figure className="aspect-square">
-                        <Image
-                          src={image}
-                          alt={title}
-                          width={300}
-                          height={300}
-                          className="w-full"
-                        />
-                      </figure>
-                      <div className="card-body items-center text-center">
-                        <h2 className="card-title">{ title }</h2>
-                        <p>{ description }</p>
-                        <div className="card-actions justify-end">
-                          <button className="btn btn-primary">Ver</button>
-                        </div>
-                      </div>
-                    </div>
+                <div className={`grid grid-cols-${contentType} gap-4 w-full`}>
+                  { content.map((item) => (
+                    <Card key={`card${title}${id}`} contentType={contentType} {...item} />
                   ))}
                 </div>
               </div>
