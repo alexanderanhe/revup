@@ -3,7 +3,7 @@ import ThemeToggle from "@/components/utils/ThemeToggle"
 
 const ProfilePage = () => {
   return (
-    <LayoutContent title="Profile">
+    <LayoutContent title="Profile" head>
       <section className="grid grid-cols-autofit place-items-center">
         <ThemeToggle />
       </section>

@@ -4,12 +4,7 @@ import LayoutContent from "@/components/templates/LayoutContent";
 
 export default function Home() {
   return (
-    <LayoutContent title="">
-      {/* <section className="full-width py-0">
-        <h1 className="flex flex-col text-3xl font-semibold text-zinc-200 [&>strong]:font-bold [&>strong]:text-zinc-900">
-          Hola, <strong>Brayan</strong>
-        </h1>
-      </section> */}
+    <LayoutContent title="" head>
       <Stats />
 
       {/* <section className="grid grid-cols-autofit">

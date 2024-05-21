@@ -12,3 +12,10 @@ export type Question = {
   }[]
   multiple?: string[]
 }
+
+export type MenuNavLinks = {
+  name: string,
+  href: string,
+  current: string[],
+  Icon?: any
+}
