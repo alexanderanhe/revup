@@ -19,3 +19,17 @@ export type MenuNavLinks = {
   current: string[],
   Icon?: any
 }
+
+export type CalendarContent = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  description: string;
+  startDatetime: string;
+  endDatetime: string;
+  active: boolean;
+}
+export type CalendarDayContent = {
+  day: Date;
+  content: CalendarContent[];
+}

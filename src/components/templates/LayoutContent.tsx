@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next'
 import { ReactNode } from "react";
+import clsx from 'clsx';
 
-import { MenuNavLinks } from '@/lib/definitions';
 import Header from "@/components/templates/menus/Header";
 import Footer from "@/components/templates/menus/Footer";
 
@@ -11,32 +11,38 @@ type Props = {
   bg?: string,
   className?: string,
   head?: boolean | string,
+  footer?: boolean | string,
 }
 
-export function generateMetadata(
-  { title }: Props,
-  parent: ResolvingMetadata
-): Metadata {
+// export function generateMetadata(
+//   { title }: Props,
+//   parent: ResolvingMetadata
+// ): Metadata {
  
-  return {
-    title,
-    // openGraph: {
-    //   title: 'Acme',
-    //   description: 'Acme is a...',
-    // },
-  }
-}
+//   return {
+//     title,
+//     // openGraph: {
+//     //   title: 'Acme',
+//     //   description: 'Acme is a...',
+//     // },
+//   }
+// }
 
-export default function LayoutContent({ title, bg, children, className, head }: Props) {
+export default function LayoutContent({ title, bg, children, className, head, footer }: Props) {
   return (
-    <div className={'min-h-screen mb-24'}>
-      {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center`} />}
-      {head && <Header />}
-      <main className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start min-h-[80vh] space-y-6 mb-24 ${className}`}>
-        { title && <h1 className="text-xl font-bold">{ title }</h1> }
+    <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
+      {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
+      { head && <Header />}
+      <main className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start space-y-6 ${className}`}>
+        { title && 
+          <h1 className={clsx(
+            'text-xl font-bold',
+            !head && 'mt-6'
+          )}>{ title }</h1>
+        }
         { children }
       </main>
-      <Footer />
+      { footer && <Footer />}
     </div>
   )
 }

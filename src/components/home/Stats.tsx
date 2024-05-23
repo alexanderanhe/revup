@@ -22,10 +22,13 @@ const Stats = () => {
       { hasAssessment ? (
         <>
           <section className="grid grid-cols-[1fr_auto] place-items-center rounded-3xl bg-black p-4">
-            <div className="w-full text-white">
+            <Link
+              href="/workout"
+              className="w-full text-white"
+            >
               <h2>Progreso del Ejercicios</h2>
               <p>12 rutinas restantes</p>
-            </div>
+            </Link>
             <div className="radial-progress text-white text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
           </section>
           <section>

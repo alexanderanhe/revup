@@ -101,7 +101,7 @@ const OnDemandPage = () => {
     if (event.target.checked) setActiveTab(id);
   }
   return (
-    <LayoutContent title="On-demand" className="grid-rows-[auto_1fr] place-items-start">
+    <LayoutContent title="On-demand" className="grid-rows-[auto_1fr] place-items-start" footer>
       <section className="grid place-items-start p-0">
         <div role="tablist" className="tabs tabs-bordered w-full overflow-auto">
           {tabs.map(({id, title, content, contentType}) => (

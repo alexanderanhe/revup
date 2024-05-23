@@ -18,32 +18,34 @@ const Header = () => {
   return (
     <header className="content-grid sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/75">
       <nav className="grid grid-cols-[1fr_auto] px-0 py-4">
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost grid grid-cols-[auto_1fr] px-0">
-            <div className="w-10 mask mask-squircle avatar">
-              <Image
-                width={40}
-                height={40}
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                alt="Brayan Angulo"
-              />
+        <div className="grid grid-cols-[auto_1fr] gap-2 items-center">
+          <div className="dropdown dropdown-start">
+            <div tabIndex={0} role="button" className="btn btn-ghost px-0">
+              <div className="w-10 mask mask-squircle avatar">
+                <Image
+                  width={40}
+                  height={40}
+                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  alt="Brayan Angulo"
+                />
+              </div>
             </div>
-            <div className="grid grid-rows-2 gap-[0.2rem] place-items-start">
-              <span className="text-xs text-primary-content">Welcome Back</span>
-              Brayan Angulo! 🤘
-            </div>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
+              { menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('nav'))
+                .map(({name, href}: MenuNavLinks) => (
+                <li key={`navLink${href}`} onClick={handleClick}>
+                  <Link
+                    href={href}
+                    className={`${pathname === href ? "text-primary" : ''}`}
+                  >{name}</Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            { menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('nav'))
-              .map(({name, href}: MenuNavLinks) => (
-              <li key={`navLink${href}`} onClick={handleClick}>
-                <Link
-                  href={href}
-                  className={`${pathname === href ? "text-primary" : ''}`}
-                >{name}</Link>
-              </li>
-            ))}
-          </ul>
+          <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">
+            <span className="text-xs text-primary-content">Welcome Back</span>
+            Brayan Angulo! 🤘
+          </div>
         </div>
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">

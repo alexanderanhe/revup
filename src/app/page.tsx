@@ -4,7 +4,7 @@ import LayoutContent from "@/components/templates/LayoutContent";
 
 export default function Home() {
   return (
-    <LayoutContent title="" head>
+    <LayoutContent title="" head footer>
       <Stats />
 
       {/* <section className="grid grid-cols-autofit">
