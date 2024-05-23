@@ -12,7 +12,7 @@ type CalendarDrawerProps = {
   selectedDay: CalendarDayContent | null;
   setSelectedDay: (date: CalendarDayContent | null) => void;
 };
-const DEFAULT_SNAP = `${innerHeight/2 + 50}px`;
+const DEFAULT_SNAP = `${window.innerHeight/2 + 50}px`;
 const SNAP_HEIGHTS = [
   "118px",
   DEFAULT_SNAP,
