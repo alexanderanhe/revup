@@ -12,14 +12,10 @@ type CalendarDrawerProps = {
   selectedDay: CalendarDayContent | null;
   setSelectedDay: (date: CalendarDayContent | null) => void;
 };
-const DEFAULT_SNAP = `${window.innerHeight/2 + 50}px`;
-const SNAP_HEIGHTS = [
-  "118px",
-  DEFAULT_SNAP,
-  1,
-];
+
 export function CalendarDrawer({selectedDay, setSelectedDay}: CalendarDrawerProps) {
-  const [snap, setSnap] = useState<number | string | null>(DEFAULT_SNAP);
+  const [snap, setSnap] = useState<number | string | null>(1);
+  const [snapHeights, setSnapHeights] = useState<(string | 1)[]>(["118px", 1]);
   const [open, setOpen] = useState<boolean>(!!selectedDay);
 
   const handleOpenChange = (state: boolean) => {
@@ -28,13 +24,20 @@ export function CalendarDrawer({selectedDay, setSelectedDay}: CalendarDrawerProp
   };
 
   useEffect(() => {
+    const defaultSnap = `${window.innerHeight/2 + 50}px`;
+    const sHeights: (string | 1)[] = [
+      "118px",
+      defaultSnap,
+      1,
+    ];
+    setSnapHeights(sHeights);
     setOpen(!!selectedDay);
-    setSnap(DEFAULT_SNAP)
+    setSnap(defaultSnap)
   }, [selectedDay]);
 
   return (
     <Drawer.Root
-      snapPoints={SNAP_HEIGHTS}
+      snapPoints={snapHeights}
       activeSnapPoint={snap}
       setActiveSnapPoint={setSnap}
       open={open}
@@ -55,7 +58,7 @@ export function CalendarDrawer({selectedDay, setSelectedDay}: CalendarDrawerProp
             <div className="grid grid-cols-[auto_1fr_auto] gap-2 font-semibold p-4">
               <CalendarIcon className="w-6 h-6" />
               {selectedDay && format(selectedDay.day, 'iiii, EEEE do')}
-              { snap === SNAP_HEIGHTS.at(0) ? (
+              { snap === snapHeights.at(0) ? (
                 <button type="button" onClick={() => setSnap(1)}>
                   <ArrowLongUpIcon className="w-6 h-6" />
                 </button>
