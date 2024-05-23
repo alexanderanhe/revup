@@ -128,7 +128,7 @@ export default function Calendar() {
 
   return (
     <>
-      <div className="full-width sticky top-0 grid-cols-[auto_1fr_auto_auto_auto] place-items-center bg-black/90 w-full py-4">
+      <div className="flex items-center bg-black/90 w-full py-4">
         <Link
           href="/"
           className='btn btn-ghost btn-square text-gray-400 flex-none'
@@ -165,7 +165,7 @@ export default function Calendar() {
       </div>
       { !selectedDay && (
         <div className="full-width w-full h-full grid grid-rows-[auto_1fr] bg-base-100 rounded-t-2xl">
-          <div className="sticky top-0 grid grid-cols-7 text-sm font-bold text-center p-2">
+          <div className="sticky top-0 grid grid-cols-7 text-sm font-bold text-center bg-base-100 p-2">
             <div>Sun</div>
             <div>Mon</div>
             <div>Tue</div>
@@ -177,7 +177,7 @@ export default function Calendar() {
           <div className="grid grid-cols-7 text-sm">
             {days.map(({day, content}, dayIdx) => (
               <button
-                key={day.toString()}
+                key={`calendarDay${day.toString()}`}
                 type="button"
                 onClick={() => setSelectedDay({day, content})}
                 className={clsx(
@@ -317,13 +317,13 @@ function SmallCalendar({ selectedDay }: { selectedDay: CalendarDayContent | null
     <div className="full-width w-full h-full grid grid-flow-row auto-rows-max bg-base-100 rounded-t-2xl">
         <div className="grid grid-cols-7 text-sm font-bold text-center p-2">
         {days.map(({day}: CalendarDayContent, dayIdx) => (
-          <div>{ format(day, 'EEE')}</div>
+          <div key={`scalendarWeekName${day.toString()}`}>{ format(day, 'EEE')}</div>
         ))}
         </div>
         <div className="grid grid-cols-7 text-sm">
           {days.map(({day, content}: CalendarDayContent, dayIdx) => (
             <div
-              key={day.toString()}
+              key={`scalendarDay${day.toString()}`}
               data-day={format(day, 'd')}
               className={clsx(
                 'grid grid-rows-[32px_58px_58px_58px] gap-2 border-2 border-base-200', 
