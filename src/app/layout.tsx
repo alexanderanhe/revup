@@ -9,6 +9,7 @@ const monserrat = Montserrat({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "RevUp",
   description: "Revup Fitness Club - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
+  manifest: "/manifest.json",
 };
  
 export const viewport: Viewport = {
