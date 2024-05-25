@@ -1,5 +1,5 @@
 import QuizzItem from "./QuizzItem"
-import Section from "./Section"
+import Section from "../templates/Section"
 import Stepper from "./Stepper"
 import { Question } from '@/lib/definitions'
 

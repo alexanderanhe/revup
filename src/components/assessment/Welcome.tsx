@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Section from "./Section"
+import Section from "../templates/Section"
 
 type WelcomeProps = {
   handleStart: () => void

@@ -1,5 +1,5 @@
 import { Question } from '@/lib/definitions';
-import Section from './Section';
+import Section from '../templates/Section';
 import { useState } from 'react';
 
 type ItemProps = {
