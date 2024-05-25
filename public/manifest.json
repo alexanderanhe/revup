@@ -1,6 +1,7 @@
 {
-  "name": "Revup Fitness Club - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
-  "short_name": "Revup club",
+  "id": "1",
+  "name": "Bray.fit - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
+  "short_name": "Bray.fit",
   "theme_color": "#fff",
   "background_color": "#fff",
   "display": "standalone",
