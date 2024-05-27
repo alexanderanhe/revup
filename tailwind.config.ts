@@ -20,19 +20,25 @@ const config: Config = {
     },
   },
   daisyui: {
-    themes: ['light', 'dark', 'pastel', 'cmyk', {
-      brayfit: {
-        "primary": "#51ff6d",
-        "secondary": "#ffa80f",
-        "accent": "#00dbd1",
-        "neutral": "#231d26",
-        "base-100": "#f0ffff",
-        "info": "#00e2ff",
-        "success": "#00a17b",
-        "warning": "#c17300",
-        "error": "#ff9196",
+    themes: [
+      {
+        brayfit: {
+          "primary": "#51ff6d",
+          "secondary": "#ffa80f",
+          "accent": "#00dbd1",
+          "neutral": "#231d26",
+          "base-100": "#f0ffff",
+          "info": "#00e2ff",
+          "success": "#00a17b",
+          "warning": "#c17300",
+          "error": "#ff9196",
+        },
       },
-    }],
+      'light',
+      'dark',
+      'pastel',
+      'cmyk'
+    ],
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui')],
 };

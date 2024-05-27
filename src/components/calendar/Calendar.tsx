@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import clsx from 'clsx';
 import {
   add,
@@ -24,6 +23,7 @@ import { HeartIcon } from "@heroicons/react/24/outline"
 
 import { CalendarDrawer } from './CalendarDrawer';
 import { CalendarContent, CalendarDayContent } from '@/lib/definitions';
+import BackButton from '../utils/BackButton';
 
 export default function Calendar() {
   const [ events, setEvents ] = useState<CalendarContent[]>([]);
@@ -118,16 +118,16 @@ export default function Calendar() {
   return (
     <>
       <header className='flex gap-2 place-items-start flex-row items-center justify-start w-full [&>h1]:text-gray-600 gap-2'>
-        <Link href='/workout' className='btn btn-ghost btn-circle text-base-300 p-0'>
+        <BackButton className='btn btn-ghost btn-circle text-base-300 p-0'>
           <ArrowLongLeftIcon className="size-8" />
-        </Link>
-        <h1 className="text-sm font-bold flex-1 uppercase text-center">Calendario</h1>
+        </BackButton>
+        <h1 className="text-sm font-bold flex-1 uppercase text-center pr-12">Calendario</h1>
       </header>
-      <div className="flex items-center justify-center w-full mt-1">
+      <div className="flex items-center justify-center w-full" style={{ marginTop: '0.5rem' }}>
         <button
           type="button"
           onClick={previousMonth}
-          className="btn btn-neutral btn-circle"
+          className="btn btn-sm btn-circle"
         >
           <span className="sr-only">Previous month</span>
           <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
@@ -138,7 +138,7 @@ export default function Calendar() {
         <button
           onClick={nextMonth}
           type="button"
-          className="btn btn-neutral btn-circle"
+          className="btn btn-sm btn-circle"
         >
           <span className="sr-only">Next month</span>
           <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
