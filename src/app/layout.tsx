@@ -3,6 +3,8 @@ import Head from "next/head";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
+import { Suspense } from "react";
+import Loader from "@/components/utils/Loader";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -28,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="es" data-theme="brayfit">
       <body className={`${monserrat.className} antialiased`}>
-        <StoreProvider>{children}</StoreProvider>
+        <Suspense fallback={<Loader />}>
+          <StoreProvider>{children}</StoreProvider>
+        </Suspense>
       </body>
     </html>
   );

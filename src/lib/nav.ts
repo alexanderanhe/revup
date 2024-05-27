@@ -9,5 +9,6 @@ const menuNavLinks: MenuNavLinks[] = [
   // { name: 'Calendario', href: '/calendar', current: ['nav', 'footer'], Icon: CalendarDaysIcon },
   { name: 'Logs', href: '/logs', current: ['nav', 'footer'], Icon: ClockIcon },
   { name: 'Ajuste', href: '/profile', current: ['footer'], Icon: Cog6ToothIcon },
+  { name: 'About', href: '/about', current: ['nav'] },
 ];
 export { menuNavLinks };
