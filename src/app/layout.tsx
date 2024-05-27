@@ -1,21 +1,20 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
-import Head from "next/head";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
-import { Suspense } from "react";
 import Loader from "@/components/utils/Loader";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RevUp",
-  description: "Revup Fitness Club - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
+  title: "bray.fit",
+  description: "bray.fit Fitness Club - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
   manifest: "/manifest.json",
 };
  
 export const viewport: Viewport = {
-  themeColor: 'white',
+  themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

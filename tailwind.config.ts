@@ -17,6 +17,14 @@ const config: Config = {
       gridTemplateColumns: {
         'autofit': 'repeat(auto-fit, minmax(300px, 1fr))',
       },
+      animation: {
+        'l10': 'l10 3s infinite;',
+      },
+      keyframes: {
+        l10: {
+          to: { transform: 'scale(1.8)', opacity: '0' }
+        },
+      },
     },
   },
   daisyui: {
