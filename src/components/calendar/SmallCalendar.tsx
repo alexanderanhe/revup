@@ -10,11 +10,12 @@ import {
   parseISO,
   startOfToday,
 } from 'date-fns';
-import { PlusIcon } from "@heroicons/react/24/solid"
+import { ArrowLongLeftIcon, CalendarDaysIcon, PlusIcon } from "@heroicons/react/24/solid"
 import { HeartIcon } from "@heroicons/react/24/outline"
 
 import { CalendarContent, CalendarDayContent } from '@/lib/definitions';
 import WorkoutDay from '@/components/calendar/WorkoutDay';
+import Link from 'next/link';
 
 export default function SmallCalendar({ data }: { data: CalendarContent[] }) {
   let today = startOfToday()
@@ -32,6 +33,15 @@ export default function SmallCalendar({ data }: { data: CalendarContent[] }) {
 
   return (
     <div className="grid w-full h-full grid grid-flow-row auto-rows-max bg-base-100 rounded-t-2xl">
+      <header className='flex gap-2 place-items-start flex-row items-center justify-start w-full [&>h1]:text-gray-600 gap-2'>
+        <Link href='/workout' className='btn btn-ghost btn-circle text-base-300 p-0'>
+          <ArrowLongLeftIcon className="size-8" />
+        </Link>
+        <h1 className="text-sm font-bold flex-1 uppercase text-center">Mi calendario</h1>
+        <Link href='/workout/calendar' className="btn btn-ghost btn-circle p-0">
+          <CalendarDaysIcon className="size-6" />
+        </Link>
+      </header>
       <div className="grid grid-cols-7 text-sm font-bold text-center p-2">
         {days.map(({day}: CalendarDayContent, dayIdx) => (
           <div key={`scalendarWeekName${day.toString()}`}>{ format(day, 'EEE')}</div>

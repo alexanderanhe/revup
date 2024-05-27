@@ -12,18 +12,18 @@ export default async function WorkoutPage() {
 
   return (
     <LayoutContent>
-      <Section
+      {/* <Section
         title="Mi entrenamiento"
         horizonalHeader
         CloseIcon={<ArrowLongLeftIcon className="size-8" />}
         headerButton={headerButton}
         buttons={[]}
-      >
+      > */}
         <div className="flex items-center justify-center w-full">
           <SmallCalendar data={data} />
         </div>
         {/* <p>Para poder recomendarte un programa de entrenamiento personalizado, necesitamos saber un poco más sobre ti.</p> */}
-      </Section>
+      {/* </Section> */}
     </LayoutContent>
   )
 }

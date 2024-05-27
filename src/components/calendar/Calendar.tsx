@@ -117,11 +117,11 @@ export default function Calendar() {
 
   return (
     <>
-      <header className='flex gap-2 place-items-start flex-row items-center justify-start [&>h1]:text-gray-600 gap-2'>
+      <header className='flex gap-2 place-items-start flex-row items-center justify-start w-full [&>h1]:text-gray-600 gap-2'>
         <Link href='/workout' className='btn btn-ghost btn-circle text-base-300 p-0'>
           <ArrowLongLeftIcon className="size-8" />
         </Link>
-        <h1 className="text-2xl font-bold">Calendario</h1>
+        <h1 className="text-sm font-bold flex-1 uppercase text-center">Calendario</h1>
       </header>
       <div className="flex items-center justify-center w-full mt-1">
         <button
