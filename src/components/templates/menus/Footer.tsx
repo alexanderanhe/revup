@@ -12,9 +12,11 @@ const Footer = () => {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-50 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/95 pt-4 pb-8">
+      <div className="fixed bottom-0 left-0 z-50 w-full pt-4 pb-4">
         <div className={clsx(
             'grid place-items-center w-full h-full max-w-lg mx-auto font-medium',
+            'backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/95 p-4',
+            'rounded-2xl',
             'grid-cols-5',
             gridCols && colStartClasses[gridCols + 1],
           )

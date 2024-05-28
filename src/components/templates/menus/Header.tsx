@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { MenuNavLinks } from "@/lib/definitions";
 import { menuNavLinks } from "@/lib/nav";
+import { CheckIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const Header = () => {
   const pathname = usePathname();
@@ -43,7 +45,7 @@ const Header = () => {
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">
-            <span className="text-xs text-primary-content">Welcome Back</span>
+            <span className="text-xs text-neutral">Welcome Back</span>
             Brayan Angulo! 🤘
           </div>
         </div>
@@ -51,17 +53,30 @@ const Header = () => {
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
             <div className="indicator">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              <span className="badge badge-sm indicator-item">8</span>
+              <span className="badge badge-sm badge-primary indicator-item">8</span>
             </div>
           </div>
-          <div tabIndex={0} className="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow">
-            <div className="card-body">
-              <span className="font-bold text-lg">8 Items</span>
-              <span className="text-info">Subtotal: $999</span>
-              <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
+          <div tabIndex={0} className="mt-3 z-[1] dropdown-content w-96 max-w-screen bg-base-100 shadow">
+
+            <div className="flex justify-between px-3 py-1 bg-base-200 items-center gap-1 rounded-lg my-3">
+              <div className="relative w-16 h-16 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gray-200 rounded-full border-2 border-white">
+                  <img className="w-full h-full object-cover rounded-full" src="https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_3.jpg" alt=""/>
+                </div>
+              </div>
+              <div>
+                <span className="font-mono">Emma would like to connect with you</span>
+              </div>
+              <div className="flex gap-2">
+                <button>
+                  <CheckIcon className="h-5 w-5" />
+                </button>
+                <button>
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
               </div>
             </div>
+
           </div>
         </div>
       </nav>

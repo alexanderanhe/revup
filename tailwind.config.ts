@@ -31,11 +31,11 @@ const config: Config = {
     themes: [
       {
         brayfit: {
-          "primary": "#51ff6d",
-          "secondary": "#ffa80f",
-          "accent": "#00dbd1",
-          "neutral": "#231d26",
-          "base-100": "#f0ffff",
+          "primary": "#ffa80f",
+          "secondary": "#51ff6d",
+          "accent": "#00cdb8",
+          "neutral": "#2b323c",
+          "base-100": "#1d232a",
           "info": "#00e2ff",
           "success": "#00a17b",
           "warning": "#c17300",
