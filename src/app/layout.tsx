@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" data-theme="brayfit">
+    <html lang="es" data-theme="dark">
       <body className={`${monserrat.className} antialiased`}>
         <Suspense fallback={<Loader />}>
           <StoreProvider>{children}</StoreProvider>

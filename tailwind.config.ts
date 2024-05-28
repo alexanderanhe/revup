@@ -25,14 +25,17 @@ const config: Config = {
           to: { transform: 'scale(1.8)', opacity: '0' }
         },
       },
+      colors: {
+        "primary-muted": "oklch(var(--primary-muted) / <alpha-value>)",
+      },
     },
   },
   daisyui: {
     themes: [
       {
         brayfit: {
-          "primary": "#ffa80f",
-          "secondary": "#51ff6d",
+          "primary": "#51ff6d",
+          "secondary": "#ffa80f",
           "accent": "#00cdb8",
           "neutral": "#2b323c",
           "base-100": "#1d232a",
@@ -40,10 +43,31 @@ const config: Config = {
           "success": "#00a17b",
           "warning": "#c17300",
           "error": "#ff9196",
+          "--primary-muted": "262 80% 30%",
         },
       },
-      'light',
-      'dark',
+      // light theme
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          "--primary-muted": "259 94% 71%",
+        },
+      },
+      // cupcake theme
+      {
+        cupcake: {
+          ...require("daisyui/src/theming/themes")["cupcake"],
+          "--primary-muted": "183 47% 79%",
+        },
+      },
+      // dark theme
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          "primary": "#51ff6d",
+          "--primary-muted": "262 80% 30%",
+        },
+      },
       'pastel',
       'cmyk'
     ],
