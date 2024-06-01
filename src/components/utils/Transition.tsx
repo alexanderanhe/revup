@@ -10,13 +10,13 @@ export default function Transition({
   className?: string;
 }) {
   return (
-    <motion.main
+    <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ ease: 'easeInOut', duration: 0.75 }}
       {...props}
     >
       { children }
-    </motion.main>
+    </motion.div>
   )
 }

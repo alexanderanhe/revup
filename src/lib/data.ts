@@ -138,6 +138,20 @@ export async function fetchMedia() {
   ]
 }
 
+export async function getUser() {
+  await wait(2000);
+
+  return {
+    displayName: 'Bray',
+    email: 'bray@gmail.com',
+    profile: {
+      _json: {
+        picture: 'https://source.unsplash.com/300x300/?productivity,city'
+      }
+    }
+  }
+}
+
 export async function wait (ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -6,22 +6,23 @@ import { MenuNavLinks } from "@/lib/definitions"
 import { menuNavLinks } from "@/lib/nav"
 import { clsx } from "clsx"
 
-const Footer = () => {
+export default function Footer() {
   const pathname = usePathname();
-  const gridCols = menuNavLinks.length + 1;
+  const navLinks = menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('footer'));
+  const gridCols = navLinks.length + 1;
+  const menuSize = gridCols * 70;
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-50 w-full pt-4 pb-4">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 mx-auto z-50 pt-4 pb-4">
         <div className={clsx(
-            'grid place-items-center w-full h-full max-w-lg mx-auto font-medium',
+            'grid place-items-center gap-4 mx-auto font-medium',
+            `md:w-[${menuSize}px] min-w-80 ${colStartClasses[gridCols - 1]}`,
             'backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/95 p-4',
             'rounded-2xl',
-            'grid-cols-5',
-            gridCols && colStartClasses[gridCols + 1],
           )
         }>
-          { menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('footer')).map(({name, href, Icon}: MenuNavLinks) => (
+          { navLinks.map(({name, href, Icon}: MenuNavLinks) => (
             <Link
               href={href}
               key={`navLinkFooter${href}`}
@@ -37,9 +38,7 @@ const Footer = () => {
   )
 }
 
-export default Footer
-
-let colStartClasses = [
+const colStartClasses = [
   '',
   'grid-cols-2',
   'grid-cols-3',

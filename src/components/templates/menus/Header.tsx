@@ -3,12 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { MenuNavLinks } from "@/lib/definitions";
-import { menuNavLinks } from "@/lib/nav";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
+import { MenuNavLinks } from "@/lib/definitions";
+import { menuNavLinks } from "@/lib/nav";
+import { User, selectUser, set_user } from "@/lib/features/auth";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+
 const Header = () => {
+  const user = useAppSelector(selectUser) as User;
+  const dispatch = useAppDispatch();
+  const getUserData = async () => {
+    try {
+      dispatch(set_user({}));
+    } catch {
+      throw new Error("Failed to get user data");
+    }
+  };
+
   const pathname = usePathname();
   const handleClick = () => {
     const elem: HTMLElement | null = document.activeElement as HTMLElement;
@@ -45,8 +58,8 @@ const Header = () => {
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">
-            <span className="text-xs text-neutral">Welcome Back</span>
-            Brayan Angulo! 🤘
+            <span className="text-xs text-gray-600">Bienvenido</span>
+            {`${user?.displayName}! 🤘`}
           </div>
         </div>
         <div className="dropdown dropdown-end">

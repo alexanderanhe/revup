@@ -4,7 +4,6 @@ import clsx from 'clsx';
 
 import Header from "@/components/templates/menus/Header";
 import Footer from "@/components/templates/menus/Footer";
-import Transition from '@/components/utils/Transition';
 
 type Props = {
   title?: string,
@@ -20,7 +19,7 @@ export default function LayoutContent({ title, bg, children, className, head, fo
     <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
       { head && <Header />}
-      <Transition className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start space-y-6 ${className}`}>
+      <main className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start space-y-6 ${className}`}>
         { title && 
           <h1 className={clsx(
             'text-xl font-bold',
@@ -28,7 +27,7 @@ export default function LayoutContent({ title, bg, children, className, head, fo
           )}>{ title }</h1>
         }
         { children }
-      </Transition>
+      </main>
       { footer && <Footer />}
     </div>
   )
