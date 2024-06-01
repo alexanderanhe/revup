@@ -72,13 +72,13 @@ const Header = () => {
           <div tabIndex={0} className="mt-3 z-[1] dropdown-content w-96 max-w-screen bg-base-100 shadow">
 
             <div className="flex justify-between px-3 py-1 bg-base-200 items-center gap-1 rounded-lg my-3">
-              <div className="relative w-16 h-16 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gray-200 rounded-full border-2 border-white">
-                  <img className="w-full h-full object-cover rounded-full" src="https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_3.jpg" alt=""/>
+              <div className="relative size-14 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 size-12 bg-gray-200 rounded-full border-2 border-white">
+                  <Image width={788} height={788} className="w-full h-full object-cover rounded-full" src="/images/trainer_pngegg.webp" alt=""/>
                 </div>
               </div>
               <div>
-                <span className="font-mono">Emma would like to connect with you</span>
+                <span className="font-mono">Jhon le gustaría conectar contigo</span>
               </div>
               <div className="flex gap-2">
                 <button>

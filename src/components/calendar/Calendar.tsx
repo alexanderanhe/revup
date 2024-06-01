@@ -113,7 +113,7 @@ export default function Calendar() {
       return { day, content }
     }));
     setEvents(result);
-  }, [currentMonth])
+  }, [currentMonth, firstDayCurrentMonth])
 
   return (
     <>
