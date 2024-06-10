@@ -1,34 +1,28 @@
-'use client'
+import { auth, signOut } from "@/auth";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-import { MenuNavLinks } from "@/lib/definitions";
-import { menuNavLinks } from "@/lib/nav";
-import { User, selectUser, set_user } from "@/lib/features/auth";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+// import { User, selectUser, set_user } from "@/lib/features/auth";
+// import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import Nav from "./Nav";
+import clsx from "clsx";
+import Link from "next/link";
 
-const Header = () => {
-  const user = useAppSelector(selectUser) as User;
-  const dispatch = useAppDispatch();
-  const getUserData = async () => {
-    try {
-      dispatch(set_user({}));
-    } catch {
-      throw new Error("Failed to get user data");
-    }
-  };
-
-  const pathname = usePathname();
-  const handleClick = () => {
-    const elem: HTMLElement | null = document.activeElement as HTMLElement;
-    if (elem) {
-      elem.blur();
-    }
-  };
+export default async function Header() {
+  // Lo tuve que comentar porque se necesita tener un use client, todo mover a un componente o usar next-auth
+  // const user = useAppSelector(selectUser) as User;
+  const session = await auth();
+  const user = session?.user;
+  // const dispatch = useAppDispatch();
+  // const getUserData = async () => {
+  //   try {
+  //     dispatch(set_user(null));
+  //   } catch {
+  //     throw new Error("Failed to get user data");
+  //   }
+  // };
 
   return (
     <header className="content-grid sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/75">
@@ -40,56 +34,65 @@ const Header = () => {
                 <Image
                   width={40}
                   height={40}
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                  alt="Brayan Angulo"
+                  src={session
+                    ? `${user?.image ?? `https://ui-avatars.com/api/?name=${user?.name}&background=51FF6D&color=ffa80f&rounded=true`}`
+                    : `https://avatar.iran.liara.run/public`
+                  }
+                  alt={`${user?.name ?? ''}`}
                 />
               </div>
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
-              { menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('nav'))
-                .map(({name, href}: MenuNavLinks) => (
-                <li key={`navLink${href}`} onClick={handleClick}>
-                  <Link
-                    href={href}
-                    className={`${pathname === href ? "text-primary" : ''}`}
-                  >{name}</Link>
-                </li>
-              ))}
+              <Nav filter='nav' />
+              {session && <li>
+                <SignOut>
+                  Cerrar sesión
+                </SignOut>
+                {/* <button type="button" onClick={getUserData}>set user null</button> */}
+              </li>}
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">
-            <span className="text-xs text-gray-600">Bienvenido</span>
-            {`${user?.displayName}! 🤘`}
+            <span className={clsx(
+              "text-xs text-gray-600",
+              !session && "row-span-2"
+            )}>Bienvenido</span>
+            {session ? `${user?.name ?? ''}! 🤘` : ''}
           </div>
         </div>
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-            <div className="indicator">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              <span className="badge badge-sm badge-primary indicator-item">8</span>
+        <div>
+          {!session && <div className="dropdown dropdown-end">
+            <Link href="/login" className="btn btn-primary rounded-2xl">Log In</Link>
+          </div>}
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+              <div className="indicator">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                <span className="badge badge-sm badge-primary indicator-item">8</span>
+              </div>
             </div>
-          </div>
-          <div tabIndex={0} className="mt-3 z-[1] dropdown-content w-96 max-w-screen bg-base-100 shadow">
+            <div tabIndex={0} className="mt-3 z-[1] dropdown-content w-96 max-w-screen bg-base-100 shadow">
 
-            <div className="flex justify-between px-3 py-1 bg-base-200 items-center gap-1 rounded-lg my-3">
-              <div className="relative size-14 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 size-12 bg-gray-200 rounded-full border-2 border-white">
-                  <Image width={788} height={788} className="w-full h-full object-cover rounded-full" src="/images/trainer_pngegg.webp" alt=""/>
+              <div className="flex justify-between px-3 py-1 bg-base-200 items-center gap-1 rounded-lg my-3">
+                <div className="relative size-14 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 size-12 bg-gray-200 rounded-full border-2 border-white">
+                    <Image width={788} height={788} className="w-full h-full object-cover rounded-full" src="/images/trainer_pngegg.webp" alt=""/>
+                  </div>
+                </div>
+                <div>
+                  <span className="font-mono">Jhon le gustaría conectar contigo</span>
+                </div>
+                <div className="flex gap-2">
+                  <button>
+                    <CheckIcon className="h-5 w-5" />
+                  </button>
+                  <button>
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
-              <div>
-                <span className="font-mono">Jhon le gustaría conectar contigo</span>
-              </div>
-              <div className="flex gap-2">
-                <button>
-                  <CheckIcon className="h-5 w-5" />
-                </button>
-                <button>
-                  <XMarkIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </nav>
@@ -98,4 +101,15 @@ const Header = () => {
   )
 }
 
-export default Header
+function SignOut({ children }: { children: React.ReactNode }) {
+  return (
+    <form
+      action={async () => {
+        "use server";
+        await signOut();
+      }}
+    >
+      <button type="submit">{children}</button>
+    </form>
+  );
+}

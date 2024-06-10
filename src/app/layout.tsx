@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
+import { cookies } from 'next/headers';
+
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Loader from "@/components/utils/Loader";
@@ -26,8 +28,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies()
+  const theme = cookieStore.get('theme');
+
   return (
-    <html lang="es" data-theme="dark">
+    <html lang="es" data-theme={theme?.value ?? 'light'}>
       <body className={`${monserrat.className} antialiased`}>
         <Suspense fallback={<Loader />}>
           <StoreProvider>{children}</StoreProvider>

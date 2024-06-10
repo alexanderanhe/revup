@@ -1,4 +1,6 @@
 import { format } from "date-fns";
+import { AuthProviders } from "./definitions";
+import { auth } from "@/auth";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -138,17 +140,44 @@ export async function fetchMedia() {
   ]
 }
 
-export async function getUser() {
+export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}) {
   await wait(2000);
 
   return {
-    displayName: 'Bray',
-    email: 'bray@gmail.com',
-    profile: {
-      _json: {
-        picture: 'https://source.unsplash.com/300x300/?productivity,city'
-      }
-    }
+    _id: '629924078f28b719d95f61af',
+    email: 'alex.angulo@gmail.com',
+    password: '123456'
+  }
+}
+
+export async function comparePassword(password: string, hash: string) {
+  await wait(2000);
+
+  return password === hash;
+}
+
+export async function getUser() {
+  const session = await auth();
+  if (!session) return null;
+  return session.user;
+}
+
+export const authProviders: AuthProviders = {
+  Google: {
+    id: 'google',
+    image: 'https://www.svgrepo.com/show/475656/google-color.svg'
+  },
+  GitHub: {
+    id: 'github',
+    image: 'https://www.svgrepo.com/show/512317/github-142.svg'
+  },
+  Facebook: {
+    id: "facebook",
+    image: "https://www.svgrepo.com/show/521654/facebook.svg"
+  },
+  X: {
+    id: "twitter",
+    image: ""
   }
 }
 

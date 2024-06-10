@@ -4,13 +4,9 @@ import type { RootState } from "../store";
 import { getUser } from "../data";
 
 export type User = {
-  displayName: string;
+  name: string;
   email: string;
-  profile: {
-    _json: {
-      picture: string;
-    }
-  }
+  image: string
 };
 interface AuthState {
   user: User | null | unknown;
@@ -33,7 +29,7 @@ export const authSlice = createSlice({
 
 export const { set_user } = authSlice.actions
 
-export const getUserData = async (dispatch: Dispatch) => {
+export const setUserData = async (dispatch: Dispatch) => {
   try {
     const user = await getUser();
     dispatch(set_user(user));

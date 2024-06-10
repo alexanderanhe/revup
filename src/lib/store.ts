@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/store/store.js
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer, { getUserData } from './features/auth';
+import authReducer, { setUserData } from './features/auth';
+import appReducer from './features/app';
 
 export const store = configureStore({
   reducer: {
+    app: appReducer,
     auth: authReducer,
   }
 });
@@ -16,7 +18,7 @@ export type AppDispatch = typeof store.dispatch
 export type AppStore = typeof store
 
 const dispatch = store.dispatch;
-getUserData(dispatch);
+setUserData(dispatch);
 
 // https://redux.js.org/usage/usage-with-typescript
 // more info: https://react-redux.js.org/using-react-redux/usage-with-typescript {OBSOLETE}

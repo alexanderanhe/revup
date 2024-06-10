@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
+import BackButton from "../utils/BackButton";
 
 type SectionProps = {
   title: string,
@@ -24,12 +25,9 @@ const Section = ({ title, horizonalHeader, header, headerButton, CloseIcon, butt
           !headerButton && "justify-start"
           )}
       >
-        <Link
-          href='/'
-          className='btn btn-ghost btn-circle p-0'
-        >
+        <BackButton className='btn btn-ghost btn-circle p-0'>
           { CloseIcon ? CloseIcon : <XMarkIcon className="size-8" />}
-        </Link>
+        </BackButton>
         { header }
         <h2 className="text-2xl font-bold">{ title }</h2>
         { headerButton }

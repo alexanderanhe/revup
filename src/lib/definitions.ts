@@ -33,3 +33,13 @@ export type CalendarDayContent = {
   day: Date;
   content: CalendarContent[];
 }
+
+export type AuthProvider = {
+  id: string;
+  image: string;
+}
+
+export type Providers = 'Google' | 'Facebook' | 'GitHub' | 'X';
+export type AuthProviders = {
+  [key in Providers]: AuthProvider
+}

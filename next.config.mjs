@@ -9,9 +9,21 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'img.daisyui.com',
+        hostname: 'ui-avatars.com',
         port: '',
-        pathname: '/images/stock/**',
+        pathname: '/api/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        port: '',
+        pathname: '/u/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatar.iran.liara.run',
+        port: '',
+        pathname: '/public/**',
       },
     ],
   },
