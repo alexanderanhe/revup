@@ -50,6 +50,7 @@ const config: Config = {
       {
         light: {
           ...require("daisyui/src/theming/themes")["light"],
+          "primary": "#51ff6d",
           "--primary-muted": "259 94% 71%",
         },
       },
@@ -62,9 +63,17 @@ const config: Config = {
       },
       // dark theme
       {
-        dark: {
+        black: {
           ...require("daisyui/src/theming/themes")["dark"],
-          "primary": "#51ff6d",
+          "primary": "oklch(65.69% 0.196 275.75)",
+          "secondary": "oklch(74.8% 0.26 342.55)",
+          "accent": "oklch(74.51% 0.167 183.61)",
+          "neutral": "#2a323c",
+          "neutral-content": "#A6ADBB",
+          "base-100": "#1d232a",
+          "base-200": "#191e24",
+          "base-300": "#15191e",
+          "base-content": "#A6ADBB",
           "--primary-muted": "262 80% 30%",
         },
       },

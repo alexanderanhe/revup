@@ -1,14 +1,18 @@
 // src/reducers/app.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-// import type { RootState } from "../store";
+import { createSlice, Dispatch, PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../store";
+import useLocalStorage from "../useLocalStorage";
 
 export type LoginModal = 'signIn' | 'signUp' | false;
+
 interface AppState {
   loginModal: LoginModal;
+  assessment: boolean;
 }
 
 const initialState: AppState = {
   loginModal: false,
+  assessment: false,
 };
 
 export const appSlice = createSlice({
@@ -19,12 +23,25 @@ export const appSlice = createSlice({
     login_modal: (state, action: PayloadAction<LoginModal>): void => {
       state.loginModal = action.payload;
     },
+    set_assessment: (state, action: PayloadAction<boolean>): void => {
+      state.assessment = action.payload;
+    },
   }
 })
 
-export const { login_modal } = appSlice.actions
+export const { login_modal, set_assessment } = appSlice.actions
+
+export const checkAssessment = async (dispatch: Dispatch) => {
+  try {
+    const [assessment] = useLocalStorage("assessment", 0);
+    dispatch(set_assessment(!!assessment));
+  } catch {
+    dispatch(set_assessment(false));
+  }
+}
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectTheme = (state: RootState) => state.app.theme
+export const selectAssessment = (state: RootState) => state.app.assessment
 
 export default appSlice.reducer

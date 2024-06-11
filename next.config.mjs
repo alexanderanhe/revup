@@ -27,6 +27,23 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve = {
+        ...config.resolve,
+        fallback: {
+          fs: false,
+          dns: false,
+          net: false,
+          tls: false,
+        },
+      };
+    }
+    return config;
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['pg'],
+  },
 };
 
 const nextConfigFunction = async (phase) => {

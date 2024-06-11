@@ -1,21 +1,19 @@
 'use client'
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { selectAssessment } from "@/lib/features/app";
+import { useAppSelector } from "@/lib/hooks";
 
 const Stats = () => {
-  const [hasAssessment, setHasAssessment] = useState(false);
+  const hasAssessment = useAppSelector(selectAssessment);
+  // const dispatch = useAppDispatch();
+  // const setHasAssessment = (value: boolean) => dispatch(set_assessment(value));
 
   const progress = 70;
   const workoutProgressStyles = {
     "--value": progress,
     "--size": "3.2rem"
-  } as React.CSSProperties
-
-  useEffect(() => {
-    const hasAssessmentLS = localStorage.getItem('hasAssessment');
-    setHasAssessment(!!hasAssessmentLS)
-  }, [])
+  } as React.CSSProperties;
 
   return (
     <>

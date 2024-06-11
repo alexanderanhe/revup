@@ -8,12 +8,18 @@ export type User = {
   email: string;
   image: string
 };
+
+export type Profile = {
+  gender: string;
+};
 interface AuthState {
   user: User | null | unknown;
+  profile: Profile | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  profile: null,
 };
 
 export const authSlice = createSlice({
@@ -24,10 +30,13 @@ export const authSlice = createSlice({
     set_user:  (state, action: PayloadAction<User | null | unknown>): void => {
       state.user = action.payload;
     },
+    set_profile:  (state, action: PayloadAction<Profile | null>): void => {
+      state.profile = action.payload;
+    },
   }
 })
 
-export const { set_user } = authSlice.actions
+export const { set_user, set_profile } = authSlice.actions
 
 export const setUserData = async (dispatch: Dispatch) => {
   try {
@@ -40,5 +49,6 @@ export const setUserData = async (dispatch: Dispatch) => {
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.auth.user
+export const selectProfile = (state: RootState) => state.auth.profile
 
 export default authSlice.reducer
