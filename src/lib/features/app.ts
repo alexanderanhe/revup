@@ -34,6 +34,7 @@ export const { login_modal, set_assessment } = appSlice.actions
 export const checkAssessment = async (dispatch: Dispatch) => {
   try {
     const [assessment] = useLocalStorage("assessment", 0);
+    console.log({assessment})
     dispatch(set_assessment(!!assessment));
   } catch {
     dispatch(set_assessment(false));

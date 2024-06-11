@@ -1,7 +1,7 @@
 // src/store/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer, { setUserData } from './features/auth';
-import appReducer, { checkAssessment } from './features/app';
+import appReducer from './features/app';
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +18,7 @@ export type AppStore = typeof store
 
 const dispatch = store.dispatch;
 setUserData(dispatch);
-checkAssessment(dispatch);
+// checkAssessment(dispatch);
 
 // https://redux.js.org/usage/usage-with-typescript
 // more info: https://react-redux.js.org/using-react-redux/usage-with-typescript {OBSOLETE}
