@@ -35,8 +35,8 @@ function Slide({ handleNext, ...slide }: SlideProps) {
           {Array.from({ length: 4 }).map((_, index) => (
             <button
               type="button"
-              className={`w-3 h-3
-              ${slide.index === index ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
+              key={`index-${index}`}
+              className={`w-3 h-3 ${slide.index === index ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
             ></button>
           ))}
         </div>
