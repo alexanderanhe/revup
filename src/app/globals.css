@@ -44,13 +44,13 @@
 }
 
 h1 {
-  @apply text-xl font-bold;
+  @apply w-full text-xl font-bold;
 }
 h2 {
-  @apply text-lg font-semibold;
+  @apply w-full text-lg font-semibold;
 }
 h3 {
-  @apply text-base font-semibold;
+  @apply w-full text-base font-semibold;
 }
 section {
   @apply flex flex-col items-start w-full gap-2 justify-start;

@@ -3,7 +3,7 @@ import { authProviders } from "@/lib/data";
 import { Providers } from "@/lib/definitions";
 import Image from "next/image";
 
-export function SignIn({ provider, ...props }: { provider: Providers, className: string }) {
+export function SignIn({ provider, ...props }: { provider: Providers, className?: string }) {
   const { id, image } = authProviders[provider];
   return (
     <form

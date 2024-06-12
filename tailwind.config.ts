@@ -51,7 +51,9 @@ const config: Config = {
         light: {
           ...require("daisyui/src/theming/themes")["light"],
           "primary": "#51ff6d",
+          "secondary": "#192126",
           "--primary-muted": "259 94% 71%",
+          "--rounded-btn": "1.5rem",
         },
       },
       // cupcake theme
@@ -62,6 +64,14 @@ const config: Config = {
         },
       },
       // dark theme
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          "primary": "#51ff6d",
+          "--primary-muted": "262 80% 30%",
+          "--rounded-btn": "1.5rem",
+        },
+      },
       {
         black: {
           ...require("daisyui/src/theming/themes")["dark"],
