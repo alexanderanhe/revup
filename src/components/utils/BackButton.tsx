@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 
 type BackButtonProps = {
@@ -8,13 +8,13 @@ type BackButtonProps = {
   className?: string;
   children: React.ReactNode;
 }
-function BackButton({href, children, ...props}: BackButtonProps) {
-  if (href) {
-    return <Link href={href} {...props}>{ children }</Link>
-  }
+function BackButton({children, ...props}: BackButtonProps) {
+  // if (href) {
+  //   return <Link href={href} {...props}>{ children }</Link>
+  // }
   
+  const router = useRouter();
   const handleNavigationBack = () => {
-    const router = useRouter();
     router.back();
   }
 
