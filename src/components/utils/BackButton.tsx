@@ -12,9 +12,9 @@ function BackButton({href, children, ...props}: BackButtonProps) {
   if (href) {
     return <Link href={href} {...props}>{ children }</Link>
   }
-  const router = useRouter();
-
+  
   const handleNavigationBack = () => {
+    const router = useRouter();
     router.back();
   }
 
