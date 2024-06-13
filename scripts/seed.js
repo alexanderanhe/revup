@@ -1,20 +1,19 @@
 const { db } = require('@vercel/postgres');
 
-console.log(process.env.POSTGRES_URL);
-
 async function seedUsers(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
     // Create the "users" table if it doesn't exist
     const createTable = await client.sql`
-      CREATE TABLE users(
-        id SERIAL,
-        name VARCHAR(255),
-        email VARCHAR(255),
-        "emailVerified" TIMESTAMPTZ,
+      CREATE TABLE users (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        email_verified BOOLEAN DEFAULT false,
         image TEXT,
-        PRIMARY KEY (id)
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
       );
     `;
 
@@ -35,20 +34,19 @@ async function seedAccounts(client) {
 
     // Create the "accounts" table if it doesn't exist
     const createTable = await client.sql`
-      CREATE TABLE accounts(
-        id SERIAL,
-        "userId" INTEGER NOT NULL,
-        type VARCHAR(255) NOT NULL,
-        provider VARCHAR(255) NOT NULL,
-        "providerAccountId" VARCHAR(255) NOT NULL,
+      CREATE TABLE accounts (
+        id SERIAL PRIMARY KEY,
+        user_id UUID NOT NULL REFERENCES users(id),
+        provider_id VARCHAR(255) NOT NULL,
+        provider_type VARCHAR(255) NOT NULL,
+        provider_account_id VARCHAR(255) NOT NULL,
         refresh_token TEXT,
-        access_token TEXT,
-        expires_at BIGINT,
-        id_token TEXT,
+        access_token TEXT NOT NULL,
+        expires_at TIMESTAMP WITH TIME ZONE,
+        token_type VARCHAR(255),
         scope TEXT,
-        session_state TEXT,
-        token_type TEXT,
-        PRIMARY KEY (id)
+        id_token TEXT,
+        session_state TEXT
       );
     `;
 
@@ -69,12 +67,11 @@ async function seedSessions(client) {
 
     // Create the "sessions" table if it doesn't exist
     const createTable = await client.sql`
-      CREATE TABLE sessions(
-        id SERIAL,
-        "userId" INTEGER NOT NULL,
-        expires TIMESTAMPTZ NOT NULL,
-        "sessionToken" VARCHAR(255) NOT NULL,
-        PRIMARY KEY (id)
+      CREATE TABLE auth_sessions (
+        id SERIAL PRIMARY KEY,
+        expires TIMESTAMP WITH TIME ZONE NOT NULL,
+        session_token TEXT NOT NULL,
+        user_id UUID NOT NULL REFERENCES users(id)
       );
     `;
 
@@ -95,11 +92,10 @@ async function seedVerificationToken(client) {
 
     // Create the "verification_token" table if it doesn't exist
     const createTable = await client.sql`
-      CREATE TABLE verification_token(
-        identifier TEXT NOT NULL,
-        expires TIMESTAMPTZ NOT NULL,
+      CREATE TABLE verification_tokens (
+        identifier VARCHAR(255) PRIMARY KEY,
         token TEXT NOT NULL,
-        PRIMARY KEY (identifier, token)
+        expires TIMESTAMP WITH TIME ZONE NOT NULL
       );
     `;
 
