@@ -27,7 +27,7 @@ const LogInDialog = () => {
     toast.promise(signIn(provider), {
       loading: `Autenticando con ${provider}...`,
       success: () => {
-        return 'Inicio de sesión exitoso!';
+        return 'Inicio de sesi&oacute;n exitoso!';
       },
       error: 'Error',
     });

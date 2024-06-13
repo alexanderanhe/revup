@@ -1,4 +1,4 @@
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 
 import Image from "next/image";
 import { CheckIcon } from "@heroicons/react/24/solid";
@@ -9,20 +9,11 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import Nav from "./Nav";
 import clsx from "clsx";
 import Link from "next/link";
+import LogOutButton from "@/components/utils/LogOutButton";
 
 export default async function Header() {
-  // Lo tuve que comentar porque se necesita tener un use client, todo mover a un componente o usar next-auth
-  // const user = useAppSelector(selectUser) as User;
   const session = await auth();
   const user = session?.user;
-  // const dispatch = useAppDispatch();
-  // const getUserData = async () => {
-  //   try {
-  //     dispatch(set_user(null));
-  //   } catch {
-  //     throw new Error("Failed to get user data");
-  //   }
-  // };
 
   return (
     <header className="content-grid sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/75">
@@ -44,12 +35,7 @@ export default async function Header() {
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
               <Nav filter='nav' />
-              {session && <li>
-                <SignOut>
-                  Cerrar sesión
-                </SignOut>
-                {/* <button type="button" onClick={getUserData}>set user null</button> */}
-              </li>}
+              {session && <LogOutButton className="text-left px-1">Cerrar sesión</LogOutButton>}
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">
@@ -99,17 +85,4 @@ export default async function Header() {
     </header>
     
   )
-}
-
-function SignOut({ children }: { children: React.ReactNode }) {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        await signOut();
-      }}
-    >
-      <button type="submit">{children}</button>
-    </form>
-  );
 }
