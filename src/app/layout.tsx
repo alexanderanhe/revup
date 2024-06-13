@@ -7,6 +7,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Loader from "@/components/utils/Loader";
 import InstallPWAButton from "@/components/utils/InstallPWAButton";
+import LogInDialog from "@/components/utils/dialogs/LogIn";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         <Suspense fallback={<Loader />}>
           <StoreProvider>
             {children}
+            <LogInDialog />
           </StoreProvider>
         </Suspense>
       </body>

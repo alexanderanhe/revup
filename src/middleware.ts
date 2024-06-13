@@ -12,8 +12,8 @@ export async function middleware(request: NextRequest) {
 
   const onBoarding = request.cookies.has('app.onboarding');
   !onBoarding && ['/assessment'].includes(request.nextUrl.pathname) && response.cookies.set('app.onboarding', '1');
-  if (!onBoarding && !['/', '/on-boarding', '/assessment'].includes(request.nextUrl.pathname)) {
-    return !['/on-boarding', '/assessment'].includes(request.nextUrl.pathname) && NextResponse.redirect(new URL('/on-boarding', request.url))
+  if (!onBoarding && !['/', '/on-boarding', '/assessment', '/login'].includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/on-boarding', request.url))
   }
 
   if (session && onBoarding && ['/', '/login'].includes(request.nextUrl.pathname)) {

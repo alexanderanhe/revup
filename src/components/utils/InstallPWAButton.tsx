@@ -40,7 +40,7 @@ export default function InstallPWAButton() {
         className="w-auto text-blue-500"
       />
       <div>
-        <h3 className="font-bold">Progressive Web Application disponible!</h3>
+        <h3 className="font-bold">App disponible!</h3>
         <div className="text-xs">Instala la aplicacion en tu dispositivo.</div>
       </div>
       <div className="flex gap-2">
