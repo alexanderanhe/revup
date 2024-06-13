@@ -7,13 +7,17 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const session = await auth();
 
-  const themePreference = request.cookies.get('theme');
-  if (!themePreference) {
-    response.cookies.set('theme', 'light');
+  const themePreference = request.cookies.get('app.theme');
+  !themePreference && response.cookies.set('app.theme', 'light');
+
+  const onBoarding = request.cookies.has('app.onboarding');
+  !onBoarding && ['/assessment'].includes(request.nextUrl.pathname) && response.cookies.set('app.onboarding', '1');
+  if (!onBoarding && !['/', '/on-boarding', '/assessment'].includes(request.nextUrl.pathname)) {
+    return !['/on-boarding', '/assessment'].includes(request.nextUrl.pathname) && NextResponse.redirect(new URL('/on-boarding', request.url))
   }
 
-  // request.nextUrl.pathname.startsWith('/profile')
-  if (session && (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/login')) {
+  if (session && onBoarding && ['/', '/login'].includes(request.nextUrl.pathname)) {
+    // request.nextUrl.pathname.startsWith('/profile')
     return NextResponse.redirect(new URL('/home', request.url))
   }
   return response;
@@ -21,5 +25,6 @@ export async function middleware(request: NextRequest) {
  
 // Optionally, don't invoke Middleware on some paths
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // matcher: ["/((?!api|_next/static|_next/image|favicon.ico|).*)"],
+  matcher: ["/", "/on-boarding", "/home", "/assessment", "/profile", "/login", "/on-demand"],
 };

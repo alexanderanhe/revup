@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import Loader from "@/components/utils/Loader";
+import InstallPWAButton from "@/components/utils/InstallPWAButton";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -29,13 +30,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies()
-  const theme = cookieStore.get('theme');
+  const theme = cookieStore.get('app.theme');
 
   return (
     <html lang="es" data-theme={theme?.value ?? 'light'}>
       <body className={`${monserrat.className} antialiased`}>
+        <InstallPWAButton />
         <Suspense fallback={<Loader />}>
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            {children}
+          </StoreProvider>
         </Suspense>
       </body>
     </html>

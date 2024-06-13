@@ -14,17 +14,17 @@ const Thankyou = () => {
         </Link>
       ]}>
       <p>En base a tus respuestas, te recomendamos el siguiente programa de entrenamiento:</p>
-      <div className="card max-w-96 bg-base-100 shadow-xl image-full">
+      <div className="card max-w-96 bg-base-100 shadow-xl image-full mx-auto">
         <figure>
           <Image
             width={430}
             height={253}
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-            alt="Shoes"
+            src="/images/9GdMuamOGlc-unsplash.webp"
+            alt="Plan personalizado a tu medida"
         /></figure>
         <div className="card-body [&>p]:text-white [&>h2]:text-white items-center text-center">
-          <h2 className="card-title">Shoes!</h2>
-          <p>If a dog chews shoes whose shoes does he choose?</p>
+          <h2 className="card-title">Plan personalizado a tu medida!</h2>
+          <p>Fortalece tu espalda</p>
           <div className="card-actions justify-end">
             
           </div>

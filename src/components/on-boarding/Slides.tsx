@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import { redirect } from 'next/navigation'
 import Slide from "./Slide";
 import Login from "./Login";
 
@@ -57,13 +58,14 @@ export default function Slides() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const handleNext = () => setCurrentSlide(prev => {
     if (prev === slides.length - 1) {
+      redirect('/assessment');
       return 0;
     };
     return currentSlide + 1
   });
 
   return (
-    <div className="content-grid grid-rows-[1fr_auto] w-full h-svh py-2">
+    <div className="content-grid grid-rows-[1fr_auto] w-full h-svh">
       { slides.filter((_, index) => currentSlide === index).map(({key, Component, ...props}) => (
         <Component key={`Slide${key}`} {...props} handleNext={handleNext} />
       ))}

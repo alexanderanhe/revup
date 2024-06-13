@@ -20,7 +20,7 @@ const Stepper = ({ steps, form, selected, setSelected }: StepperProps) => {
             title={title}
             className={`flex w-full items-center [&:not(:last-child)]:after:content-[''] after:w-full after:h-1 [&:not(:last-child)]:after:border-b [&:not(:last-child)]:after:border-base-400 [&:not(:last-child)]:after:border-4 [&:not(:last-child)]:after:inline-block`}
           >
-            <span className={`flex items-center justify-center w-10 h-10 ${selected === index ? 'bg-secondary' : (form[key] ? 'bg-primary' : 'bg-gray-100')} rounded-full lg:h-12 lg:w-12 shrink-0`}>
+            <span className={`flex items-center justify-center w-10 h-10 ${selected === index ? 'bg-secondary text-secondary-content' : (form[key] ? 'bg-primary  text-primary-content' : 'bg-base-200')} rounded-full lg:h-12 lg:w-12 shrink-0`}>
               { index + 1}
             </span>
           </li>

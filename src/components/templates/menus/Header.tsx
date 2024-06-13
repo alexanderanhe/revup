@@ -57,7 +57,7 @@ export default async function Header() {
               "text-xs text-gray-600",
               !session && "row-span-2"
             )}>Bienvenido</span>
-            {session ? `${user?.name ?? ''}! 🤘` : ''}
+            <span className="truncate overflow-hidden w-full">{session ? `${user?.name ?? ''}! 🤘` : ''}</span>
           </div>
         </div>
         <div>

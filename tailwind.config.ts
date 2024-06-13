@@ -68,6 +68,7 @@ const config: Config = {
         dark: {
           ...require("daisyui/src/theming/themes")["dark"],
           "primary": "#51ff6d",
+          "secondary": "#ffffff",
           "--primary-muted": "262 80% 30%",
           "--rounded-btn": "1.5rem",
         },

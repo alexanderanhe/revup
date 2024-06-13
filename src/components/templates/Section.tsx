@@ -25,7 +25,7 @@ const Section = ({ title, horizonalHeader, header, headerButton, CloseIcon, butt
           !headerButton && "justify-start"
           )}
       >
-        <BackButton className='btn btn-ghost btn-circle p-0'>
+        <BackButton className='btn btn-ghost btn-circle p-0' href='/home'>
           { CloseIcon ? CloseIcon : <XMarkIcon className="size-8" />}
         </BackButton>
         { header }

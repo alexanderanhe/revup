@@ -14,11 +14,11 @@ type SlideProps = {
 function Slide({ handleNext, ...slide }: SlideProps) {
   return (
     <Fragment>
-      <section className="flex justify-start items-center [&>p]:text-center [&>p]:text-lg gap-4">
-        <div className="flex items-center justify-center w-full">
+      <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg" style={{ gridColumn: 'full-width'}}>
+        <div className='flex justify-center'>
           {slide.image && (
             <Image
-              className="w-auto h-[40vh] aspect-square object-cover rounded-t-3xl shadow-lg"
+              className="w-full h-[60svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
               src={slide.image}
               style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
               alt={ slide.title ?? 'Slide image'}
@@ -27,8 +27,10 @@ function Slide({ handleNext, ...slide }: SlideProps) {
             />
           )}
         </div>
-        <h2 className="text-center py-4">{ slide.title }</h2>
-        <p>{ slide.description }</p>
+        <div className='content-grid'>
+          <h2 className="text-center py-4">{ slide.title }</h2>
+          <p>{ slide.description }</p>
+        </div>
       </section>
       <footer className="grid grid-cols-1 gap-2 pb-10">
         <div className="flex justify-center w-full space-x-3 pb-4">
