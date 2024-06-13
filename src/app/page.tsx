@@ -3,6 +3,7 @@ import Link from "next/link";
 import logo from './logo.svg'
 import Image from "next/image";
 import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
+import { LogoIcon } from "@/components/utils/icons";
 
 export default async function IndexPage() {
   let session = await auth();
@@ -14,7 +15,7 @@ export default async function IndexPage() {
         <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-4 py-2">
           <div className="flex items-center">
             <a className="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
-              <Image className="w-auto h-12 fill-current inline" src={logo} alt="logo" width={512} height={288} />
+              <LogoIcon className="w-auto h-12 fill-current inline" />
             </a>
           </div>
           <div className="dropdown dropdown-bottom dropdown-end">
@@ -160,10 +161,10 @@ export default async function IndexPage() {
             <div className="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
               <a href="#" className="flex flex-wrap no-underline hover:no-underline">
                 <p className="w-full text-gray-600 text-xs md:text-sm px-6">
-                  Calendar View
+                  APP
                 </p>
                 <div className="w-full font-bold text-xl text-gray-800 px-6">
-                  Lorem ipsum dolor sit amet.
+                  Calendar View
                 </div>
                 <p className="text-gray-800 text-base px-6 mb-5">
                   Visualize your weekly and monthly workout schedule at a glance.
@@ -182,10 +183,10 @@ export default async function IndexPage() {
             <div className="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
               <a href="#" className="flex flex-wrap no-underline hover:no-underline">
                 <p className="w-full text-gray-600 text-xs md:text-sm px-6">
-                  Customizable Schedules
+                  APP
                 </p>
                 <div className="w-full font-bold text-xl text-gray-800 px-6">
-                  Lorem ipsum dolor sit amet.
+                  Customizable Schedules
                 </div>
                 <p className="text-gray-800 text-base px-6 mb-5">
                   Create personalized workout plans that fit your lifestyle and commitments.
@@ -204,10 +205,10 @@ export default async function IndexPage() {
             <div className="flex-1 bg-white rounded-t rounded-b-none overflow-hidden shadow">
               <a href="#" className="flex flex-wrap no-underline hover:no-underline">
                 <p className="w-full text-gray-600 text-xs md:text-sm px-6">
-                  Automatic Reminders
+                  APP
                 </p>
                 <div className="w-full font-bold text-xl text-gray-800 px-6">
-                  Lorem ipsum dolor sit amet.
+                  Automatic Reminders
                 </div>
                 <p className="text-gray-800 text-base px-6 mb-5">
                   Receive push notifications to help you stay on top of your fitness routine.
@@ -246,7 +247,7 @@ export default async function IndexPage() {
               </div>
               <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                 <div className="w-full pt-6 text-3xl text-gray-600 font-bold text-center">
-                  £0
+                  $0<small>MXN</small>
                   <span className="text-base">for one user</span>
                 </div>
                 <div className="flex items-center justify-center">
@@ -272,7 +273,7 @@ export default async function IndexPage() {
               </div>
               <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                 <div className="w-full pt-6 text-4xl font-bold text-center">
-                  £x.99
+                  $99<small>MXN</small>
                   <span className="text-base">/ per user</span>
                 </div>
                 <div className="flex items-center justify-center">
@@ -298,7 +299,7 @@ export default async function IndexPage() {
               </div>
               <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
                 <div className="w-full pt-6 text-3xl text-gray-600 font-bold text-center">
-                  £x.99
+                  $200<small>MXN</small>
                   <span className="text-base">/ per user</span>
                 </div>
                 <div className="flex items-center justify-center">
@@ -345,23 +346,16 @@ export default async function IndexPage() {
         <h3 className="my-4 text-3xl leading-tight">
           Main Hero Message to sell yourself!
         </h3>
-        <button className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+        <button className="mx-auto hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
           Action!
         </button>
       </section>
-      <footer className="bg-white">
+      <footer className="bg-base-100">
         <div className="container mx-auto px-8">
           <div className="w-full flex flex-col md:flex-row py-6">
             <div className="flex-1 mb-6 text-black">
-              <a className="text-pink-600 no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
-                <svg className="h-8 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.005 512.005">
-                  <rect fill="#2a2a31" x="16.539" y="425.626" width="479.767" height="50.502" transform="matrix(1,0,0,1,0,0)" />
-                  <path
-                    className="plane-take-off"
-                    d=" M 510.7 189.151 C 505.271 168.95 484.565 156.956 464.365 162.385 L 330.156 198.367 L 155.924 35.878 L 107.19 49.008 L 211.729 230.183 L 86.232 263.767 L 36.614 224.754 L 0 234.603 L 45.957 314.27 L 65.274 347.727 L 105.802 336.869 L 240.011 300.886 L 349.726 271.469 L 483.935 235.486 C 504.134 230.057 516.129 209.352 510.7 189.151 Z "
-                  />
-                </svg>
-                LANDING
+              <a className="no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+                <LogoIcon className="w-auto h-40 fill-current inline" />
               </a>
             </div>
             <div className="flex-1">

@@ -31,29 +31,31 @@ export default function InstallPWAButton() {
     return null;
   }
   return (
-    <div role="alert" className="alert">
-      <Image
-        src="/images/icons/icon-72x72.png"
-        alt="Work out at home or at the gym"
-        width={72}
-        height={72}
-        className="w-auto text-blue-500"
-      />
-      <div>
-        <h3 className="font-bold">App disponible!</h3>
-        <div className="text-xs">Instala la aplicacion en tu dispositivo.</div>
-      </div>
-      <div className="flex gap-2">
-        <button className="btn btn-sm" onClick={() => setSupportsPWA(!supportsPWA)}>Close</button>
-        <button
-          id="setup_button"
-          className="btn btn-sm btn-primary"
-          aria-label="Install app"
-          title="Install app"
-          onClick={onClick}
-        >
-          Install
-        </button>
+    <div className="container mx-auto">
+      <div role="alert" className="alert">
+        <Image
+          src="/images/icons/icon-72x72.png"
+          alt="Work out at home or at the gym"
+          width={72}
+          height={72}
+          className="w-auto text-blue-500"
+        />
+        <div>
+          <h3 className="font-bold">App disponible!</h3>
+          <div className="text-xs">Instala la aplicacion en tu dispositivo.</div>
+        </div>
+        <div className="flex gap-2">
+          <button className="btn btn-sm" onClick={() => setSupportsPWA(!supportsPWA)}>Close</button>
+          <button
+            id="setup_button"
+            className="btn btn-sm btn-primary"
+            aria-label="Install app"
+            title="Install app"
+            onClick={onClick}
+          >
+            Install
+          </button>
+        </div>
       </div>
     </div>
   );

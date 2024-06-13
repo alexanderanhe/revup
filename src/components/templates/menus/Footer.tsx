@@ -18,7 +18,7 @@ export default function Footer() {
         <div className={clsx(
             'grid place-items-center gap-4 mx-auto font-medium',
             `md:w-[${menuSize}px] min-w-80 ${colStartClasses[gridCols - 1]}`,
-            'backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/95 p-4',
+            'backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-content text-base-100 rounded-full p-3',
             'rounded-2xl',
           )
         }>
@@ -26,7 +26,7 @@ export default function Footer() {
             <Link
               href={href}
               key={`navLinkFooter${href}`}
-              className={`btn ${pathname === href ? "w-full grid grid-cols-[auto_1fr] place-items-center col-span-2" : 'btn-ghost btn-square [&>span]:hidden'}`}
+              className={`btn ${pathname === href ? "btn-primary w-full grid grid-cols-[auto_1fr] place-items-center col-span-2" : 'btn-ghost btn-square [&>span]:hidden'} p-3`}
             >
               <Icon className="size-5" />
               <span className="text-xs whitespace-nowrap">{name}</span>

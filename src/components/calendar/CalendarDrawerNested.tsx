@@ -55,12 +55,11 @@ export default function CalendarDrawerNested({ children, ...props }: CalendarDra
                   fill="none"
                   height="16"
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   viewBox="0 0 24 24"
                   width="16"
-                  aria-hidden="true"
                   className="w-3 h-3 ml-1"
                 >
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
@@ -78,12 +77,11 @@ export default function CalendarDrawerNested({ children, ...props }: CalendarDra
                   fill="none"
                   height="16"
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   viewBox="0 0 24 24"
                   width="16"
-                  aria-hidden="true"
                   className="w-3 h-3 ml-1"
                 >
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
