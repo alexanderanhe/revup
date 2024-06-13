@@ -77,14 +77,14 @@ const LogInDialog = () => {
                   <div className="flex flex-col gap-3">
                     <button
                       type="button"
-                      onClick={handleSignIn('github')}
+                      onClick={handleSignIn('facebook')}
                       className="btn btn-glass btn-active"
                       disabled={status === 'loading'}
                     >
                       <img
-                        src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub"
+                        src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook"
                         className="h-[18px] w-[18px]" />
-                      Continue with GitHub
+                        Continue with Facebook
                     </button>
 
                     <button
@@ -97,6 +97,18 @@ const LogInDialog = () => {
                         src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"
                         className="h-[18px] w-[18px]" />
                         Continue with Google
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleSignIn('github')}
+                      className="btn btn-glass btn-active"
+                      disabled={status === 'loading'}
+                    >
+                      <img
+                        src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub"
+                        className="h-[18px] w-[18px]" />
+                      Continue with GitHub
                     </button>
                   </div>
 

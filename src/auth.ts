@@ -1,8 +1,9 @@
 import NextAuth from "next-auth";
-import PostgresAdapter from "@auth/pg-adapter"
-import { Pool } from "pg"
-import GitHub from "next-auth/providers/github";
+// import PostgresAdapter from "@auth/pg-adapter"
+// import { Pool } from "pg"
 import Google from "next-auth/providers/google";
+import Facebook from "next-auth/providers/facebook";
+import GitHub from "next-auth/providers/github";
 
 // const pool = new Pool({
 //   host: process.env.POSTGRES_DATABASE,
@@ -21,5 +22,5 @@ export const {
   signOut,
 } = NextAuth({
   // adapter: PostgresAdapter(pool),
-  providers: [Google, GitHub],
+  providers: [Google, Facebook, GitHub],
 });
