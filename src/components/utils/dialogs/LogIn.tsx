@@ -27,9 +27,9 @@ const LogInDialog = () => {
     toast.promise(signIn(provider), {
       loading: `Autenticando con ${provider}...`,
       success: () => {
-        return 'Inicio de sesi&oacute;n exitoso!';
+        return "Inicio de sesión exitoso!";
       },
-      error: 'Error',
+      error: "Error",
     });
   }
 
@@ -38,7 +38,7 @@ const LogInDialog = () => {
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn('credentials', { ...form });
+    signIn("credentials", { ...form });
   }
   const handleSubmitSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -139,7 +139,7 @@ const LogInDialog = () => {
                     </button>
                   </form>
                   <div className="flex gap-2 text-center text-sm justify-center">
-                    Don't have an account?
+                    Don&apos;t have an account?
                     <button type='button' onClick={() => setModal('signUp')} className="font-medium text-primary">Sign up</button>
                   </div>
                 </>

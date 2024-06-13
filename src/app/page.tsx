@@ -1,5 +1,4 @@
 import { auth, signIn, signOut } from "@/auth";
-import { Providers } from "@/lib/definitions";
 import Link from "next/link";
 import logo from './logo.svg'
 import Image from "next/image";
