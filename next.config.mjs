@@ -21,6 +21,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'platform-lookaside.fbsbx.com',
+        port: '',
+        pathname: '/platform/profilepic/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'ui-avatars.com',
         port: '',
         pathname: '/api/**',
