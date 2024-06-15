@@ -1,16 +1,24 @@
 'use client'
 
 import { signOut } from "next-auth/react"
+import React from "react";
 
 type LogOutButtonProps = {
-  children: React.ReactNode;
-} & React.ComponentProps<'button'>
+  type?: string;
+  className?: string;
+  children?: React.ReactNode;
+}
 
-export default function LogOutButton({ children, ...props}: LogOutButtonProps) {
+export default function LogOutButton({ type, children, ...props}: LogOutButtonProps) {
   const handleLogOut = () => {
     signOut({ callbackUrl: '/' })
   }
-  return (
-    <button type="button" onClick={handleLogOut} {...props}>{ children }</button>
-  )
+  return React.createElement(
+    type ?? 'button',
+    {
+      ...props,
+      onClick: handleLogOut,
+    },
+    children
+  );
 }

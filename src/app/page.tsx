@@ -9,14 +9,25 @@ export default async function IndexPage() {
   let session = await auth();
   let user = session?.user?.email;
 
+  const LoginBtn = () => !user
+    ? <OpenLoginDialog state='signIn' className="btn font-bold rounded-full shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+        Login
+      </OpenLoginDialog>
+    : <Link href='/home' className="btn rounded-full shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+        Enter
+      </Link>
+
   return (
     <div className="leading-normal tracking-normal text-white gradient">
       <nav id="header" className="sticky w-full top-0 text-white backdrop-blur transition-colors duration-500 bg-gray-400/50 z-[1]">
-        <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-4 py-2">
+        <div className="w-full container mx-auto flex flex-wrap gap-4 items-center justify-between mt-0 px-4 py-2">
           <div className="flex items-center">
             <a className="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
               <LogoIcon className="w-auto h-12 fill-current inline" />
             </a>
+          </div>
+          <div className="flex flex-grow justify-end lg:hidden">
+            <LoginBtn />
           </div>
           <div className="dropdown dropdown-bottom dropdown-end">
             <div tabIndex={0} role="button" className="flex lg:hidden items-center p-1 text-white hover:text-[#7f2784] focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
@@ -44,16 +55,10 @@ export default async function IndexPage() {
                     Sing Up
                   </OpenLoginDialog>
                 </li>}
+                <li className="max-lg:hidden">
+                  <LoginBtn />
+                </li>
               </ul>
-              {!user ? <OpenLoginDialog
-                state='signIn'
-                className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full mt-4 lg:mt-0 py-4 px-8 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-              >
-                Login
-              </OpenLoginDialog>
-              : <Link
-                href='/home'
-                className="">Enter</Link>}
             </div>
           </div>
         </div>

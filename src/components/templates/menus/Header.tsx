@@ -35,7 +35,7 @@ export default async function Header() {
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
               <Nav filter='nav' />
-              {session && <LogOutButton className="text-left px-1">Cerrar sesión</LogOutButton>}
+              {session && <LogOutButton type="li" className="text-left px-1"><a>Cerrar sesión</a></LogOutButton>}
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">

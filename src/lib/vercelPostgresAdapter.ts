@@ -1,3 +1,4 @@
+// https://medium.com/@tord.standnes/how-to-use-next-auth-with-vercel-postgres-8ba9a6af5da0
 import { sql } from "@vercel/postgres";
 import { Account } from "next-auth";
 import {
