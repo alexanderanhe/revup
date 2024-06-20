@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { LogoIcon } from "@/components/utils/icons";
 import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 
 export default async function NavHeader() {
   let session = await auth();
@@ -23,8 +24,14 @@ export default async function NavHeader() {
     <nav id="header" className="sticky w-full top-0 text-white backdrop-blur transition-colors duration-500 bg-gray-400/50 z-[1]">
       <div className="w-full container mx-auto flex flex-wrap gap-4 items-center justify-between mt-0 px-4 py-2">
         <div className="flex items-center">
-          <a className="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
-            <LogoIcon className="w-auto h-12 fill-current inline" />
+          <a className="flex items-end toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
+            <Image
+              width={37}
+              height={37}
+              src='/images/icons/icon-72x72.png'
+              alt={ "bray.fit logo" }
+              className="w-auto border-2 rounded-xl h-12"></Image>
+            <LogoIcon className="w-auto h-12 fill-current inline max-sm:hidden" />
           </a>
         </div>
         <div className="flex flex-grow justify-end lg:hidden">

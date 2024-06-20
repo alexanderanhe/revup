@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 
 export default async function WorkoutPlanerSection() {
   const t = await getTranslations("MainLangingPage");
@@ -26,6 +27,13 @@ export default async function WorkoutPlanerSection() {
                 Visualize your weekly and monthly workout schedule at a glance.
               </p>
             </a>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_workout_calendar.webp'
+              alt={ "Calendar View" }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-full aspect-[5/3] object-contain mx-auto"></Image>
           </div>
           {/* <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
             <div className="flex items-center justify-start">
@@ -48,6 +56,13 @@ export default async function WorkoutPlanerSection() {
                 Create personalized workout plans that fit your lifestyle and commitments.
               </p>
             </a>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_workout_customizable.webp'
+              alt={ "Customizable Schedules" }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-full aspect-[5/3] object-contain mx-auto"></Image>
           </div>
           {/* <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
             <div className="flex items-center justify-center">
@@ -70,6 +85,13 @@ export default async function WorkoutPlanerSection() {
                 Receive push notifications to help you stay on top of your fitness routine.
               </p>
             </a>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_workout_reminders.webp'
+              alt={ "Automatic Reminders" }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-full aspect-[5/3] object-contain mx-auto"></Image>
           </div>
           {/* <div className="flex-none mt-auto bg-white rounded-b rounded-t-none overflow-hidden shadow p-6">
             <div className="flex items-center justify-end">

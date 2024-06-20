@@ -23,12 +23,24 @@ export default async function AboutSection() {
             </p>
           </div>
           <div className="w-full sm:w-1/2 p-6">
-            <div className="w-full mx-auto"></div>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_about_2.webp'
+              alt={ t("about.build.title") }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-full aspect-[5/3] object-contain mx-auto"></Image>
           </div>
         </div>
         <div className="flex flex-wrap flex-col-reverse sm:flex-row">
           <div className="w-full sm:w-1/2 p-6 mt-6">
-            <div className="w-5/6 mx-auto"></div>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_about_3.webp'
+              alt={ t("about.build.title") }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-5/6 aspect-[5/3] object-contain mx-auto"></Image>
           </div>
           <div className="w-full sm:w-1/2 p-6 mt-6">
             <div className="align-middle">
@@ -51,7 +63,13 @@ export default async function AboutSection() {
             </p>
           </div>
           <div className="w-full sm:w-1/2 p-6">
-            <Image width={1500} height={500} src='/images/7635479-ai.webp' alt="Stay Consistent" className="w-full mx-auto"></Image>
+            <Image
+              width={1500}
+              height={500}
+              src='/images/main_about_1.webp'
+              alt={ t("about.consistent.title") }
+              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
+              className="w-full aspect-[5/3] object-contain mx-auto"></Image>
           </div>
         </div>
       </div>

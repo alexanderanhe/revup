@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import { cookies } from 'next/headers';
 
-import "../globals.css";
-import StoreProvider from "../StoreProvider";
+import "./globals.css";
+import Providers from "../Providers";
 import Loader from "@/components/utils/Loader";
 import LogInDialog from "@/components/utils/dialogs/LogIn";
 import { locales } from "@/i18n";
@@ -47,10 +47,10 @@ export default function LocaleLayout({
       <body className={`${monserrat.className} antialiased`}>
         <PWABanner />
         <Suspense fallback={<Loader />}>
-          <StoreProvider>
+          <Providers>
             {children}
             <LogInDialog />
-          </StoreProvider>
+          </Providers>
         </Suspense>
       </body>
     </html>

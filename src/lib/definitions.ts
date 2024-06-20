@@ -53,3 +53,9 @@ export type Providers = 'Google' | 'Facebook' | 'GitHub' | 'X';
 export type AuthProviders = {
   [key in Providers]: AuthProvider
 }
+
+export const PAGES = {
+  ROOT: '/',
+  HOME: '/home',
+  ON_BOARDING: '/on-boarding'
+}

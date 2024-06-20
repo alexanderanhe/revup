@@ -1,12 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 
-import NavHeader from '@/components/main-landing-page/NavHeader';
-import HeroSection from '@/components/main-landing-page/HeroSection';
-import AboutSection from '@/components/main-landing-page/AboutSection';
-import WorkoutPlanerSection from '@/components/main-landing-page/WorkoutPlanerSection';
-import PricingSection from '@/components/main-landing-page/PricingSection';
-import CallToActionSection from '@/components/main-landing-page/CallToActionSection';
-import FooterSection from '@/components/main-landing-page/FooterSection';
+import NavHeader from '@/app/ui/main-landing/NavHeader';
+import HeroSection from '@/app/ui/main-landing/HeroSection';
+import AboutSection from '@/app/ui/main-landing/AboutSection';
+import WorkoutPlanerSection from '@/app/ui/main-landing/WorkoutPlanerSection';
+import PricingSection from '@/app/ui/main-landing/PricingSection';
+import CallToActionSection from '@/app/ui/main-landing/CallToActionSection';
+import FooterSection from '@/app/ui/main-landing/FooterSection';
 
 export default async function IndexPage() {
   const t = await getTranslations("MainLangingPage"); // Await the getTranslations function call
