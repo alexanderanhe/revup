@@ -8,7 +8,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 // import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Nav from "./Nav";
 import clsx from "clsx";
-import Link from "next/link";
+import { Link } from "@/navigation";
 import LogOutButton from "@/components/utils/LogOutButton";
 
 export default async function Header() {

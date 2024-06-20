@@ -1,6 +1,7 @@
 import { format } from "date-fns";
-import { AuthProviders } from "./definitions";
+import { AuthProviders, User } from "./definitions";
 import { auth } from "@/auth";
+import { sql } from "@vercel/postgres";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -156,7 +157,17 @@ export async function comparePassword(password: string, hash: string) {
   return password === hash;
 }
 
-export async function getUser() {
+export async function getUser(email: string): Promise<User | undefined> {
+  try {
+    const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+    return user.rows[0];
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
+export async function getSession() {
   const session = await auth();
   if (!session) return null;
   return session.user;

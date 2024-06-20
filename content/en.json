@@ -1,0 +1,57 @@
+{
+  "MainLangingPage": {
+    "navigation": {
+      "about": "About",
+      "pricing": "Pricing"
+    },
+    "hero": {
+      "pretitle": "WHAT ARE YOU WAITING FOR?",
+      "title": "be healthy, be strong, be fitness",
+      "description": "People don't lack strength, they lack determination!",
+      "getstartedbtn": "Get Started"
+    },
+    "about": {
+      "title": "Stay on Track with Customized Routines",
+      "goals": {
+        "title": "Set Goals",
+        "description": "Define your fitness objectives and let the app suggest tailored workout plans."
+      },
+      "build": {
+        "title": "Build Routines",
+        "description": "Easily create and save custom routines using our extensive exercise library."
+      },
+      "consistent": {
+        "title": "Stay Consistent",
+        "description": "Receive helpful reminders and track your progress to stay motivated and on track."
+      }
+    },
+    "workoutPlanner": {
+      "title": "Workout Planner and Scheduler"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "free": {},
+      "basic": {},
+      "pro": {}
+    },
+    "callToAction": {
+      "title": "This is your story!",
+      "description": "Believe in yourself and there will come a day when others will have no choice but to believe with you.",
+      "actionBtn": "Start now!"
+    },
+    "footer": {},
+    "loggedBtn": "Enter"
+  },
+  "Home": {
+  },
+  "auth": {
+    "login": "Log in",
+    "signUp": "Sign up"
+  },
+  "pwa": {
+    "title": "App available!",
+    "description":"Install the app on your device.",
+    "installBtn": "Install",
+    "closeBtn": "Close"
+  }
+}

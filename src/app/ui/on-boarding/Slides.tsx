@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from "react";
-import { redirect } from 'next/navigation'
 import Slide from "./Slide";
 import Login from "./Login";
+import { useState } from "react";
+import { redirect } from "@/navigation";
+import { handleOnboarding } from "@/lib/actions";
 
 const slides = [
   {
@@ -54,14 +55,14 @@ const slides = [
   },
 ]
 
-export default function Slides() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const handleNext = () => setCurrentSlide(prev => {
-    if (prev === slides.length - 1) {
+export default async function Slides() {
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const handleNext = () => setCurrentSlide((prevSlide) => {
+    if (prevSlide === slides.length - 1) {
       redirect('/assessment');
       return 0;
     };
-    return currentSlide + 1
+    return prevSlide + 1
   });
 
   return (
@@ -69,6 +70,7 @@ export default function Slides() {
       { slides.filter((_, index) => currentSlide === index).map(({key, Component, ...props}) => (
         <Component key={`Slide${key}`} {...props} handleNext={handleNext} />
       ))}
+      <form action={handleOnboarding} className="flex gap-2"></form>
     </div>
   )
 }

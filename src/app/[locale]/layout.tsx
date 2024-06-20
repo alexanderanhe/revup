@@ -3,11 +3,13 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import { cookies } from 'next/headers';
 
-import "./globals.css";
-import StoreProvider from "./StoreProvider";
+import "../globals.css";
+import StoreProvider from "../StoreProvider";
 import Loader from "@/components/utils/Loader";
-import InstallPWAButton from "@/components/utils/InstallPWAButton";
 import LogInDialog from "@/components/utils/dialogs/LogIn";
+import { locales } from "@/i18n";
+import { unstable_setRequestLocale } from "next-intl/server";
+import PWABanner from "@/components/utils/pwaBanner/PWABanner";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -25,18 +27,25 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
+
 export default function RootLayout({
   children,
+  params: {locale},
 }: Readonly<{
   children: React.ReactNode;
+  params: {locale: string};
 }>) {
+  unstable_setRequestLocale(locale);
   const cookieStore = cookies()
   const theme = cookieStore.get('app.theme');
 
   return (
-    <html lang="es" data-theme={theme?.value ?? 'light'}>
+    <html lang={locale} data-theme={theme?.value ?? 'light'}>
       <body className={`${monserrat.className} antialiased`}>
-        <InstallPWAButton />
+        <PWABanner />
         <Suspense fallback={<Loader />}>
           <StoreProvider>
             {children}

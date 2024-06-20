@@ -1,11 +1,27 @@
 'use client'
 
+import { handleHidePWABanner } from "@/lib/actions";
+import { usePathname } from "@/navigation";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function InstallPWAButton() {
+type PWABannerClientProps = {
+  title: string;
+  description: string;
+  installBtn: string;
+  closeBtn: string;
+};
+export default function PWABannerClient({
+  title,
+  description,
+  installBtn,
+  closeBtn
+}: PWABannerClientProps){
+  const form = useRef<HTMLFormElement>();
   const [supportsPWA, setSupportsPWA] = useState<boolean>(false);
   const [promptInstall, setPromptInstall] = useState<Event | null>(null);
+  const p = usePathname();
+  const isHome = ['/home'].includes(p);
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -13,7 +29,15 @@ export default function InstallPWAButton() {
       return;
     }
     (promptInstall as any).prompt();
+    handleClose();
   };
+
+  const handleClose = () => {
+    setSupportsPWA((prev) => {
+      if (form.current) form.current.submit();
+      return !prev;
+    })
+  }
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -27,7 +51,7 @@ export default function InstallPWAButton() {
     return () => window.removeEventListener("transitionend", handler);
   }, []);
 
-  if (!supportsPWA) {
+  if (!supportsPWA || !isHome) {
     return null;
   }
   return (
@@ -40,21 +64,22 @@ export default function InstallPWAButton() {
         className="w-auto text-blue-500"
       />
       <div>
-        <h3 className="font-bold">App disponible!</h3>
-        <div className="text-xs">Instala la aplicacion en tu dispositivo.</div>
+        <h3 className="font-bold">{ title }</h3>
+        <div className="text-xs">{ description }</div>
       </div>
-      <div className="flex gap-2">
-        <button className="btn btn-sm" onClick={() => setSupportsPWA(!supportsPWA)}>Close</button>
+      <form action={handleHidePWABanner} className="flex gap-2">
+        <button type="button" name="close" className="btn btn-sm" onClick={handleClose}>{ closeBtn }</button>
         <button
           id="setup_button"
+          name="install"
           className="btn btn-sm btn-primary"
           aria-label="Install app"
           title="Install app"
           onClick={onClick}
         >
-          Install
+          { installBtn }
         </button>
-      </div>
+      </form>
     </div>
   );
 };

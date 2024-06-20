@@ -1,0 +1,57 @@
+{
+  "MainLangingPage": {
+    "navigation": {
+      "about": "Acerca de",
+      "pricing": "Precios"
+    },
+    "hero": {
+      "pretitle": "Aplicación web",
+      "title": "be healthy, be strong, be fitness",
+      "description": "A la gente no le falta fuerza, le falta determinación!",
+      "getstartedbtn": "Empezar"
+    },
+    "about": {
+      "title": "Manténgase encaminado con rutinas personalizadas",
+      "goals": {
+        "title": "Fijar metas",
+        "description": "Defina sus objetivos de acondicionamiento físico y deje que la aplicación le sugiera planes de entrenamiento personalizados."
+      },
+      "build": {
+        "title": "Construir rutinas",
+        "description": "Cree y guarde fácilmente rutinas personalizadas utilizando nuestra extensa biblioteca de ejercicios."
+      },
+      "consistent": {
+        "title": "Manténgase consistente",
+        "description": "Reciba recordatorios útiles y realice un seguimiento de su progreso para mantenerse motivado y encaminado."
+      }
+    },
+    "workoutPlanner": {
+      "title": "Planificador y programador de entrenamiento"
+    },
+    "pricing": {
+      "title": "Precios",
+      "free": {},
+      "basic": {},
+      "pro": {}
+    },
+    "callToAction": {
+      "title": "Esta es tu historia!",
+      "description": "Cree en ti mismo y llegará un día e que los demás no tendrán más remedio que creer contigo.",
+      "actionBtn": "Empezar ahora!"
+    },
+    "footer": {},
+    "loggedBtn": "Entrar"
+  },
+  "Home": {
+  },
+  "auth": {
+    "login": "Log in",
+    "signUp": "Registro"
+  },
+  "pwa": {
+    "title": "App disponible!",
+    "description":"Instala la aplicación en tu dispositivo.",
+    "installBtn": "Instalar",
+    "closeBtn": "Cerrar"
+  }
+}

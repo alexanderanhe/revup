@@ -1,7 +1,7 @@
 // src/reducers/auth.ts
 import { createSlice, Dispatch, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { getUser } from "../data";
+import { getSession } from "../data";
 
 export type User = {
   name: string;
@@ -40,7 +40,7 @@ export const { set_user, set_profile } = authSlice.actions
 
 export const setUserData = async (dispatch: Dispatch) => {
   try {
-    const user = await getUser();
+    const user = await getSession();
     dispatch(set_user(user));
   } catch {
     dispatch(set_user(null));

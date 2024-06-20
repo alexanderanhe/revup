@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Stats from "@/components/home/Stats";
+import Stats from "@/app/ui/home/Stats";
 import LayoutContent from "@/components/templates/LayoutContent";
 import { wait } from "@/lib/data";
 
@@ -10,7 +10,7 @@ export default async function HomePage() {
     <LayoutContent title="" head footer>
       <Stats />
 
-      <section className="grid grid-cols-autofit">
+      {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>
             <Image
@@ -43,7 +43,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </LayoutContent>
   );
 }

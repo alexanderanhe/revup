@@ -1,4 +1,4 @@
-import Slides from "@/components/on-boarding/Slides";
+import Slides from "@/app/ui/on-boarding/Slides";
 
 export default function OnBoardingPage() {
   return (

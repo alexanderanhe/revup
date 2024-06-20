@@ -2,9 +2,10 @@ import {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
 } from "next/constants.js";
+import withNextIntl from 'next-intl/plugin';
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withNextIntl()({
   images: {
     remotePatterns: [
       {
@@ -39,24 +40,11 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve = {
-        ...config.resolve,
-        fallback: {
-          fs: false,
-          dns: false,
-          net: false,
-          tls: false,
-        },
-      };
-    }
+  webpack: (config) => {
+    config.externals = [...config.externals, "bcrypt"];
     return config;
   },
-  experimental: {
-    serverComponentsExternalPackages: ['pg'],
-  },
-};
+});
 
 const nextConfigFunction = async (phase) => {
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {

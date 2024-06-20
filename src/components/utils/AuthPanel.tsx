@@ -4,24 +4,26 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { signIn, useSession } from 'next-auth/react';
-import { useAppSelector, useAppDispatch } from '@/lib/hooks';
-import { LoginModal, login_modal } from '@/lib/features/app';
-import type { RootState } from '@/lib/store';
+import { LoginModal } from '@/lib/features/app';
 
 const FORM_INIT = {
   username: "",
   password: ""
 }
 
-export default function AuthPanel() {
+type AuthPanelProps = {
+  modal: LoginModal;
+}
+
+export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
+  const [ modal, setModal ] = useState<LoginModal>(initModal);
   const { data: session, status } = useSession();
   const [ form, setForm ] = useState(FORM_INIT);
-  const modal = useAppSelector((state: RootState) => state.app.loginModal)
-  const dispatch = useAppDispatch()
-  const setModal = (state: LoginModal) => dispatch(login_modal(state));
 
   const handleSignIn = (provider: string) => () => {
-    toast.promise(signIn(provider), {
+    toast.promise(signIn(provider, {
+      callbackUrl: "/home"
+    }), {
       loading: `Autenticando con ${provider}...`,
       success: () => {
         return "Inicio de sesión exitoso!";
@@ -47,7 +49,14 @@ export default function AuthPanel() {
     //   toast.error("Failed to signUp");
     // }
   }
+
   if (!modal) return null;
+
+  if (status === "authenticated") {
+    return (
+      <p>Te has autenticado con el usuario {session?.user?.email}</p>
+    )
+  }
 
   return modal === 'signIn' ? (
     <>
@@ -56,14 +65,14 @@ export default function AuthPanel() {
           SignIn to your account
         </p>
         <p className="text-sm leading-4">
-          You must be logged in to perform this action.
+          You must be logged in to perform this action.{ status }
         </p>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col items-center justify-center gap-3 w-full">
         <button
           type="button"
           onClick={handleSignIn('facebook')}
-          className="btn btn-glass btn-active"
+          className="btn btn-glass btn-active w-full max-w-96"
           disabled={status === 'loading'}
         >
           <img
@@ -75,7 +84,7 @@ export default function AuthPanel() {
         <button
           type="button"
           onClick={handleSignIn('google')}
-          className="btn btn-glass btn-active"
+          className="btn btn-glass btn-active w-full max-w-96"
           disabled={status === 'loading'}
         >
           <img
@@ -87,7 +96,7 @@ export default function AuthPanel() {
         <button
           type="button"
           onClick={handleSignIn('github')}
-          className="btn btn-glass btn-active"
+          className="btn btn-glass btn-active w-full max-w-96"
           disabled={status === 'loading'}
         >
           <img
@@ -116,7 +125,7 @@ export default function AuthPanel() {
             placeholder="Email Adress"
           />
         </label>
-        <label className="input input-bordered flex items-center gap-2">
+        {/* <label className="input input-bordered flex items-center gap-2">
           Password
           <input
             name="password"
@@ -126,7 +135,7 @@ export default function AuthPanel() {
             className="grow"
             placeholder="Password"
           />
-        </label>
+        </label> */}
         <p className="text-sm">
           <a href="/forgot-password" className="text-primary">Reset your password?</a>
         </p>
@@ -142,7 +151,7 @@ export default function AuthPanel() {
     </>
   ) : (
     <>
-    <div className="flex flex-col gap-5 text-center">
+      <div className="flex flex-col gap-5 text-center">
         <p className="text-2xl font-semibold leading-5">
           Register a new account
         </p>
