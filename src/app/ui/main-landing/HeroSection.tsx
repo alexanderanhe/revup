@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Link } from "@/navigation";
 import { auth } from "@/auth";
 import { jersey10 } from "@/app/ui/fonts";
-import { PAGES } from "@/lib/definitions";
+import { PAGES } from "@/lib/routes";
 
 export default async function HeroSection() {
   let session = await auth();

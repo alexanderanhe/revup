@@ -1,18 +1,21 @@
 'use client'
 
-import Image from "next/image";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Fragment } from "react";
 import Link from "next/link";
-import AuthPanel from "../../../components/utils/AuthPanel";
+import { useFormStatus } from "react-dom";
+import { handleOnboarding } from "@/lib/actions";
+import AuthPanel from "@/app/ui/auth/AuthPanel";
 
 type LoginProps = {
   buttonClass?: string;
   buttonText?: string;
+  submit?: boolean;
   handleNext: () => void;
 };
 
-export default function Login({ buttonClass, buttonText, handleNext }: LoginProps) {
+export default function Login({ buttonClass, buttonText, submit, handleNext }: LoginProps) {
+  const { pending } = useFormStatus();
   const {data: session, status} = useSession();
 
   return (
@@ -25,7 +28,15 @@ export default function Login({ buttonClass, buttonText, handleNext }: LoginProp
           ? <button type="button" onClick={handleNext} className="btn btn-success w-full">Continuar con {session?.user?.email}</button>
           : (
           <Fragment>
-            <button type="button" onClick={handleNext} className={ buttonClass }>{ buttonText }</button>
+            { submit ? (
+              <form action={handleOnboarding} className="w-full">
+                <input type="hidden" name="onboarding" value="1" />
+                <input type="hidden" name="next" value="/home" />
+                <button type="submit" disabled={pending} className={ buttonClass }>{ buttonText }</button>
+              </form>
+            ) : (
+              <button type="button" onClick={handleNext} className={ buttonClass }>{ buttonText }</button>
+            )}
             <p className="text-center">
               {'Al continuar acepta los '}
               <Link href="/terms-of-service" className="text-center text-blue-500">Terminos y condiciones</Link>

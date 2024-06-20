@@ -61,7 +61,7 @@ export default function PWABannerClient({
         alt="Work out at home or at the gym"
         width={72}
         height={72}
-        className="w-auto text-blue-500"
+        className="w-auto rounded-xl border-2 text-blue-500"
       />
       <div>
         <h3 className="font-bold">{ title }</h3>

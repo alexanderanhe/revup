@@ -1,9 +1,17 @@
-export const ROOT = '/';
+export const PAGES = {
+  ROOT: '/',
+  HOME: '/home',
+  LOGIN: '/login',
+  ON_BOARDING: '/on-boarding',
+  ASSESSMENT: '/assessment',
+}
+
+export const ROOT = PAGES.ROOT;
 export const PUBLIC_ROUTES = [
-  "/",
-  "/on-boarding",
-  "/on-boarding/1",
-  "/login",
+  PAGES.ROOT,
+  PAGES.ON_BOARDING,
+  PAGES.HOME,
+  PAGES.LOGIN,
   "/forgot-password",
   "/reset-password",
   "/unauthorized",
@@ -15,5 +23,5 @@ export const PUBLIC_ROUTES = [
   "/cookie-policy",
   "/end-user-license-agreement"
 ];
-export const DEFAULT_REDIRECT = '/home';
-export const UNAUTHORIZED_REDIRECT = '/login';
+export const DEFAULT_REDIRECT = PAGES.HOME;
+export const UNAUTHORIZED_REDIRECT = PAGES.LOGIN;

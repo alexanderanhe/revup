@@ -1,13 +1,13 @@
 import createIntlMiddleware from 'next-intl/middleware';
 import { locales } from '@/i18n';
-import { PUBLIC_ROUTES, DEFAULT_REDIRECT, ROOT } from '@/lib/routes';
+import { PUBLIC_ROUTES, DEFAULT_REDIRECT, ROOT, UNAUTHORIZED_REDIRECT } from '@/lib/routes';
 
 import { auth } from '@/auth';
 
 
 const intlMiddleware = createIntlMiddleware({
   locales,
-  defaultLocale: 'en'
+  defaultLocale: "es"
 });
  
 // // This function can be marked `async` if using `await` inside
@@ -107,7 +107,7 @@ export default auth((request) => {
     return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
   }
   if (!isAuthenticated && !isPublicPage) {
-    return Response.redirect(new URL(ROOT, nextUrl));
+    return Response.redirect(new URL(UNAUTHORIZED_REDIRECT, nextUrl));
   }
   return intlMiddleware(request);
 })

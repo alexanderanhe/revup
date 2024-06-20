@@ -1,6 +1,7 @@
 'use server'
+
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import {  NextResponse } from 'next/server';
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
@@ -8,7 +9,7 @@ import { AuthError } from 'next-auth';
 // ...
  
 export async function authenticate(
-  prevState: string | undefined,
+  // prevState: string | undefined,
   formData: FormData,
 ) {
   try {
@@ -27,14 +28,13 @@ export async function authenticate(
 }
 
 export async function handleHidePWABanner() {
-  const cookieStore = cookies();
   const res = NextResponse.next();
-  cookieStore.set('app.installpwa', '0');
-  res.cookies.set('app.installpwa', '0');
+  cookies().set('app.installpwa', '0', { httpOnly: true });
+  res.cookies.set('app.installpwa', '0', { httpOnly: true });
 }
 export async function handleOnboarding() {
-  const cookieStore = cookies();
+  console.log("CLICKED ONBOARDING!!!")
   const res = NextResponse.next();
-  cookieStore.set('app.onboarding', '1');
-  res.cookies.set('app.onboarding', '1');
+  cookies().set('app.onboarding', '1', { httpOnly: true });
+  res.cookies.set('app.onboarding', '1', { httpOnly: true });
 }

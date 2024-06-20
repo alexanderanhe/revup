@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
-import { PAGES } from "@/lib/definitions";
+import { PAGES } from "@/lib/routes";
 import { Link } from "@/navigation";
 
 export default async function CallToActionSection() {

@@ -51,7 +51,11 @@ export default async function NavHeader() {
               </li> */}
               { navigationKeys.map((key) => (
                 <li className="mr-3" key={key}>
-                  <a href={`#/${key}`} className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4">{ t(`navigation.${key}`) }</a>
+                  <Link
+                    href={`/#${key}`}
+                    scroll={true}
+                    className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
+                  >{ t(`navigation.${key}`) }</Link>
                 </li>
               ))}
               {!user && <li className="mr-3">

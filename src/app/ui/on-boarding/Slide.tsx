@@ -1,5 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import React, { Fragment } from 'react'
+import { useFormStatus } from 'react-dom';
+import { handleOnboarding } from "@/lib/actions";
 
 type SlideProps = {
   title?: string;
@@ -8,10 +12,13 @@ type SlideProps = {
   index?: number;
   buttonClass?: string;
   buttonText?: string;
+  submit?: boolean;
   handleNext: () => void;
 };
 
-function Slide({ handleNext, ...slide }: SlideProps) {
+function Slide({ handleNext, submit, ...slide }: SlideProps) {
+  const { pending } = useFormStatus();
+
   return (
     <Fragment>
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg" style={{ gridColumn: 'full-width'}}>
@@ -42,13 +49,27 @@ function Slide({ handleNext, ...slide }: SlideProps) {
             ></button>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={handleNext}
-          className={ slide.buttonClass }
-        >
-          { slide.buttonText }
-        </button>
+        { submit ? (
+          <form action={handleOnboarding}>
+            <input type="hidden" name="onboarding" value="1" />
+            <input type="hidden" name="next" value="/home" />
+            <button
+              type="submit"
+              disabled={pending}
+              className={ slide.buttonClass }
+            >
+              { slide.buttonText }
+            </button>
+          </form>
+        ) : (
+          <button
+            type="button"
+            onClick={handleNext}
+            className={ slide.buttonClass }
+          >
+            { slide.buttonText }
+          </button>
+        )}
       </footer>
     </Fragment>
   )

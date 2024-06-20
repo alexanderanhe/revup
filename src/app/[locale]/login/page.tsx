@@ -1,4 +1,4 @@
-import AuthPanel from "@/components/utils/AuthPanel";
+import AuthPanel from "@/app/ui/auth/AuthPanel";
 
 const LogInPage = () => {
   return (

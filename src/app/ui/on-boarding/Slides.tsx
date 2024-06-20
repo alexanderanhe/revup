@@ -4,7 +4,8 @@ import Slide from "./Slide";
 import Login from "./Login";
 import { useState } from "react";
 import { redirect } from "@/navigation";
-import { handleOnboarding } from "@/lib/actions";
+import { PAGES } from "@/lib/routes";
+import { useSession } from "next-auth/react";
 
 const slides = [
   {
@@ -55,11 +56,14 @@ const slides = [
   },
 ]
 
-export default async function Slides() {
+export default function Slides() {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const { data: session, status } = useSession();
+  const { HOME } = PAGES;
+
   const handleNext = () => setCurrentSlide((prevSlide) => {
     if (prevSlide === slides.length - 1) {
-      redirect('/assessment');
+      redirect(HOME);
       return 0;
     };
     return prevSlide + 1
@@ -68,9 +72,12 @@ export default async function Slides() {
   return (
     <div className="content-grid grid-rows-[1fr_auto] w-full h-svh">
       { slides.filter((_, index) => currentSlide === index).map(({key, Component, ...props}) => (
-        <Component key={`Slide${key}`} {...props} handleNext={handleNext} />
+        <Component
+          key={`Slide${key}`}
+          {...props}
+          submit={currentSlide === slides.length - (session ? 2 : 1)}
+          handleNext={handleNext} />
       ))}
-      <form action={handleOnboarding} className="flex gap-2"></form>
     </div>
   )
 }

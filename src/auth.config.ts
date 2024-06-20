@@ -11,8 +11,6 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl, cookies } }) {
       const isAuthenticated = !!auth?.user;
-      const onBoarding = cookies.get('app.onboarding');
-      console.log({onBoarding})
       return isAuthenticated;
     },
   },

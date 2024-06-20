@@ -2,17 +2,17 @@ import { cookies } from "next/headers";
 import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
 
-type OnBoardingLayoutProps = {
+type HomeLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function OnBoardingLayout({ children }: OnBoardingLayoutProps) {
+export default function HomeLayout({ children }: HomeLayoutProps) {
   const cookieStore = cookies();
   const hasOnBoarding = cookieStore.has('app.onboarding');
-  const { HOME } = PAGES;
+  const { ON_BOARDING } = PAGES;
 
-  if (hasOnBoarding) {
-    redirect(HOME);
+  if (!hasOnBoarding) {
+    redirect(ON_BOARDING);
   }
   return children;
 }
