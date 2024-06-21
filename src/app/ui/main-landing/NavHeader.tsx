@@ -4,6 +4,7 @@ import { LogoIcon } from "@/components/utils/icons";
 import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import Nav from "./Nav";
 
 export default async function NavHeader() {
   let session = await auth();
@@ -13,10 +14,10 @@ export default async function NavHeader() {
   const navigationKeys = Object.keys(t.raw("navigation"));
 
   const LoginBtn = () => !user
-    ? <OpenLoginDialog state='signIn' className="btn font-bold rounded-full shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+    ? <OpenLoginDialog state='signIn' className="hover:underline bg-white text-gray-800 font-bold rounded-full text-sm py-2 px-4 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
         { tAuth("login" )}
       </OpenLoginDialog>
-    : <Link href='/home' className="btn rounded-full shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+    : <Link href='/home' className="hover:underline bg-white text-gray-800 font-bold rounded-full text-sm py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
         { t("loggedBtn") }
       </Link>
 
@@ -50,13 +51,13 @@ export default async function NavHeader() {
                 <a className="inline-block py-2 px-4 text-black font-bold no-underline" href="#">Active</a>
               </li> */}
               { navigationKeys.map((key) => (
-                <li className="mr-3" key={key}>
+                <Nav key={key}>
                   <Link
-                    href={`/#${key}`}
+                    href={{ hash: key }}
                     scroll={true}
                     className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
                   >{ t(`navigation.${key}`) }</Link>
-                </li>
+                </Nav>
               ))}
               {!user && <li className="mr-3">
                 <OpenLoginDialog

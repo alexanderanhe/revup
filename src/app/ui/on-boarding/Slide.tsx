@@ -44,8 +44,8 @@ function Slide({ submit, ...slide }: SlideProps) {
           {Array.from({ length: 4 }).map((_, index) => (
             <Link
               key={`index-${index}`}
-              href={`#slide${index}`}
-              scroll={true}
+              href={{hash: `slide${index}`}}
+              scroll={false}
               className={`w-3 h-3 ${slide.index === index ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
             ></Link>
           ))}
@@ -64,8 +64,8 @@ function Slide({ submit, ...slide }: SlideProps) {
           </form>
         ) : (
           <Link
-            href={`#slide${(slide.index ?? 0) + 1}`}
-            scroll={true}
+            href={{ hash: `slide${(slide.index ?? 0) + 1}` }}
+            scroll={false}
             className={ slide.buttonClass }
           >
             { slide.buttonText }
