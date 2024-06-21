@@ -6,17 +6,16 @@ import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { handleOnboarding } from "@/lib/actions";
 import AuthPanel from "@/app/ui/auth/AuthPanel";
+import { redirect } from "@/navigation";
 
 type LoginProps = {
-  buttonClass?: string;
-  buttonText?: string;
-  submit?: boolean;
-  handleNext: () => void;
 };
 
-export default function Login({ buttonClass, buttonText, submit, handleNext }: LoginProps) {
+export default function Login() {
   const { pending } = useFormStatus();
   const {data: session, status} = useSession();
+
+  const handleNext = () => redirect('/home')
 
   return (
     <Fragment>
@@ -28,15 +27,7 @@ export default function Login({ buttonClass, buttonText, submit, handleNext }: L
           ? <button type="button" onClick={handleNext} className="btn btn-success w-full">Continuar con {session?.user?.email}</button>
           : (
           <Fragment>
-            { submit ? (
-              <form action={handleOnboarding} className="w-full">
-                <input type="hidden" name="onboarding" value="1" />
-                <input type="hidden" name="next" value="/home" />
-                <button type="submit" disabled={pending} className={ buttonClass }>{ buttonText }</button>
-              </form>
-            ) : (
-              <button type="button" onClick={handleNext} className={ buttonClass }>{ buttonText }</button>
-            )}
+            <button type="button" onClick={handleNext} className="btn btn-info btn-outline w-full uppercase">Skip</button>
             <p className="text-center">
               {'Al continuar acepta los '}
               <Link href="/terms-of-service" className="text-center text-blue-500">Terminos y condiciones</Link>

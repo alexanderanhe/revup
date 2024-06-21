@@ -42,12 +42,7 @@ function Slide({ submit, ...slide }: SlideProps) {
       <footer className="grid grid-cols-1 gap-2 pb-10">
         <div className="flex justify-center w-full space-x-3 pb-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <Link
-              key={`index-${index}`}
-              href={`#slide${index}`}
-              scroll={false}
-              className={`w-3 h-3 ${slide.index === index ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
-            ></Link>
+            <a key={`index-${index}`} href={`#slide${index}`} className={`w-3 h-3 ${slide.index === index ? 'bg-base-300' : 'bg-base-200'} rounded-full`}></a>
           ))}
         </div>
         { submit ? (
@@ -63,13 +58,9 @@ function Slide({ submit, ...slide }: SlideProps) {
             </button>
           </form>
         ) : (
-          <Link
-            href={`#slide${(slide.index ?? 0) + 1}`}
-            scroll={false}
-            className={ slide.buttonClass }
-          >
+          <a href={`#slide${(slide.index ?? 0) + 1}`} className={ slide.buttonClass }>
             { slide.buttonText }
-          </Link>
+          </a>
         )}
       </footer>
     </Fragment>
