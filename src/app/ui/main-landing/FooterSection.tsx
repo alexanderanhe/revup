@@ -6,7 +6,7 @@ export default async function FooterSection() {
     <footer className="bg-base-100">
       <div className="container mx-auto px-8">
         <div className="w-full flex flex-col md:flex-row py-6">
-          <div className="flex-1 mb-6 text-black">
+          <div className="flex flex-1 items-center justify-center mb-6 text-secondary">
             <a className="no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
               <LogoIcon className="w-auto h-40 fill-current inline" />
             </a>

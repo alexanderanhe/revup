@@ -56,5 +56,6 @@ section {
   @apply flex flex-col items-start w-full gap-2 justify-start;
 }
 .gradient {
-  background: linear-gradient(90deg, #56198b 0%, #53f074 100%);
+  background: linear-gradient(90deg, #56198b 0%, #260b3e 100%);
+  /* background: linear-gradient(90deg, #56198b 0%, #53f074 100%); */
 }

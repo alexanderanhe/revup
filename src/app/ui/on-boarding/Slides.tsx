@@ -1,8 +1,7 @@
 'use client'
 
 import Slide from "./Slide";
-import Login from "./Login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
 import { useSession } from "next-auth/react";
@@ -16,7 +15,6 @@ const slides = [
     index: 0,
     buttonClass: 'btn btn-secondary w-full uppercase',
     buttonText: 'Siguiente',
-    Component: Slide
   },
   {
     key: 2,
@@ -26,7 +24,6 @@ const slides = [
     index: 1,
     buttonClass: 'btn btn-secondary w-full uppercase',
     buttonText: 'Siguiente',
-    Component: Slide
   },
   {
     key: 3,
@@ -36,7 +33,6 @@ const slides = [
     index: 2,
     buttonClass: 'btn btn-secondary w-full uppercase',
     buttonText: 'Siguiente',
-    Component: Slide
   },
   {
     key: 4,
@@ -46,19 +42,19 @@ const slides = [
     index: 3,
     buttonClass: 'btn btn-primary w-full uppercase',
     buttonText: 'Start',
-    Component: Slide
   },
-  {
-    key: 5,
-    buttonClass: 'btn btn-info btn-outline w-full uppercase',
-    buttonText: 'Skip',
-    Component: Login
-  },
+  // {
+  //   key: 5,
+  //   buttonClass: 'btn btn-info btn-outline w-full uppercase',
+  //   buttonText: 'Skip',
+  //   index: 4,
+  //   Component: Login
+  // },
 ]
 
 export default function Slides() {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const { HOME } = PAGES;
 
   const handleNext = () => setCurrentSlide((prevSlide) => {
@@ -68,16 +64,17 @@ export default function Slides() {
     };
     return prevSlide + 1
   });
+  useEffect(() => {
+    update();
+  }, [status]);
 
   return (
-    <div className="content-grid grid-rows-[1fr_auto] w-full h-svh">
-      { slides.filter((_, index) => currentSlide === index).map(({key, Component, ...props}) => (
-        <Component
-          key={`Slide${key}`}
-          {...props}
-          submit={currentSlide === slides.length - (session ? 2 : 1)}
-          handleNext={handleNext} />
-      ))}
+    <div className="carousel rounded-box space-x-4 w-full h-svh">
+      { slides.map(({key, ...props}) => (
+        <div key={`Slide${key}`} id={`slide${props.index}`} className="carousel-item content-grid grid-rows-1 w-full h-full">
+          <Slide {...props} submit={currentSlide === slides.length - (session ? 2 : 1)} />
+        </div>
+        ))}
     </div>
   )
 }

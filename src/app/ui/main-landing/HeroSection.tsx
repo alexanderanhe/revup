@@ -19,7 +19,7 @@ export default async function HeroSection() {
           <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
             <p className="uppercase tracking-loose w-full">{ t("hero.pretitle") }</p>
             <h1 className={`${jersey10.className} antialiased text-5xl font-bold leading-tight mb-4`}>
-              <span className="bg-primary tracking-wide">
+              <span className="bg-primary text-secondary tracking-wide px-2">
                 { t("hero.title") }
               </span>
             </h1>

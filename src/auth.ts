@@ -14,7 +14,7 @@ export const {
   handlers: { GET, POST },
   auth,
   signIn,
-  signOut,
+  signOut
 } = NextAuth({
   adapter: vercelPostgresAdapter(),
   ...authConfig,
