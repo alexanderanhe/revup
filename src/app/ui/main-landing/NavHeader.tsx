@@ -51,13 +51,7 @@ export default async function NavHeader() {
                 <a className="inline-block py-2 px-4 text-black font-bold no-underline" href="#">Active</a>
               </li> */}
               { navigationKeys.map((key) => (
-                <Nav key={key}>
-                  <Link
-                    href={{ hash: key }}
-                    scroll={true}
-                    className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-                  >{ t(`navigation.${key}`) }</Link>
-                </Nav>
+                <Nav key={key} hash={key}>{ t(`navigation.${key}`) }</Nav>
               ))}
               {!user && <li className="mr-3">
                 <OpenLoginDialog
