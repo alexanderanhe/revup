@@ -58,9 +58,14 @@ function Slide({ submit, ...slide }: SlideProps) {
             </button>
           </form>
         ) : (
-          <a href={`#slide${(slide.index ?? 0) + 1}`} className={ slide.buttonClass }>
+          <Link
+            href={`/#slide${(slide.index ?? 0) + 1}`}
+            scroll={false}
+            className={ slide.buttonClass }
+            replace
+          >
             { slide.buttonText }
-          </a>
+          </Link>
         )}
       </footer>
     </Fragment>
