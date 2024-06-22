@@ -3,7 +3,9 @@ import Section from "@/components/templates/Section"
 import Stepper from "./Stepper"
 import { Question } from '@/lib/definitions'
 import { handleSetAssessment } from "@/lib/actions"
-import { useFormStatus } from "react-dom"
+import { useFormState, useFormStatus } from "react-dom"
+import SubmitButton from "@/app/ui/utils/SubmitButton"
+import { useEffect } from "react"
 
 type QuizzProps = {
   selected: number,
@@ -12,9 +14,9 @@ type QuizzProps = {
   setSelected: (selected: number) => void
 }
 
-const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
-  const [ form ] = formState;
-  const { pending } = useFormStatus();
+export default function Quizz ({ selected, quizz, formState: formData, setSelected }: QuizzProps) {
+  const [ form ] = formData;
+  const [ formState, formAction ] = useFormState(handleSetAssessment, null);
   const header = <Stepper steps={quizz} selected={selected} form={form} setSelected={setSelected} />;
 
   // const handleSubmit = () => {
@@ -23,6 +25,13 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
   const handleChangeAnswers = () => {
     setSelected(0);
   }
+
+  useEffect(() => {
+    if (formState === 'saved') {
+      setSelected(selected + 1);
+    }
+  }, [formState]);
+
   return (
     <>
       { quizz.map((question: Question, index: number) => 
@@ -30,7 +39,7 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
           <QuizzItem
             key={`steps-${index}${question.title}`}
             q={question}
-            formState={formState}
+            formState={formData}
             selected={selected}
             setSelected={setSelected}
             header={header}
@@ -38,18 +47,14 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
       ) }
       { selected === quizz.length &&
         <Section title="Confirma tus respuestas" header={header} buttons={[
-            <form key="nextConfirm" action={handleSetAssessment}>
+            <form key="nextConfirm" action={formAction}>
               { Object.entries(form).map(([key, value]) => (
                 <input key={`input-${key}`} type="hidden" name={key} value={String(value)} />
               ))}
-              <button
-                  type="submit"
-                  disabled={pending}
-                  // onClick={handleSubmit}
-                  className="btn btn-primary w-full"
-                >
-                {pending ? '...' : 'Confirmar'}
-              </button>
+              { formState ?? ''}
+              <SubmitButton className="btn btn-primary w-full">
+                Confirmar
+              </SubmitButton>
             </form>,
             <button
               key="nextChange"
@@ -70,5 +75,3 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
     </>
   )
 }
-
-export default Quizz

@@ -2,8 +2,9 @@
 
 import Image from 'next/image'
 import React, { Fragment } from 'react'
-import { useFormStatus } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import { handleOnboarding } from "@/lib/actions";
+import SubmitButton from '@/app/ui/utils/SubmitButton';
 
 type SlideProps = {
   title?: string;
@@ -15,8 +16,8 @@ type SlideProps = {
   submit?: boolean;
 };
 
-function Slide({ submit, ...slide }: SlideProps) {
-  const { pending } = useFormStatus();
+export default function Slide({ submit, ...slide }: SlideProps) {
+  const [ formState, formAction ] = useFormState(handleOnboarding, null);
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -53,14 +54,11 @@ function Slide({ submit, ...slide }: SlideProps) {
           ))}
         </div>
         { submit ? (
-          <form action={handleOnboarding}>
-            <button
-              type="submit"
-              disabled={pending}
-              className={ slide.buttonClass }
-            >
+          <form action={formAction}>
+            { formState ?? '' }
+            <SubmitButton className={ slide.buttonClass }>
               { slide.buttonText }
-            </button>
+            </SubmitButton>
           </form>
         ) : (
           <a href={`#slide${(slide.index ?? 0) + 1}`} onClick={handleClick} className={ slide.buttonClass }>
@@ -71,5 +69,3 @@ function Slide({ submit, ...slide }: SlideProps) {
     </Fragment>
   )
 }
-
-export default Slide
