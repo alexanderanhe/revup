@@ -14,9 +14,6 @@ type LoginProps = {
 export default function Login() {
   const { pending } = useFormStatus();
   const {data: session, status} = useSession();
-
-  const handleNext = () => redirect('/home')
-
   return (
     <Fragment>
       <section className="flex justify-start items-center [&>p]:text-center [&>p]:text-lg gap-4 p-4">
@@ -24,10 +21,10 @@ export default function Login() {
       </section>
       <footer className="grid grid-cols-1 place-items-center gap-2 pb-10">
         { status === "authenticated"
-          ? <button type="button" onClick={handleNext} className="btn btn-success w-full">Continuar con {session?.user?.email}</button>
+          ? <Link href="/home" className="btn btn-success w-full" replace>Continuar con {session?.user?.email}</Link>
           : (
           <Fragment>
-            <button type="button" onClick={handleNext} className="btn btn-info btn-outline w-full uppercase">Skip</button>
+            <Link href={'/home'} className="btn btn-info btn-outline w-full uppercase" replace>Skip</Link>
             <p className="text-center">
               {'Al continuar acepta los '}
               <Link href="/terms-of-service" className="text-center text-blue-500">Terminos y condiciones</Link>
