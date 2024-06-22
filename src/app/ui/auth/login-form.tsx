@@ -12,15 +12,14 @@ import { useActionState } from 'react';
 import { authenticate } from '@/lib/actions';
  
 export default function LoginForm() {
-  const errorMessage = ''
   const isPending = false
-  // const [errorMessage, formAction, isPending] = useActionState(
-  //   authenticate,
-  //   undefined,
-  // );
+  const [errorMessage, formAction] = useActionState(
+    authenticate,
+    undefined,
+  );
  
   return (
-    <form action={authenticate} className="space-y-3">
+    <form action={formAction} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
