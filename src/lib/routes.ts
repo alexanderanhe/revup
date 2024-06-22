@@ -4,6 +4,9 @@ export const PAGES = {
   LOGIN: '/login',
   ON_BOARDING: '/on-boarding',
   ASSESSMENT: '/assessment',
+  PRIVACY: '/privacy-policy',
+  TERMS: '/terms-of-service',
+  COOKIES: '/cookie-policy'
 }
 
 export const ROOT = PAGES.ROOT;
@@ -11,6 +14,7 @@ export const PUBLIC_ROUTES = [
   PAGES.ROOT,
   PAGES.ON_BOARDING,
   PAGES.HOME,
+  PAGES.ASSESSMENT,
   PAGES.LOGIN,
   "/forgot-password",
   "/reset-password",
@@ -18,9 +22,9 @@ export const PUBLIC_ROUTES = [
   "/contact",
   "/about",
   "/help",
-  "/privacy-policy",
-  "/terms-of-service",
-  "/cookie-policy",
+  PAGES.PRIVACY,
+  PAGES.TERMS,
+  PAGES.COOKIES,
   "/end-user-license-agreement"
 ];
 export const DEFAULT_REDIRECT = PAGES.HOME;

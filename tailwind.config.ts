@@ -19,10 +19,14 @@ const config: Config = {
       },
       animation: {
         'l10': 'l10 3s infinite;',
+        'l11': 'l11 0.5s ease-in;',
       },
       keyframes: {
         l10: {
           to: { transform: 'scale(1.8)', opacity: '0' }
+        },
+        l11: {
+          from: { transform: 'scale(2.8)', opacity: '0' }
         },
       },
       colors: {

@@ -51,7 +51,7 @@ export default async function Slides() {
           <div key={`Slide${key}`} id={`slide${props.index}`} className="carousel-item content-grid grid-rows-1 w-full h-full">
             <Slide {...props} submit={props.index === slides.length - 1} />
           </div>
-          ))}
+        ))}
       </div>
     ) : (
       <div className="content-grid grid-rows-[1fr_auto] w-full h-svh"><Login/></div>

@@ -10,6 +10,7 @@ import Nav from "./Nav";
 import clsx from "clsx";
 import { Link } from "@/navigation";
 import LogOutButton from "@/components/utils/LogOutButton";
+import DeleteAllCookies from "@/app/ui/utils/DeleteAllCookies";
 
 export default async function Header() {
   const session = await auth();
@@ -35,6 +36,7 @@ export default async function Header() {
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
               <Nav filter='nav' />
+              <DeleteAllCookies />
               {session && <LogOutButton type="li" className="text-left px-1"><a>Cerrar sesión</a></LogOutButton>}
             </ul>
           </div>

@@ -1,15 +1,13 @@
-import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import { cookies } from 'next/headers';
 
 import "./globals.css";
 import Providers from "../Providers";
-import Loader from "@/components/utils/Loader";
 import LogInDialog from "@/components/utils/dialogs/LogIn";
 import { locales } from "@/i18n";
 import { unstable_setRequestLocale } from "next-intl/server";
-import PWABanner from "@/components/utils/pwaBanner/PWABanner";
+import Banners from "@/components/utils/Banners";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -45,13 +43,11 @@ export default function LocaleLayout({
   return (
     <html lang={locale} data-theme={theme?.value ?? 'light'}>
       <body className={`${monserrat.className} antialiased`}>
-        <PWABanner />
-        <Suspense fallback={<Loader />}>
-          <Providers>
-            {children}
-            <LogInDialog />
-          </Providers>
-        </Suspense>
+        <Banners />
+        <Providers>
+          {children}
+          <LogInDialog />
+        </Providers>
       </body>
     </html>
   );

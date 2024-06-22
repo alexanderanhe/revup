@@ -1,15 +1,36 @@
-import Image from "next/image";
-import Stats from "@/app/ui/home/Stats";
+import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
+
+import { auth } from "@/auth";
+
 import LayoutContent from "@/components/templates/LayoutContent";
-import { wait } from "@/lib/data";
+import Stats from "@/app/ui/home/Stats";
+import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
+import { User } from "@/lib/definitions";
 
 export default async function HomePage() {
-  await wait(2000);
+  const session = await auth();
+  const user = session?.user;
+
+  const Assessment = async () => {
+    const hasAssessment = (user as User)?.assessment || cookies().has('app.assessment');
+    if (hasAssessment) {
+      return;
+    }
+    const t = await getTranslations("Assessment.banner")
+    return (
+      <AssessmentBanner
+        title={t("title")}
+        description={t("description")}
+        buttonText={t("buttonText")}
+      />
+    )
+  }
 
   return (
     <LayoutContent title="" head footer>
-      <Stats />
-
+      <Assessment />
+      { user && <Stats /> }
       {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>

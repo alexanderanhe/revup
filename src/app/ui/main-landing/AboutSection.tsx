@@ -26,7 +26,7 @@ export default async function AboutSection() {
             <Image
               width={1500}
               height={500}
-              src='/images/main_about_2.webp'
+              src='/images/main_about_goals.webp'
               alt={ t("about.build.title") }
               style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
               className="w-full aspect-[5/3] object-contain mx-auto"></Image>

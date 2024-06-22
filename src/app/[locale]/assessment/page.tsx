@@ -1,4 +1,4 @@
-import Main from "@/components/assessment/Main";
+import Main from "@/app/ui/assessment/Main";
 
 export default function AssessmentPage() {
   return (

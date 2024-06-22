@@ -1,6 +1,8 @@
-import { Question } from '@/lib/definitions';
-import Section from '../templates/Section';
 import { useState } from 'react';
+
+import Section from '@/components/templates/Section';
+
+import { Question } from '@/lib/definitions';
 
 type ItemProps = {
   q: Question,
@@ -73,16 +75,15 @@ const QuizzItem = ({q, formState, selected, setSelected, header }: ItemProps) =>
           )}
         </div>
       )}
-      {inputs && inputs.map(({name, title, type, placeholder}) => 
-        <label key={name} className="form-control w-full max-w-xs">
+      {inputs && inputs.map(({ title, ...props}) => 
+        <label key={props.name} className="form-control w-full max-w-xs">
           <div className="label">
             <span className="label-text">{title}</span>
           </div>
           <input
-            type={type}
-            onChange={handleChange(name)}
-            placeholder={placeholder}
+            onChange={handleChange(props.name)}
             className="input input-bordered w-full max-w-xs"
+            {...props}
           />
           <div className="label">
             <span className="label-text-alt">(optional)</span>

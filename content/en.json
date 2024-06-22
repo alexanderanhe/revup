@@ -44,6 +44,16 @@
   },
   "Home": {
   },
+  "Assessment": {
+    "title": "Assessment",
+    "description": "Complete the assessment to get a personalized training plan.",
+    "startBtn": "Start",
+    "banner": {
+      "title": "Necessary assessment",
+      "description": "In order to create personalized routines, you need to answer a few short questions.",
+      "buttonText": "Do now"
+    }
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Sign up"
@@ -53,5 +63,10 @@
     "description":"Install the app on your device.",
     "installBtn": "Install",
     "closeBtn": "Close"
+  },
+  "acceptcookies": {
+    "message": "We use cookies for essential website functions and to better understand how you use our site, so we can create the best possible experience for you.",
+    "accept": "Got it",
+    "privacy": "Privacy Policy"
   }
 }

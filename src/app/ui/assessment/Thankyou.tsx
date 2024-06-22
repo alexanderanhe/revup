@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Section from '../templates/Section'
+import Section from '@/components/templates/Section'
 import Image from 'next/image'
 
 const Thankyou = () => {

@@ -1,10 +1,9 @@
 import { Link } from "@/navigation";
 import { auth } from "@/auth";
-import { LogoIcon } from "@/components/utils/icons";
 import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
-import Image from "next/image";
-import Nav from "./Nav";
+import Nav from "@/app/ui/main-landing/Nav";
+import NavLogo from "@/app/ui/main-landing/NavLogo";
 
 export default async function NavHeader() {
   let session = await auth();
@@ -25,15 +24,7 @@ export default async function NavHeader() {
     <nav id="header" className="sticky w-full top-0 text-white backdrop-blur transition-colors duration-500 bg-gray-400/50 z-[1]">
       <div className="w-full container mx-auto flex flex-wrap gap-4 items-center justify-between mt-0 px-4 py-2">
         <div className="flex items-center">
-          <a className="flex items-end toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
-            <Image
-              width={37}
-              height={37}
-              src='/images/icons/icon-72x72.png'
-              alt={ "bray.fit logo" }
-              className="w-auto border-2 rounded-xl h-12"></Image>
-            <LogoIcon className="w-auto h-12 fill-current inline max-sm:hidden" />
-          </a>
+          <NavLogo />
         </div>
         <div className="flex flex-grow justify-end lg:hidden">
           <LoginBtn />
@@ -47,16 +38,13 @@ export default async function NavHeader() {
           </div>
           <div tabIndex={0} className="w-full flex-grow lg:flex lg:items-center min-w-80 lg:w-auto max-lg:base-200 max-lg:dropdown-content mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0" id="nav-content">
             <ul className="list-reset lg:flex justify-end flex-1 items-center">
-              {/* <li className="mr-3">
-                <a className="inline-block py-2 px-4 text-black font-bold no-underline" href="#">Active</a>
-              </li> */}
               { navigationKeys.map((key) => (
                 <Nav key={key} hash={key}>{ t(`navigation.${key}`) }</Nav>
               ))}
               {!user && <li className="mr-3">
                 <OpenLoginDialog
                   state='signUp'
-                  className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
+                  className="inline-block text-white font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4"
                 >
                   { tAuth("signUp" )}
                 </OpenLoginDialog>

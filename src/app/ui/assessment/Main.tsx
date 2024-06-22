@@ -9,6 +9,36 @@ import { Question } from "@/lib/definitions";
 
 const quizz: Question[] = [
   {
+    key: "gender",
+    title: "Genero:",
+    shortTitle: "Genero",
+    description: "",
+    options: ["Hombre", "Mujer"]
+  },
+  {
+    key: "weight",
+    shortTitle: "Peso y Altura",
+    title: "¿Cuál es tu pesoy altura actuales?",
+    inputs: [
+      {
+        name: "weight",
+        title: "Peso (kg)",
+        type: "number",
+        pattern: "[0-9]*",
+        inputmode: "numeric",
+        placeholder: "00"
+      },
+      {
+        name: "height",
+        title: "Altura (cm)",
+        type: "number",
+        pattern: "[0-9]*",
+        inputmode: "numeric",
+        placeholder: "00"
+      }
+    ]
+  },
+  {
     key: "goal",
     title: "Mi objectivo es:",
     shortTitle: "Objetivo",
@@ -35,25 +65,8 @@ const quizz: Question[] = [
     title: "Pretendo entrenar con una frecuencia de:",
     description: "",
     options: ["1x a la semana", "2x a la semana", "3x a la semana o más"]
-  },{
-    key: "weight",
-    shortTitle: "Peso y Altura",
-    title: "¿Cuál es tu pesoy altura actuales?",
-    inputs: [
-      {
-        name: "weight",
-        title: "Peso (kg)",
-        type: "number",
-        placeholder: "00"
-      },
-      {
-        name: "height",
-        title: "Altura (cm)",
-        type: "number",
-        placeholder: "00"
-      }
-    ]
-  },{
+  },
+  {
     key: "health",
     shortTitle: "Salud o física",
     title: "¿Tienes alguna caracteristica física o de salud que debamos tener en cuenta?",

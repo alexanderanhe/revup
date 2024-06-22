@@ -44,6 +44,16 @@
   },
   "Home": {
   },
+  "Assessment": {
+    "title": "Evaluación",
+    "description": "Complete la evaluación para obtener un plan de entrenamiento personalizado.",
+    "startBtn": "Empezar",
+    "banner": {
+      "title": "Evaluación necesaria",
+      "description": "Para poder crear rutinas personalizadas es necesario que respondas unas breves preguntas.",
+      "buttonText": "Hacer ahora"
+    }
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Registro"
@@ -53,5 +63,10 @@
     "description":"Instala la aplicación en tu dispositivo.",
     "installBtn": "Instalar",
     "closeBtn": "Cerrar"
+  },
+  "acceptcookies": {
+    "message": "Utilizamos cookies para funciones esenciales del sitio web y para comprender mejor cómo utiliza nuestro sitio, de modo que podamos crear la mejor experiencia posible para usted.",
+    "accept": "Entiendo",
+    "privacy": "Política de Privacidad"
   }
 }

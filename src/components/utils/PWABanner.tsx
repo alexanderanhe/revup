@@ -1,27 +1,28 @@
 'use client'
 
 import { handleHidePWABanner } from "@/lib/actions";
+import { PAGES } from "@/lib/routes";
 import { usePathname } from "@/navigation";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type PWABannerClientProps = {
+type PWABannerProps = {
   title: string;
   description: string;
   installBtn: string;
   closeBtn: string;
 };
-export default function PWABannerClient({
+export default function PWABanner({
   title,
   description,
   installBtn,
   closeBtn
-}: PWABannerClientProps){
+}: PWABannerProps){
   const form = useRef<HTMLFormElement>();
   const [supportsPWA, setSupportsPWA] = useState<boolean>(false);
   const [promptInstall, setPromptInstall] = useState<Event | null>(null);
   const p = usePathname();
-  const isHome = ['/home'].includes(p);
+  const isHome = [PAGES.HOME].includes(p);
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -68,9 +69,8 @@ export default function PWABannerClient({
         <div className="text-xs">{ description }</div>
       </div>
       <form action={handleHidePWABanner} className="flex gap-2">
-        <button type="button" name="close" className="btn btn-sm" onClick={handleClose}>{ closeBtn }</button>
+        <button type="submit" name="close" className="btn btn-sm">{ closeBtn }</button>
         <button
-          id="setup_button"
           name="install"
           className="btn btn-sm btn-primary"
           aria-label="Install app"

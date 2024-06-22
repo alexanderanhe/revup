@@ -1,7 +1,9 @@
 import QuizzItem from "./QuizzItem"
-import Section from "../templates/Section"
+import Section from "@/components/templates/Section"
 import Stepper from "./Stepper"
 import { Question } from '@/lib/definitions'
+import { handleSetAssessment } from "@/lib/actions"
+import { useFormStatus } from "react-dom"
 
 type QuizzProps = {
   selected: number,
@@ -12,13 +14,12 @@ type QuizzProps = {
 
 const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
   const [ form ] = formState;
+  const { pending } = useFormStatus();
   const header = <Stepper steps={quizz} selected={selected} form={form} setSelected={setSelected} />;
 
-  const handleSubmit = () => {
-    console.log('submit', form);
-    setSelected(selected + 1);
-    localStorage.setItem('hasAssessment', 'true');
-  }
+  // const handleSubmit = () => {
+  //   setSelected(selected + 1);
+  // }
   const handleChangeAnswers = () => {
     setSelected(0);
   }
@@ -37,13 +38,19 @@ const Quizz = ({ selected, quizz, formState, setSelected }: QuizzProps) => {
       ) }
       { selected === quizz.length &&
         <Section title="Confirma tus respuestas" header={header} buttons={[
-            <button
-              key="nextConfirm"
-              onClick={handleSubmit}
-              className="btn btn-primary w-full"
-            >
-              Confirmar
-            </button>,
+            <form key="nextConfirm" action={handleSetAssessment}>
+              { Object.entries(form).map(([key, value]) => (
+                <input key={`input-${key}`} type="hidden" name={key} value={String(value)} />
+              ))}
+              <button
+                  type="submit"
+                  disabled={pending}
+                  // onClick={handleSubmit}
+                  className="btn btn-primary w-full"
+                >
+                {pending ? '...' : 'Confirmar'}
+              </button>
+            </form>,
             <button
               key="nextChange"
               onClick={handleChangeAnswers}

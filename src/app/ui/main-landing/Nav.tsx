@@ -1,22 +1,20 @@
 'use client'
 
-import { Link } from "@/navigation";
-
 export default function Nav({ hash, children }: { hash: string, children: React.ReactNode }) {
-  const handleClick = () => {
-    const elem: HTMLElement | null = document.activeElement as HTMLElement;
-    if (elem) {
-      elem.blur();
-    }
-  };
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    const activeElement: HTMLElement | null = document.activeElement as HTMLElement;
+    activeElement && activeElement.blur();
+    
+    const hash = event.currentTarget.hash;
+    const goToElement = document.querySelector(hash);
+    goToElement && goToElement.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
-    <li className="mr-3" onClick={handleClick}>
-      <Link
-        href={`/#${hash}`}
-        scroll={false}
-        className="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4"
-        replace
-      >{ children }</Link>
+    <li className="mr-3">
+      <a href={`#${hash}`} onClick={handleClick} className="inline-block text-white font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4">{ children }</a>
     </li>
   )
 }

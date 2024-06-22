@@ -14,7 +14,7 @@ export default async function HeroSection() {
   const t = await getTranslations("MainLangingPage");
   return (
     <>
-      <div className="pt-24">
+      <div id="hero" className="pt-24">
         <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
           <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
             <p className="uppercase tracking-loose w-full">{ t("hero.pretitle") }</p>

@@ -4,6 +4,7 @@ export type User = {
   email: string;
   image: string;
   password: string;
+  assessment?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -18,7 +19,9 @@ export type Question = {
     name: string,
     title: string,
     type: string,
-    placeholder: string
+    placeholder: string,
+    pattern?: string,
+    inputmode?: string
   }[]
   multiple?: string[]
 }

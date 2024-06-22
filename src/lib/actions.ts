@@ -28,13 +28,18 @@ export async function authenticate(
 }
 
 export async function handleHidePWABanner() {
-  const res = NextResponse.next();
   cookies().set('app.installpwa', '0', { httpOnly: true });
-  res.cookies.set('app.installpwa', '0', { httpOnly: true });
 }
 export async function handleOnboarding() {
-  console.log("CLICKED ONBOARDING!!!")
-  const res = NextResponse.next();
   cookies().set('app.onboarding', '1', { httpOnly: true });
-  res.cookies.set('app.onboarding', '1', { httpOnly: true });
+}
+export async function handleAcceptCookies() {
+  cookies().set('app.acceptcookies', '1', { httpOnly: true });
+}
+export async function handleSetAssessment(formData: FormData) {
+  console.log('formData', formData);
+  cookies().set('app.assessment', JSON.stringify(formData), { httpOnly: true });
+}
+export async function handleDeleteCookies() {
+  cookies().getAll().forEach((cookie) => cookies().delete(cookie.name));
 }
