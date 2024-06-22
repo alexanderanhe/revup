@@ -9,7 +9,7 @@ type AssessmentBannerProps = {
 
 export default function AssessmentBanner({ title, description, buttonText }: AssessmentBannerProps ) {
   return (
-    <div className="card w-96 bg-base-300 mx-auto">
+    <div className="card w-full max-w-96 bg-base-300 mx-auto">
       <div className="card-body items-center text-center">
         <h2 className="card-title">{ title }</h2>
         <p>{ description }</p>

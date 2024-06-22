@@ -22,13 +22,13 @@ export default function CookiesModal({message, privacyPolicyBtn, aceptBtn}: Cook
     cookiesModal && (cookiesModal as any).showModal()
   }, [])
 
-  if (pathname === PAGES.PRIVACY) {
+  if (pathname === PAGES.COOKIES) {
     return
   }
 
   return (
     <dialog className="modal modal-bottom p-8" id="cookiesModal">
-      <div className="modal-box card w-96 bg-base-200 overflow-visible p-0">
+      <div className="modal-box card w-full max-w-96 bg-base-200 overflow-visible p-0">
         <div className="absolute top-0 left-[50%] -translate-x-1/2 -translate-y-1/2 text-4xl">
           <CookiesIcon className="w-16 h-16 text-primary" />
         </div>
