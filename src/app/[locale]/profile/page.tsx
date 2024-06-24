@@ -1,5 +1,5 @@
 import LayoutContent from "@/components/templates/LayoutContent"
-import ThemeToggle from "@/components/utils/ThemeToggle"
+import ThemeToggle from "@/app/ui/utils/ThemeToggle"
 
 const ProfilePage = () => {
   return (

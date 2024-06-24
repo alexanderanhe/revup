@@ -8,6 +8,7 @@ import {
   AdapterUser,
   VerificationToken,
 } from "next-auth/adapters";
+import { AdapterUserInfo } from "./definitions";
 
 export default function vercelPostgresAdapter(): Adapter {
   try {
@@ -18,11 +19,17 @@ export default function vercelPostgresAdapter(): Adapter {
         INSERT INTO users (name, email, image) 
         VALUES (${user.name}, ${user.email}, ${user.image}) 
         RETURNING id, name, email, email_verified, image`;
+      // Create user info
+      const {rows: userInfo} = await sql`
+        INSERT INTO users_info (user_id) 
+        VALUES (${rows[0].id}) 
+        RETURNING theme, assessment, onboarding`;
       const newUser: AdapterUser = {
         ...rows[0],
         id: rows[0].id.toString(),
         emailVerified: rows[0].email_verified,
         email: rows[0].email,
+        ...userInfo[0],
       };
       return newUser;
     };
@@ -122,17 +129,17 @@ export default function vercelPostgresAdapter(): Adapter {
 
     const getSessionAndUser = async (
       sessionToken: string
-    ): Promise<{ session: AdapterSession; user: AdapterUser } | null> => {
+    ): Promise<{ session: AdapterSession; user: AdapterUser & AdapterUserInfo } | null> => {
       const session = await sql`
         SELECT * 
         FROM auth_sessions 
         WHERE session_token = ${sessionToken}`;
       const { rows } = await sql`
-        SELECT * 
-        FROM users 
-        WHERE id = ${session.rows[0].user_id}`;
+        SELECT u.*, ui.theme, ui.assessment, ui.onboarding 
+        FROM users u join users_info ui on u.id = ui.user_id
+        WHERE u.id = ${session.rows[0].user_id}`;
       const expiresDate = new Date(session.rows[0].expires);
-      const sessionAndUser: { session: AdapterSession; user: AdapterUser } = {
+      const sessionAndUser: { session: AdapterSession; user: AdapterUser & AdapterUserInfo } = {
         session: {
           sessionToken: session.rows[0].session_token,
           userId: session.rows[0].user_id,
@@ -144,6 +151,10 @@ export default function vercelPostgresAdapter(): Adapter {
           email: rows[0].email,
           name: rows[0].name,
           image: rows[0].image,
+          // AdapterUserInfo
+          theme: rows[0].theme.trim(),
+          assessment: rows[0].assessment,
+          onboarding: rows[0].onboarding,
         },
       };
 

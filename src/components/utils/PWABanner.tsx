@@ -1,10 +1,12 @@
 'use client'
 
+import SubmitButton from "@/app/ui/utils/SubmitButton";
 import { handleHidePWABanner } from "@/lib/actions";
 import { PAGES } from "@/lib/routes";
 import { usePathname } from "@/navigation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useFormState } from "react-dom";
 
 type PWABannerProps = {
   title: string;
@@ -21,6 +23,7 @@ export default function PWABanner({
   const form = useRef<HTMLFormElement>();
   const [supportsPWA, setSupportsPWA] = useState<boolean>(false);
   const [promptInstall, setPromptInstall] = useState<Event | null>(null);
+  const [ formState, formAction ] = useFormState(handleHidePWABanner, null);
   const p = usePathname();
   const isHome = [PAGES.HOME].includes(p);
 
@@ -67,9 +70,10 @@ export default function PWABanner({
       <div>
         <h3 className="font-bold">{ title }</h3>
         <div className="text-xs">{ description }</div>
+        { formState ?? '' }
       </div>
-      <form action={handleHidePWABanner} className="flex gap-2">
-        <button type="submit" name="close" className="btn btn-sm">{ closeBtn }</button>
+      <form action={formAction} className="flex gap-2">
+        <SubmitButton className="btn btn-sm">{ closeBtn }</SubmitButton>
         <button
           name="install"
           className="btn btn-sm btn-primary"

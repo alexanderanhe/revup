@@ -1,10 +1,14 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { signIn, useSession } from 'next-auth/react';
 import { LoginModal } from '@/lib/features/app';
+import { useFormState } from 'react-dom';
+import { authenticateFacebook, authenticateGithub, authenticateGoogle } from '@/lib/actions';
+import SubmitButton from '../utils/SubmitButton';
+import { redirect } from '@/navigation';
 
 const FORM_INIT = {
   username: "",
@@ -19,18 +23,6 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   const [ modal, setModal ] = useState<LoginModal>(initModal);
   const { data: session, status } = useSession();
   const [ form, setForm ] = useState(FORM_INIT);
-
-  const handleSignIn = (provider: string) => () => {
-    toast.promise(signIn(provider, {
-      callbackUrl: "/home"
-    }), {
-      loading: `Autenticando con ${provider}...`,
-      success: () => {
-        return "Inicio de sesión exitoso!";
-      },
-      error: "Error",
-    });
-  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -69,41 +61,9 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
         </p>
       </div>
       <div className="flex flex-col items-center justify-center gap-3 w-full">
-        <button
-          type="button"
-          onClick={handleSignIn('facebook')}
-          className="btn btn-glass btn-active w-full max-w-96"
-          disabled={status === 'loading'}
-        >
-          <img
-            src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook"
-            className="h-[18px] w-[18px]" />
-            Continue with Facebook
-        </button>
-
-        <button
-          type="button"
-          onClick={handleSignIn('google')}
-          className="btn btn-glass btn-active w-full max-w-96"
-          disabled={status === 'loading'}
-        >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"
-            className="h-[18px] w-[18px]" />
-            Continue with Google
-        </button>
-
-        <button
-          type="button"
-          onClick={handleSignIn('github')}
-          className="btn btn-glass btn-active w-full max-w-96"
-          disabled={status === 'loading'}
-        >
-          <img
-            src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub"
-            className="h-[18px] w-[18px]" />
-          Continue with GitHub
-        </button>
+        <AuthGoogle />
+        <AuthFacebook />
+        <AuthGithub />
       </div>
 
       <div className="flex w-full items-center gap-2 text-sm text-neutral">
@@ -188,5 +148,54 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
       </div>
     </>
     
+  )
+}
+
+function AuthGoogle() {
+  const [ formState, formAction ] = useFormState(authenticateGoogle, null);
+  useEffect(() => {
+    formState === "done" && redirect("/home");
+  }, [formState]);
+  return (
+    <form action={formAction} className="w-full">
+      <SubmitButton className="btn btn-glass btn-active w-full max-w-96">
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"
+          className="h-[18px] w-[18px]" />
+          Continue with Google
+      </SubmitButton>
+    </form>
+  )
+}
+function AuthFacebook() {
+  const [ formState, formAction ] = useFormState(authenticateFacebook, null);
+  useEffect(() => {
+    formState === "done" && redirect("/home");
+  }, [formState]);
+  return (
+    <form action={formAction} className="w-full">
+      <SubmitButton className="btn btn-glass btn-active w-full max-w-96">
+        <img
+          src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook"
+          className="h-[18px] w-[18px]" />
+          Continue with Facebook
+      </SubmitButton>
+    </form>
+  )
+}
+function AuthGithub() {
+  const [ formState, formAction ] = useFormState(authenticateGithub, null);
+  useEffect(() => {
+    formState === "done" && redirect("/home");
+  }, [formState]);
+  return (
+    <form action={formAction} className="w-full">
+      <SubmitButton className="btn btn-glass btn-active w-full max-w-96">
+      <img
+          src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub"
+          className="h-[18px] w-[18px]" />
+        Continue with GitHub
+      </SubmitButton>
+    </form>
   )
 }

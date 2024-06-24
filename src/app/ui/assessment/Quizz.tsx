@@ -11,10 +11,11 @@ type QuizzProps = {
   selected: number,
   quizz: Question[],
   formState: [any, (form: any) => void],
-  setSelected: (selected: number) => void
+  setSelected: (selected: number) => void,
+  translations: Record<string, string>
 }
 
-export default function Quizz ({ selected, quizz, formState: formData, setSelected }: QuizzProps) {
+export default function Quizz ({ selected, quizz, formState: formData, setSelected, translations }: QuizzProps) {
   const [ form ] = formData;
   const [ formState, formAction ] = useFormState(handleSetAssessment, null);
   const header = <Stepper steps={quizz} selected={selected} form={form} setSelected={setSelected} />;
@@ -43,6 +44,7 @@ export default function Quizz ({ selected, quizz, formState: formData, setSelect
             selected={selected}
             setSelected={setSelected}
             header={header}
+            translations={translations}
           />
       ) }
       { selected === quizz.length &&
@@ -64,10 +66,10 @@ export default function Quizz ({ selected, quizz, formState: formData, setSelect
               Cambiar respuestas
             </button>
           ]}>
-            { quizz.map(({ key, shortTitle }: Question) => 
+            { quizz.map(({ key, shortTitle, options, multiple }: Question) => 
               <div key={`results${key}`} className="[&>strong]:text-sm [&>strong]:uppercase [&>strong]:font-semibold">
                 <strong>{shortTitle}</strong>
-                <p>{form[key]}</p>
+                <p>{options || multiple ? translations[`${key}:${form[key]}`] ?? 'X' : form[key]}</p>
               </div>
             ) }
         </Section>

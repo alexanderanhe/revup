@@ -1,5 +1,52 @@
 const { db } = require('@vercel/postgres');
 
+async function dropAll(client) {
+  try {
+    const dropUserInfo = await client.sql`DROP TABLE IF EXISTS users_info;`;
+    const dropAssessments = await client.sql`DROP TABLE IF EXISTS assessments;`;
+    const dropVerificationToken = await client.sql`DROP TABLE IF EXISTS verification_tokens;`;
+    const dropAuthSessions = await client.sql`DROP TABLE IF EXISTS auth_sessions;`;
+    const dropAccounts = await client.sql`DROP TABLE IF EXISTS accounts;`;
+    const dropUsers = await client.sql`DROP TABLE IF EXISTS users;`;
+    const dropTypeGender = await client.sql`DROP TYPE  IF EXISTS gender;`;
+
+    console.log(`Dropped all types and tables`);
+
+    return {
+      dropUserInfo,
+      dropAssessments,
+      dropVerificationToken,
+      dropAuthSessions,
+      dropAccounts,
+      dropUsers,
+      dropTypeGender
+    };
+  } catch (error) {
+    console.error('Error droping all:', error);
+    throw error;
+  }
+}
+
+async function seedTypes(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "users" table if it doesn't exist
+    const createTypes = await client.sql`
+      CREATE TYPE gender AS ENUM ('M', 'F', 'O');
+    `;
+
+    console.log(`Created "types" table`);
+
+    return {
+      createTypes,
+    };
+  } catch (error) {
+    console.error('Error seeding types:', error);
+    throw error;
+  }
+}
+
 async function seedUsers(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
@@ -12,6 +59,8 @@ async function seedUsers(client) {
         email VARCHAR(255) NOT NULL UNIQUE,
         email_verified BOOLEAN DEFAULT false,
         image TEXT,
+        gender gender NULL,
+        birthdate DATE NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
@@ -24,6 +73,32 @@ async function seedUsers(client) {
     };
   } catch (error) {
     console.error('Error seeding Users:', error);
+    throw error;
+  }
+}
+
+async function seedUsersInfo(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    
+    // Create the "users_info" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE users_info (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        theme CHAR(10) NOT NULL DEFAULT 'light',
+        assessment BOOLEAN DEFAULT false,
+        onboarding BOOLEAN DEFAULT false,
+        user_id UUID NULL REFERENCES users(id)
+      );
+    `;
+
+    console.log(`Created "users_info" table`);
+
+    return {
+      createTable,
+    };
+  } catch (error) {
+    console.error('Error seeding Users Info:', error);
     throw error;
   }
 }
@@ -110,13 +185,51 @@ async function seedVerificationToken(client) {
   }
 }
 
+async function seedAssessments(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    // Create the "assessments" table if it doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE assessments (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        gender gender NOT NULL,
+        birthdate DATE NOT NULL,
+        weight SMALLINT NOT NULL,
+        height SMALLINT NOT NULL,
+        goal CHAR(4) NOT NULL,
+        training CHAR(4) NOT NULL,
+        gym CHAR(4) NOT NULL,
+        frequency CHAR(4) NOT NULL,
+        health CHAR(4) NOT NULL,
+        user_id UUID NULL REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `;
+
+    console.log(`Created "assessments" table`);
+
+    return {
+      createTable,
+    };
+  } catch (error) {
+    console.error('Error seeding Assessments:', error);
+    throw error;
+  }
+}
+
 async function main() {
   const client = await db.connect();
 
+  await dropAll(client);
+  await seedTypes(client);
   await seedUsers(client);
+  await seedUsersInfo(client);
   await seedAccounts(client);
   await seedSessions(client);
   await seedVerificationToken(client);
+  await seedAssessments(client);
 
   await client.end();
 }

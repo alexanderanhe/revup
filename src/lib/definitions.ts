@@ -1,29 +1,40 @@
+import { boolean } from "zod";
+
 export type User = {
   id: string;
   name: string;
+  emailVerified: boolean;
   email: string;
   image: string;
   password: string;
-  assessment?: string;
+  theme: string;
+  assessment?: boolean;
+  onboarding?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
+export type AdapterUserInfo = {
+  theme: string;
+  assessment: boolean;
+  onboarding: boolean;
+}
+
 export type Question = {
   key: string,
-  title: string,
-  shortTitle: string,
+  title?: string,
+  shortTitle?: string,
   description?: string,
   options?: string[]
   inputs?: {
     name: string,
-    title: string,
     type: string,
     placeholder: string,
     pattern?: string,
-    inputmode?: string
+    inputmode?: string,
+    optional: boolean
   }[]
-  multiple?: string[]
+  multiple?: [string, boolean][]
 }
 
 export type MenuNavLinks = {
@@ -56,3 +67,4 @@ export type Providers = 'Google' | 'Facebook' | 'GitHub' | 'X';
 export type AuthProviders = {
   [key in Providers]: AuthProvider
 }
+export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];

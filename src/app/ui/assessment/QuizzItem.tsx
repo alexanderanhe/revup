@@ -3,32 +3,37 @@ import { useState } from 'react';
 import Section from '@/components/templates/Section';
 
 import { Question } from '@/lib/definitions';
+import clsx from 'clsx';
 
 type ItemProps = {
   q: Question,
   formState: [any, (form: any) => void],
   selected: number,
   setSelected: (selected: number) => void,
-  header: JSX.Element
+  header: JSX.Element,
+  translations: Record<string, string>
 }
 
-const QuizzItem = ({q, formState, selected, setSelected, header }: ItemProps) => {
+const QuizzItem = ({q, formState, selected, setSelected, header, translations }: ItemProps) => {
   const [form, setForm] = formState;
   const { key, title, description, options, multiple, inputs }: Question = q;
-  const [multipleOpts, setMultipleOpts] = useState<string[]>(multiple ? form[key]?.split(',') ?? [] : []);
+  const [multipleOpts, setMultipleOpts] = useState<[string[], boolean]>([multiple ? form[key]?.split(',') ?? [] : [], false]);
   const [inputsOpts, setInputsOpts] = useState<Record<string, string>>({});
 
   const handleNext = () => {
     if (multiple) {
-      setForm({...form, [key]: multipleOpts.join(', ')})
+      const [opts] = multipleOpts;
+      setForm({...form, [key]: opts.join(', ')})
     } else if (inputs) {
-      console.log(inputsOpts)
-      setForm({...form, [key]: Object.values(inputsOpts).join(', ')})
+      setForm({...form, [key]: Object.values(inputsOpts).join(',')})
     }
     setSelected(selected + 1);
   }
-  const handleClickMultiple = (value: string) => () => {
-    setMultipleOpts((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : prev.concat(value));
+  const handleClickMultiple = (value: string, unique: boolean) => () => {
+    setMultipleOpts(([prev, flag]) => {
+      return [prev.includes(value) ? prev.filter((v) => v !== value)
+        : (unique || flag ? [value] : prev.concat(value)), unique]
+    });
   }
   const handleClickOption = (value: string) => () => {
     setForm({...form, [key]: value})
@@ -37,7 +42,7 @@ const QuizzItem = ({q, formState, selected, setSelected, header }: ItemProps) =>
   const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputsOpts({...inputsOpts, [name]: event.target.value})
   }
-  return <Section title={title} header={header} buttons={
+  return <Section title={title ?? ''} header={header} buttons={
       multiple || inputs ? [
         <button
           key="next"
@@ -50,44 +55,47 @@ const QuizzItem = ({q, formState, selected, setSelected, header }: ItemProps) =>
     }>
       <p>{ description }</p>
       { options && (
-        <div className="grid grid-cols-1 gap-4">
-          { options.map((option, index) => 
+        <div className="grid grid-cols-1 gap-4 w-full">
+          { options.map((option: string) => 
             <button
-              key={`option-${title}${index}`}
+              key={`option-${title}${option}`}
               onClick={handleClickOption(option)}
-              className={`btn btn-ghost ${form[key] === option && 'btn-outline'} shadow rounded-box w-full justify-start text-left`}
+              className={clsx(
+                'btn btn-ghost btn-lg shadow rounded-box w-full justify-start text-left',
+                form[key] === option && 'btn-outline'
+              )}
             >
-              { option }
+              { translations[`${key}:${option}`] ?? 'X' }
             </button>
           )}
         </div>
       )}
       { multiple && (
         <div className="flex flex-wrap gap-4">
-          { multiple.map((option) => 
+          { multiple.map(([option, unique]: [string, boolean]) => 
             <button
               key={`option-${option}`}
-              onClick={handleClickMultiple(option)}
-              className={`btn shadow rounded ${multipleOpts?.includes(option) && 'btn-outline'}`}
+              onClick={handleClickMultiple(option, unique)}
+              className={`btn shadow rounded ${multipleOpts[0]?.includes(option) && 'btn-outline'} uppercase`}
             >
-              { option }
+              { translations[`${key}:${option}`] }
             </button>
           )}
         </div>
       )}
-      {inputs && inputs.map(({ title, ...props}) => 
+      {inputs && inputs.map(({ optional, ...props}) => 
         <label key={props.name} className="form-control w-full max-w-xs">
           <div className="label">
-            <span className="label-text">{title}</span>
+            <span className="label-text">{translations[`${key}:${props.name}:title`]}</span>
           </div>
           <input
             onChange={handleChange(props.name)}
             className="input input-bordered w-full max-w-xs"
             {...props}
           />
-          <div className="label">
-            <span className="label-text-alt">(optional)</span>
-          </div>
+          {optional && <div className="label">
+            <span className="label-text-alt">({translations["optional"]})</span>
+          </div>}
         </label>
       )}
     </Section>

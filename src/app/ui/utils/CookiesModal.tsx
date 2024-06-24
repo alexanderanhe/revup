@@ -30,14 +30,15 @@ export default function CookiesModal({message, privacyPolicyBtn, aceptBtn}: Cook
 
   return (
     <dialog className="modal modal-bottom" id="cookiesModal">
-      <div className="modal-box card w-full max-w-96 mx-auto bg-base-200 overflow-visible p-0 pb-4">
+      <div className="modal-box card w-full max-w-3xl mx-auto bg-base-200 overflow-visible p-0 pb-4">
         <div className="absolute top-0 left-[50%] -translate-x-1/2 -translate-y-1/2 text-4xl">
           <CookiesIcon className="w-16 h-16 text-primary" />
         </div>
-        <div className="card-body pb-0">
+        <div className="card-body p-10 pb-0">
           <p>
             { message }
-            <HeartIcon className="w-6 h-6 text-primary inline" />
+            { ' ' }
+            <HeartIcon className="w-6 h-6 text-primary inline opacity-80" />
           </p>
           { formState ?? '' }
         </div>

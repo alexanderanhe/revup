@@ -1,7 +1,8 @@
 import { format } from "date-fns";
-import { AuthProviders, User } from "./definitions";
+import { AuthProviders, THEMES, User } from "./definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -171,6 +172,96 @@ export async function getSession() {
   const session = await auth();
   if (!session) return null;
   return session.user;
+}
+
+export async function saveAssessment(formData: FormData): Promise<{assessment_id: string, user_id: string | undefined}>{
+  const form = Object.fromEntries(Array.from(formData.entries()));
+  const session = await auth();
+  const user = session?.user;
+  try {
+    const [weight, height] = (<string>form['weight&height']).split(',').map((v) => parseInt(v));
+    const result = await sql`INSERT INTO assessments
+      (gender, birthdate, weight, height, goal, training, gym, frequency, health, user_id)
+      VALUES (
+        ${<string>form.gender},
+        ${<string>form.birthdate},
+        ${<number>weight},
+        ${<number>height},
+        ${<string>form.goal},
+        ${<string>form.training},
+        ${<string>form.gym},
+        ${<string>form.frequency},
+        ${<string>form.health},
+        ${user?.id}
+      ) RETURNING id, gender, birthdate`;
+    const { id, gender, birthdate } = result.rows[0];
+    if (user) {
+      await sql`UPDATE users
+        SET gender=${<string>gender}, birthdate=${<string>birthdate}
+        WHERE id=${user.id}`;
+      await sql`UPDATE users_info SET assessment=${true} WHERE user_id=${user.id}`;
+    }
+    return {assessment_id: id, user_id: user?.id};
+  } catch (error) {
+    console.error('Failed to insert assessment:', error);
+    throw new Error('Failed to insert assessment.');
+  }
+}
+
+export async function saveAssessmentById(assessmentId: RequestCookie | undefined): Promise<void>{
+  const session = await auth();
+  const user = session?.user;
+  try {
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+    const { rowCount } = await sql`SELECT * FROM assessments WHERE id=${String(assessmentId)} AND user_id IS NULL`;
+    if (rowCount === 0) {
+      throw new Error('Assessment not found.');
+    }
+    await sql`UPDATE users_info
+      SET assessment=${true}
+      WHERE user_id=${user.id}`;
+    
+  } catch (error) {
+    console.error('Failed to update user assessment:', error);
+    throw new Error('Failed to update user assessment.');
+  }
+}
+
+export async function saveTheme(formData: FormData): Promise<{theme: string, user_id: string | undefined}>{
+  const form = Object.fromEntries(Array.from(formData.entries()));
+  console.log(form)
+  const session = await auth();
+  const user = session?.user;
+  try {
+    const theme = <string>form['theme-dropdown'];
+    if (THEMES.includes(theme) && user) {
+      await sql`UPDATE users_info
+        SET theme=${theme}
+        WHERE user_id=${user.id}`;
+    }
+    return { theme, user_id: user?.id };
+  } catch (error) {
+    console.error('Failed to update user theme:', error);
+    throw new Error('Failed to update user theme.');
+  }
+}
+export async function saveOnBoarding(): Promise<void>{
+  const session = await auth();
+  const user = session?.user;
+  try {
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+    await sql`UPDATE users_info
+      SET onboarding=${true}
+      WHERE user_id=${user.id}`;
+    
+  } catch (error) {
+    console.error('Failed to update user onboarding:', error);
+    throw new Error('Failed to update user onboarding.');
+  }
 }
 
 export const authProviders: AuthProviders = {

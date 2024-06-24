@@ -8,6 +8,9 @@ import LogInDialog from "@/components/utils/dialogs/LogIn";
 import { locales } from "@/i18n";
 import { unstable_setRequestLocale } from "next-intl/server";
 import Banners from "@/components/utils/Banners";
+import { auth } from "@/auth";
+import { User } from "next-auth";
+import { AdapterUserInfo } from "@/lib/definitions";
 
 const monserrat = Montserrat({ subsets: ["latin"] });
 
@@ -29,7 +32,7 @@ export function generateStaticParams() {
   return locales.map((locale) => ({locale}));
 }
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params: {locale},
 }: Readonly<{
@@ -37,11 +40,13 @@ export default function LocaleLayout({
   params: {locale: string};
 }>) {
   unstable_setRequestLocale(locale);
+  const session = await auth();
+  const user: any = session?.user;
   const cookieStore = cookies()
-  const theme = cookieStore.get('app.theme');
+  const theme = user?.theme ?? cookieStore.get('app.theme')?.value ?? 'light';
 
   return (
-    <html lang={locale} data-theme={theme?.value ?? 'light'}>
+    <html lang={locale} data-theme={theme}>
       <body className={`${monserrat.className} antialiased`}>
         <Banners />
         <Providers>

@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
+'use client'
+
 import Slide from "./Slide";
-import Login from "./Login";
 
 const slides = [
   {
@@ -41,20 +41,14 @@ const slides = [
   },
 ]
 
-export default async function Slides() {
-  const cookieStore = cookies();
-  const hasOnBoarding = cookieStore.has('app.onboarding');
+export default function Slides() {
   return (
-    !hasOnBoarding ? (
-      <div className="carousel space-x-4 w-full h-svh">
-        { slides.map(({key, ...props}) => (
-          <div key={`Slide${key}`} id={`slide${props.index}`} className="carousel-item content-grid grid-rows-1 w-full h-full">
-            <Slide {...props} submit={props.index === slides.length - 1} />
-          </div>
-        ))}
-      </div>
-    ) : (
-      <div className="content-grid grid-rows-[1fr_auto] w-full h-svh"><Login/></div>
-    )
+    <div className="carousel space-x-4 w-full h-svh">
+      { slides.map(({key, ...props}) => (
+        <div key={`Slide${key}`} id={`slide${props.index}`} className="carousel-item content-grid grid-rows-1 w-full h-full">
+          <Slide {...props} submit={props.index === slides.length - 1} />
+        </div>
+      ))}
+    </div>
   )
 }
