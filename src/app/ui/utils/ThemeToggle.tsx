@@ -8,6 +8,13 @@ import SubmitButton from "./SubmitButton";
 
 const ThemeToggle = () => {
   const [ formState, formAction ] = useFormState(handleSetTheme, null);
+  const handleClick = () => {
+    const elem: HTMLElement | null = document.activeElement as HTMLElement;
+    if (elem) {
+      elem.blur();
+    }
+  };
+
   return (
     <form action={formAction}>
       <div className="dropdown">
@@ -21,6 +28,7 @@ const ThemeToggle = () => {
               <input
                 type="radio"
                 name="theme-dropdown"
+                onClick={handleClick}
                 className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
                 aria-label={theme}
                 value={theme}

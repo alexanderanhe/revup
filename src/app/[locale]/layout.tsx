@@ -32,6 +32,13 @@ export function generateStaticParams() {
   return locales.map((locale) => ({locale}));
 }
 
+async function checkTheme() {
+  const session = await auth();
+  const user: any = session?.user;
+  const cookieStore = cookies()
+  return user?.theme ?? cookieStore.get('app.theme')?.value ?? 'light';
+}
+
 export default async function LocaleLayout({
   children,
   params: {locale},
@@ -40,10 +47,7 @@ export default async function LocaleLayout({
   params: {locale: string};
 }>) {
   unstable_setRequestLocale(locale);
-  const session = await auth();
-  const user: any = session?.user;
-  const cookieStore = cookies()
-  const theme = user?.theme ?? cookieStore.get('app.theme')?.value ?? 'light';
+  const theme = await checkTheme();
 
   return (
     <html lang={locale} data-theme={theme}>
