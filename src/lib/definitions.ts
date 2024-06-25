@@ -68,3 +68,10 @@ export type AuthProviders = {
   [key in Providers]: AuthProvider
 }
 export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
+export const APPCOOKIES = {
+  PWA: 'app.installpwa',
+  ONBOARDING: 'app.onboarding',
+  ACCEPTCOOKIES: 'app.acceptcookies',
+  ASSESSMENT: 'app.assessment',
+  THEME: 'app.theme'
+};

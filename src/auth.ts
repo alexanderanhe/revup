@@ -17,7 +17,7 @@ export const {
   signOut
 } = NextAuth({
   adapter: vercelPostgresAdapter(),
-  ...authConfig,
+  ...authConfig(),
   providers: [Google, Facebook, GitHub,
     Credentials({
       async authorize(credentials) {
@@ -30,8 +30,7 @@ export const {
           const user = await getUser(email);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
-          // const passwordsMatch = true;
- 
+
           if (passwordsMatch) return user;
           return user;
         }

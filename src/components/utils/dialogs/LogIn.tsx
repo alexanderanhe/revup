@@ -24,7 +24,7 @@ const LogInDialog = () => {
     >
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[10]" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 bg-base-200 flex flex-col rounded-t-[10px] h-[96%] z-[10] mt-24">
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] backdrop-blur transition-colors duration-500 bg-base-200/90 z-[10] mt-24">
           <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" />
           <div className="flex flex-col overflow-auto rounded-t-[10px] flex-1">
             <div className="flex flex-col gap-5 flex-1 max-w-md mx-auto w-full p-4">

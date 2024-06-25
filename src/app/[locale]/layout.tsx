@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat } from "next/font/google";
 import { cookies } from 'next/headers';
 
 import "./globals.css";
@@ -9,10 +8,8 @@ import { locales } from "@/i18n";
 import { unstable_setRequestLocale } from "next-intl/server";
 import Banners from "@/components/utils/Banners";
 import { auth } from "@/auth";
-import { User } from "next-auth";
-import { AdapterUserInfo } from "@/lib/definitions";
-
-const monserrat = Montserrat({ subsets: ["latin"] });
+import { poppins } from "@/app/ui/fonts";
+import { APPCOOKIES } from "@/lib/definitions";
 
 export const metadata: Metadata = {
   title: "bray.fit",
@@ -21,7 +18,7 @@ export const metadata: Metadata = {
 };
  
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#FFFFFF',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -36,7 +33,7 @@ async function checkTheme() {
   const session = await auth();
   const user: any = session?.user;
   const cookieStore = cookies()
-  return user?.theme ?? cookieStore.get('app.theme')?.value ?? 'light';
+  return user?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? 'light';
 }
 
 export default async function LocaleLayout({
@@ -51,7 +48,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} data-theme={theme}>
-      <body className={`${monserrat.className} antialiased`}>
+      <body className={`${poppins.className} antialiased`}>
         <Banners />
         <Providers>
           {children}

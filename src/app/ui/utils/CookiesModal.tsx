@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { handleAcceptCookies } from "@/lib/actions";
 import { PAGES } from "@/lib/routes";
 import { Link, usePathname } from "@/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import HeartIcon from "@/components/utils/icons/HeartIcon";
 import CookiesIcon from "@/components/utils/icons/CookiesIcon";
 import SubmitButton from "@/app/ui/utils/SubmitButton";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 type CookiesModalProps = {
   message: string;
@@ -19,10 +20,19 @@ export default function CookiesModal({message, privacyPolicyBtn, aceptBtn}: Cook
   const [ formState, formAction ] = useFormState(handleAcceptCookies, null);
   const pathname = usePathname()
 
+  const handleClose = () => {
+    const cookiesModal = document.getElementById('cookiesModal')
+    cookiesModal && (cookiesModal as any).close()
+  }
+
   useEffect(() => {
     const cookiesModal = document.getElementById('cookiesModal')
     cookiesModal && (cookiesModal as any).showModal()
   }, [])
+
+  useEffect(() => {
+    formState === 'done' && handleClose()
+  }, [formState])
 
   if (pathname === PAGES.COOKIES) {
     return
@@ -41,15 +51,16 @@ export default function CookiesModal({message, privacyPolicyBtn, aceptBtn}: Cook
             <HeartIcon className="w-6 h-6 text-primary inline opacity-80" />
           </p>
           { formState ?? '' }
+          <button type="button" className="btn btn-ghost absolute top-0 right-0" onClick={handleClose}>
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
-        <div className="modal-action flex flex-row-reverse grow items-center justify-between m-0 p-4">
-          <form action={formAction} method="dialog">
-            <SubmitButton className="btn btn btn-primary btn-sm w-24">
-              { aceptBtn }
-            </SubmitButton>
-          </form>
+        <form action={formAction} className="modal-action flex flex-row-reverse grow items-center justify-between m-0 p-4">
+          <SubmitButton className="btn btn btn-primary btn-sm w-24">
+            { aceptBtn }
+          </SubmitButton>
           <Link href={PAGES.COOKIES} className="btn btn-ghost">{ privacyPolicyBtn }</Link>
-        </div>
+        </form>
       </div>
     </dialog>
   )

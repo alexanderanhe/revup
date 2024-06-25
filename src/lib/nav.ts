@@ -6,7 +6,7 @@ const menuNavLinks: MenuNavLinks[] = [
   { name: 'Hoy', href: '/home', current: ['nav', 'footer'], Icon: HomeIcon },
   { name: 'Assessment', href: '/assessment', current: ['nav'] },
   { name: 'Ejercicios', href: '/workout', current: ['nav'] },
-  { name: 'On-demand', href: '/on-demand', current: ['footer'], Icon: ExploreIcon },
+  { name: 'Explore', href: '/explore', current: ['footer'], Icon: ExploreIcon },
   { name: 'Logs', href: '/logs', current: ['nav', 'footer'], Icon: AnalyticsIcon },
   { name: 'Ajustes', href: '/profile', current: ['footer'], Icon: ProfileIcon },
   { name: 'About', href: '/about', current: ['nav'] },

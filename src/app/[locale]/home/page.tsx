@@ -6,14 +6,15 @@ import { auth } from "@/auth";
 import LayoutContent from "@/components/templates/LayoutContent";
 import Stats from "@/app/ui/home/Stats";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
-import { User } from "@/lib/definitions";
+import { APPCOOKIES, User } from "@/lib/definitions";
 
 export default async function HomePage() {
   const session = await auth();
   const user = session?.user;
+  console.log(user);
 
   const Assessment = async () => {
-    const hasAssessment = (user as User)?.assessment || cookies().has('app.assessment');
+    const hasAssessment = (user as User)?.assessment || cookies().has(APPCOOKIES.ASSESSMENT);
     if (hasAssessment) {
       return;
     }

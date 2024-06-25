@@ -208,21 +208,24 @@ export async function saveAssessment(formData: FormData): Promise<{assessment_id
   }
 }
 
-export async function saveAssessmentById(assessmentId: RequestCookie | undefined): Promise<void>{
+export async function saveAssessmentById(assessmentCookie: RequestCookie | undefined): Promise<void>{
   const session = await auth();
   const user = session?.user;
   try {
     if (!user) {
       throw new Error('User session not found.');
     }
-    const { rowCount } = await sql`SELECT * FROM assessments WHERE id=${String(assessmentId)} AND user_id IS NULL`;
-    if (rowCount === 0) {
-      throw new Error('Assessment not found.');
+    const assessmentId = assessmentCookie?.value;
+    console.log('assessmentId:', assessmentId);
+    if (assessmentId) { 
+      const { rowCount } = await sql`SELECT * FROM assessments WHERE id=${assessmentId} AND user_id IS NULL`;
+      if (rowCount === 0) {
+        throw new Error('Assessment not found.');
+      }
+      await sql`UPDATE users_info
+        SET assessment=${true}
+        WHERE user_id=${user.id}`;
     }
-    await sql`UPDATE users_info
-      SET assessment=${true}
-      WHERE user_id=${user.id}`;
-    
   } catch (error) {
     console.error('Failed to update user assessment:', error);
     throw new Error('Failed to update user assessment.');
@@ -231,7 +234,6 @@ export async function saveAssessmentById(assessmentId: RequestCookie | undefined
 
 export async function saveTheme(formData: FormData): Promise<{theme: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));
-  console.log(form)
   const session = await auth();
   const user = session?.user;
   try {
