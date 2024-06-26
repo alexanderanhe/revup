@@ -16,14 +16,16 @@ export default async function ProfilePage() {
       // head
       footer
     >
-      <section className="flex flex-row gap-4">
+      <section className="grid grid-cols-[auto_1fr_auto] gap-4">
         <div className="avatar">
           <div className="w-14 rounded-full">
             <ProfileImage user={user} />
           </div>
         </div>
-        <div className="grow flex flex-col gap-2">
-          <h2 className="text-xl font-bold">{ user?.name }</h2>
+        <div className="grid grid-rows-2 gap-2">
+          <h2 className="text-xl font-bold truncate overflow-hidden w-full">
+            { user?.name }
+          </h2>
           <p>Lose a Fat Program</p>
         </div>
         <Link href="/profile/edit" className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl min-w-20">Edit</Link>
