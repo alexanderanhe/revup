@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
-import PWABanner from '@/components/utils/PWABanner';
+import PWABanner from '@/app/ui/utils/PWABanner';
 import CookiesModal from '@/app/ui/utils/CookiesModal';
-import Loader from "@/components/utils/Loader";
+import Loader from "@/app/ui/utils/Loader";
 import { APPCOOKIES } from '@/lib/definitions';
 
 export default async function Banners() {

@@ -1,17 +1,18 @@
 import { boolean } from "zod";
 
 export type User = {
-  id?: string;
-  name?: string;
-  emailVerified?: boolean;
-  email?: string;
-  image?: string;
-  password?: string;
-  theme?: string;
-  assessment?: boolean;
-  onboarding?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  id?: string | null;
+  name?: string | null;
+  emailVerified?: boolean | null;
+  email?: string | null;
+  image?: string | null;
+  gender?: string | null;
+  password?: string | null;
+  theme?: string | null;
+  assessment?: boolean | null;
+  onboarding?: boolean | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 export type AdapterUserInfo = {

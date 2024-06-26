@@ -1,4 +1,4 @@
-import Loader from "@/components/utils/Loader";
+import Loader from "@/app/ui/utils/Loader";
 
 function AboutPage() {
   return (

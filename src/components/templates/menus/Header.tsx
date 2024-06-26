@@ -9,12 +9,12 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import Nav from "./Nav";
 import clsx from "clsx";
 import { Link } from "@/navigation";
-import LogOutButton from "@/components/utils/LogOutButton";
-import DeleteAllCookies from "@/app/ui/utils/DeleteAllCookies";
+import ProfileImage from "@/app/ui/ProfileImage";
+import { User } from "@/lib/definitions";
 
 export default async function Header() {
   const session = await auth();
-  const user = session?.user;
+  const user: User | undefined = session?.user;
 
   return (
     <header className="content-grid sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/75">
@@ -23,21 +23,11 @@ export default async function Header() {
           <div className="dropdown dropdown-start">
             <div tabIndex={0} role="button" className="btn btn-ghost px-0">
               <div className="w-10 mask mask-squircle avatar">
-                <Image
-                  width={40}
-                  height={40}
-                  src={session
-                    ? `${user?.image ?? `https://ui-avatars.com/api/?name=${user?.name}&background=51FF6D&color=ffa80f&rounded=true`}`
-                    : `https://avatar.iran.liara.run/public`
-                  }
-                  alt={`${user?.name ?? ''}`}
-                />
+                <ProfileImage user={user} />
               </div>
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-base-100 rounded-box w-52">
               <Nav filter='nav' />
-              <DeleteAllCookies />
-              {session && <LogOutButton type="li" className="text-left px-1"><a>Cerrar sesión</a></LogOutButton>}
             </ul>
           </div>
           <div className="grid grid-rows-2 gap-[0.2rem] place-items-start h-10 text-sm font-semibold">

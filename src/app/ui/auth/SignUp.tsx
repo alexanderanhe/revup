@@ -5,10 +5,12 @@ import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { LoginModal } from '@/lib/features/app';
 import { PAGES } from '@/lib/routes';
 import { EyeIcon, EyeSlashIcon, LockClosedIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '@/app/ui/Input';
 import { useFormState } from 'react-dom';
 import { registerUser } from '@/lib/actions';
+import { Form } from '@/app/ui/auth/AuthPanel';
+import { toast } from 'sonner';
 
 const FORM_INIT = {
   name: "",
@@ -17,16 +19,14 @@ const FORM_INIT = {
   confirm: ""
 }
 
-type Form = {
-  [key: string]: string | undefined;
-};
-
 type SignUpProps = {
   setModal: (modal: LoginModal) => void;
+  globalForm: Form;
+  setGlobalForm: (form: Form) => void;
 }
 
-export default function SignUp({ setModal }: SignUpProps) {
-  const [ form, setForm ] = useState<Form>(FORM_INIT);
+export default function SignUp({ setModal, globalForm, setGlobalForm }: SignUpProps) {
+  const [ form, setForm ] = useState<Form>(globalForm);
   const [ showPassword, setShowPassword] = useState<boolean>(false);
   const [ formState, formAction ] = useFormState(registerUser, undefined);
 
@@ -34,8 +34,17 @@ export default function SignUp({ setModal }: SignUpProps) {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
+  useEffect(() => {
+    if (formState === 'done') {
+      toast.success('Check your email for further instructions');
+      setGlobalForm(form);
+      setModal('signIn');
+      setForm(FORM_INIT);
+    }
+  }, [formState]);
+
   return (
-    <div className="grid grid-rows-[1fr_auto] form-control gap-3 h-full">
+    <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 h-full">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-1 text-center">
           <p>Hey there,</p>
@@ -46,15 +55,15 @@ export default function SignUp({ setModal }: SignUpProps) {
         <div className="flex flex-col gap-4">
           <Input>
             <UserIcon className="h-4 w-4 opacity-70" />
-            <input type="text" name="name" onChange={handleChange} className="grow" placeholder="Name" />
+            <input type="text" name="name" onChange={handleChange} className="grow" placeholder="Name" autoComplete="off" />
           </Input>
           <Input>
             <EnvelopeIcon className="h-4 w-4 opacity-70" />
-            <input type="text" name="email" onChange={handleChange} className="grow" placeholder="Email" />
+            <input type="text" name="email" onChange={handleChange} className="grow" placeholder="Email" autoComplete="off" />
           </Input>
           <Input>
             <LockClosedIcon className="h-4 w-4 opacity-70" />
-            <input type={showPassword ? "text" : "password"} name="password" onChange={handleChange} className="grow" placeholder="Password" />
+            <input type={showPassword ? "text" : "password"} name="password" onChange={handleChange} className="grow" placeholder="Password" autoComplete="off" />
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="btn btn-xs btn-ghost">
               { showPassword ? <EyeIcon className="size-5" /> : <EyeSlashIcon className="size-5" /> }
             </button>

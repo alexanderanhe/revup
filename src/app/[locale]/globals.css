@@ -62,7 +62,28 @@ section {
 
 .blue-lineal {
   background: linear-gradient(274.42deg, #92A3FD 0%, #9DCEFF 124.45%);
-  border-radius: 99px;
+  &.btn {
+    border-radius: 99px;
+  }
+  &.btn:hover {
+    background: linear-gradient(274.42deg, #9DCEFF 0%, #92A3FD 124.45%);
+  }
+}
+.text-blue-lineal {
+  color: #92A3FD;
+}
+
+.purple-lineal {
+  background: linear-gradient(274.42deg, #C58BF2 0%, #EEA4CE 124.45%);
+  &.btn {
+    border-radius: 99px;
+  }
+  &.btn:hover {
+    background: linear-gradient(274.42deg, #EEA4CE 0%, #C58BF2 124.45%);
+  }
+}
+.text-purple-lineal {
+  color: #C58BF2;
 }
 
 input {

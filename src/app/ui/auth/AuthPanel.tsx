@@ -9,6 +9,17 @@ import SignUp from '@/app/ui/auth/SignUp';
 import ForgotPassword from '@/app/ui/auth/ForgotPassword';
 import WelcomeBack from '@/app/ui/auth/WelcomeBack';
 
+const FORM_INIT = {
+  name: "",
+  email: "",
+  password: "",
+  confirm: ""
+}
+
+export type Form = {
+  [key: string]: string | undefined;
+};
+
 export type MultipleLoginModal = LoginModal | 'Forgot';
 type AuthPanelProps = {
   modal: LoginModal;
@@ -16,9 +27,12 @@ type AuthPanelProps = {
 
 export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   const [ modal, setModal ] = useState<MultipleLoginModal>(initModal);
+  const [ form, setForm ] = useState<Form>(FORM_INIT);
   const { data: session, status } = useSession();
   const props = {
-    setModal
+    setModal,
+    globalForm: form,
+    setGlobalForm: setForm,
   }
 
   if (!modal) return null;

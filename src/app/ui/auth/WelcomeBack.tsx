@@ -20,7 +20,7 @@ export default function WelcomeBack({ session }: WelcomeBackProps) {
         <p className="text-center">Te has autenticado con el usuario {session?.user?.email}</p>
       </div>
       <div className="flex gap-2 text-center text-sm justify-center">
-        <Link href={DEFAULT_REDIRECT} className="btn btn-primary w-full">Go To Home</Link>
+        <Link href={DEFAULT_REDIRECT} className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full">Go To Home</Link>
       </div>
     </div>
   )

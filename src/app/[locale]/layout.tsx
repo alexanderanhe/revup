@@ -10,6 +10,7 @@ import Banners from "@/components/utils/Banners";
 import { auth } from "@/auth";
 import { poppins } from "@/app/ui/fonts";
 import { APPCOOKIES } from "@/lib/definitions";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "bray.fit",
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
           {children}
           <LogInDialog />
         </Providers>
+        <Toaster />
       </body>
     </html>
   );

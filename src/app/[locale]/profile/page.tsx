@@ -1,18 +1,32 @@
 import LayoutContent from "@/components/templates/LayoutContent"
-import ThemeToggle from "@/app/ui/utils/ThemeToggle"
-import Card from "@/app/ui/Card"
-import { ArrowLeftStartOnRectangleIcon, ArrowRightIcon, BellIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, EnvelopeIcon, NewspaperIcon, ShieldCheckIcon, UserIcon } from "@heroicons/react/24/outline"
+import { ArrowRightIcon, BellIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, EnvelopeIcon, NewspaperIcon, ShieldCheckIcon, UserIcon } from "@heroicons/react/24/outline"
 
-const ProfilePage = () => {
+import Card from "@/app/ui/Card"
+import { Link } from "@/navigation"
+import { auth } from "@/auth"
+import ProfileImage from "@/app/ui/ProfileImage"
+
+export default async function ProfilePage() {
+  const session = await auth();
+  const user = session?.user;
   return (
     <LayoutContent
       title="Profile"
       // bg="blur bg-[url('/images/pngegg_4.webp')]"
-      head
+      // head
       footer
     >
-      <section className="grid grid-cols-autofit place-items-center">
-        <ThemeToggle />
+      <section className="flex flex-row gap-4">
+        <div className="avatar">
+          <div className="w-14 rounded-full">
+            <ProfileImage user={user} />
+          </div>
+        </div>
+        <div className="grow flex flex-col gap-2">
+          <h2 className="text-xl font-bold">{ user?.name }</h2>
+          <p>Lose a Fat Program</p>
+        </div>
+        <Link href="/profile/edit" className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl min-w-20">Edit</Link>
       </section>
       <section className="grid grid-cols-3">
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
@@ -76,20 +90,13 @@ const ProfilePage = () => {
             <span className="grow flex justify-start">Privacy Policy</span>
             <ArrowRightIcon className="size-5" />
           </button>
-          <button className="btn btn-ghost w-full">
+          <Link href="/profile/settings" className="btn btn-ghost w-full">
             <Cog6ToothIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">Settings</span>
             <ArrowRightIcon className="size-5" />
-          </button>
-          <button className="btn btn-ghost w-full">
-            <ArrowLeftStartOnRectangleIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Log out</span>
-            <ArrowRightIcon className="size-5" />
-          </button>
+          </Link>
         </Card>
       </section>
     </LayoutContent>
   )
 }
-
-export default ProfilePage

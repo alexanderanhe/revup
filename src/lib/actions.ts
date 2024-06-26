@@ -2,8 +2,10 @@
 
 import { cookies } from 'next/headers';
 import { AuthError } from 'next-auth';
-import { signIn } from '@/auth';
-import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme } from '@/lib/data';
+import { Resend } from 'resend';
+
+import { signIn, signOut } from '@/auth';
+import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme, wait } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
  
 // ...
@@ -14,6 +16,49 @@ export async function authenticate(
 ) {
   try {
     await signIn('credentials', formData);
+    return 'done';
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
+}
+
+export async function forgetPassword(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    const user: User = Object.fromEntries(Array.from(formData.entries()));
+    if (!user.email) return
+
+    const resend = new Resend(process.env.AUTH_RESEND_KEY);
+
+    resend.emails.send({
+      from: 'brayfit@angulo.dev',
+      to: user.email,
+      subject: 'Hello World',
+      html: '<p>Forget your password!</p>'
+    });
+    return 'done';
+  } catch (error) {
+    return 'error';
+  }
+}
+
+export async function logOut(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signOut();
+    return 'done';
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -164,6 +209,10 @@ export async function handleSetTheme(
     return 'error';
   }
 }
-export async function handleDeleteCookies() {
+export async function handleDeleteCookies(
+  prevState: string | null,
+  formData: FormData,
+) {
   cookies().getAll().forEach((cookie) => cookies().delete(cookie.name));
+  return 'done';
 }
