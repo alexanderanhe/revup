@@ -57,6 +57,7 @@ async function seedUsers(client) {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
+        password TEXT NULL,
         email_verified BOOLEAN DEFAULT false,
         image TEXT,
         gender gender NULL,

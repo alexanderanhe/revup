@@ -47,7 +47,7 @@ const QuizzItem = ({q, formState, selected, setSelected, header, translations }:
         <button
           key="next"
           onClick={handleNext}
-          className="btn btn-primary w-full"
+          className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full"
         >
           Siguiente
         </button>

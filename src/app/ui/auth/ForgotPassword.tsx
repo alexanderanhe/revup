@@ -29,10 +29,10 @@ function ForgotPassword({ setModal, email }: ForgotPasswordProps) {
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 h-full">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1 text-center">
-          <h4>Hey there,</h4>
-          <p className="text-lg font-black leading-5">
+          <p>Hey there,</p>
+          <h4 className="text-lg font-bold leading-5">
             Welcome back
-          </p>
+          </h4>
         </div>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <label className="input input-bordered flex items-center gap-2">

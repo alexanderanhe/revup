@@ -1,8 +1,10 @@
 import { format } from "date-fns";
-import { AuthProviders, THEMES, User } from "./definitions";
+import bcrypt from 'bcryptjs';
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+
+import { THEMES, User } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -168,6 +170,17 @@ export async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
+export async function createUser({name, email, password}: User): Promise<User> {
+  try {
+    const passwordEncrypt = password ? bcrypt.hashSync(password, 10) : '';
+    const result = await sql<User>`INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${passwordEncrypt}) RETURNING *`;
+    return result.rows[0] as User;
+  } catch (error) {
+    console.error('Failed to create user:', error);
+    throw new Error('Failed to create user.');
+  }
+}
+
 export async function getSession() {
   const session = await auth();
   if (!session) return null;
@@ -263,25 +276,6 @@ export async function saveOnBoarding(): Promise<void>{
   } catch (error) {
     console.error('Failed to update user onboarding:', error);
     throw new Error('Failed to update user onboarding.');
-  }
-}
-
-export const authProviders: AuthProviders = {
-  Google: {
-    id: 'google',
-    image: 'https://www.svgrepo.com/show/475656/google-color.svg'
-  },
-  GitHub: {
-    id: 'github',
-    image: 'https://www.svgrepo.com/show/512317/github-142.svg'
-  },
-  Facebook: {
-    id: "facebook",
-    image: "https://www.svgrepo.com/show/521654/facebook.svg"
-  },
-  X: {
-    id: "twitter",
-    image: ""
   }
 }
 

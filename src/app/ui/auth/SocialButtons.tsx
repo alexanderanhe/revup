@@ -13,7 +13,7 @@ export function AuthGoogle() {
   }, [formState]);
   return (
     <form action={formAction}>
-      <SubmitButton className="btn btn-square bg-white border-[1] border-base-200 rounded-3xl">
+      <SubmitButton className="btn btn-square bg-white border-[1px] borde-[#DDDADA]">
         <Image width={18} height={18} src="/images/google.png" alt="Google" className="size-[18px]" />
       </SubmitButton>
     </form>
@@ -26,7 +26,7 @@ export function AuthFacebook() {
   }, [formState]);
   return (
     <form action={formAction}>
-      <SubmitButton className="btn btn-square bg-white border-[1] border-base-200 rounded-3xl">
+      <SubmitButton className="btn btn-square bg-white border-[1px] borde-[#DDDADA]">
         <Image width={18} height={18} src="/images/facebook.png" alt="Facebook" className="size-[18px]" />
       </SubmitButton>
     </form>
@@ -39,7 +39,7 @@ export function AuthGithub() {
   }, [formState]);
   return (
     <form action={formAction}>
-      <SubmitButton className="btn btn-square bg-white border-[1] border-base-200 rounded-3xl">
+      <SubmitButton className="btn btn-square bg-white border-[1px] borde-[#DDDADA]">
         <Image width={18} height={18} src="/images/github.svg" alt="GitHub" className="size-[18px]" />
       </SubmitButton>
     </form>

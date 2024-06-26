@@ -5,11 +5,17 @@ import React, { Fragment } from 'react'
 import { useFormState, useFormStatus } from 'react-dom';
 import { handleOnboarding } from "@/lib/actions";
 import SubmitButton from '@/app/ui/utils/SubmitButton';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
 type SlideProps = {
   title?: string;
   description?: string;
-  image?: string;
+  image?: {
+    src: string;
+    alt: string;
+    className?: string;
+    style?: React.CSSProperties;
+  };
   index?: number;
   buttonClass?: string;
   buttonText?: string;
@@ -33,10 +39,7 @@ export default function Slide({ submit, ...slide }: SlideProps) {
         <div className='flex justify-center'>
           {slide.image && (
             <Image
-              className="w-full h-[60svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
-              src={slide.image}
-              style={{ maskImage: "linear-gradient(black 60%, transparent)"}}
-              alt={ slide.title ?? 'Slide image'}
+              {...slide.image}
               width={400}
               height={400}
             />
@@ -63,6 +66,7 @@ export default function Slide({ submit, ...slide }: SlideProps) {
         ) : (
           <a href={`#slide${(slide.index ?? 0) + 1}`} onClick={handleClick} className={ slide.buttonClass }>
             { slide.buttonText }
+            <ChevronRightIcon className="size-5" />
           </a>
         )}
       </footer>

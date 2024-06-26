@@ -1,10 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers';
-import { auth, signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme } from './data';
-import { APPCOOKIES, User } from './definitions';
+import { signIn } from '@/auth';
+import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme } from '@/lib/data';
+import { APPCOOKIES, User } from '@/lib/definitions';
  
 // ...
  
@@ -14,6 +14,28 @@ export async function authenticate(
 ) {
   try {
     await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
+}
+
+export async function registerUser(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    const user: User = Object.fromEntries(Array.from(formData.entries()));
+    if (!user.name || !user.email || !user.password) return
+    await createUser(user);
+    return 'done';
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

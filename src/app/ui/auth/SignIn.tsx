@@ -9,6 +9,7 @@ import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { MultipleLoginModal } from './AuthPanel';
+import Input from '@/app/ui/Input';
 
 const FORM_INIT = {
   email: "",
@@ -36,25 +37,25 @@ export default function SignIn({ setModal }: SignInProps) {
 
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 h-full">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-7">
         <div className="flex flex-col gap-1 text-center">
-          <h4>Hey there,</h4>
-          <p className="text-lg font-black leading-5">
+          <p>Hey there,</p>
+          <h4 className="text-lg font-bold leading-5">
             Welcome back
-          </p>
+          </h4>
         </div>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <label className="input input-bordered flex items-center gap-2">
+          <Input>
             <EnvelopeIcon className="h-4 w-4 opacity-70" />
             <input type="text" name="email" onChange={handleChange} className="grow" placeholder="Email" />
-          </label>
-          <label className="input input-bordered flex items-center gap-2">
+          </Input>
+          <Input>
             <LockClosedIcon className="h-4 w-4 opacity-70" />
-            <input type={showPassword ? "text" : "password"} name="password" onChange={handleChange} className="grow" value="password" />
+            <input type={showPassword ? "text" : "password"} name="password" onChange={handleChange} className="grow" placeholder="Password" />
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="btn btn-xs btn-ghost">
               { showPassword ? <EyeIcon className="size-5" /> : <EyeSlashIcon className="size-5" /> }
             </button>
-          </label>
+          </Input>
           <p className="text-sm text-center">
             <button type='button' onClick={() => setModal('Forgot')} className="underline text-gray-400">Reset your password?</button>
           </p>
@@ -65,19 +66,19 @@ export default function SignIn({ setModal }: SignInProps) {
           { Object.keys(form).map((key) => (
             <input key={key} type="hidden" name={key} value={form[key] ?? ''} />
           )) }
-          <SubmitButton className="btn btn-primary w-full">
-            <ArrowRightEndOnRectangleIcon className="h-4 w-4 opacity-70" />
+          <SubmitButton className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full">
+            <ArrowRightEndOnRectangleIcon className="size-4 opacity-70" />
             Log In
           </SubmitButton>
         </form>
         
         <div className="flex w-full items-center gap-2 text-sm text-neutral">
-          <div className="h-px w-full bg-neutral"></div>
-          OR
-          <div className="h-px w-full bg-neutral"></div>
+          <div className="h-px w-full bg-[#DDDADA]"></div>
+          <small className="text-sm">Or</small>
+          <div className="h-px w-full bg-[#DDDADA]"></div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 w-full">
+        <div className="flex items-center justify-center gap-8 w-full">
           <AuthGoogle />
           <AuthFacebook />
           <AuthGithub />

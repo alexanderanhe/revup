@@ -7,17 +7,34 @@ const quizz: Question[] = [
     key: "gender",
     options: ["M", "F"]
   },
-  {
-    key: "birthdate",
-    inputs: [
-      {
-        name: "birthdate",
-        type: "date",
-        placeholder: "yyyy-mm-dd",
-        optional: false
-      },
-    ]
-  },
+  // {
+  //   key: "birthdate",
+  //   options: ["M", "F"],
+  //   inputs: [
+  //     {
+  //       name: "birthdate",
+  //       type: "date",
+  //       placeholder: "yyyy-mm-dd",
+  //       optional: false
+  //     },
+  //     {
+  //       name: "weight",
+  //       type: "number",
+  //       pattern: "[0-9]*",
+  //       inputmode: "numeric",
+  //       placeholder: "00",
+  //       optional: true
+  //     },
+  //     {
+  //       name: "height",
+  //       type: "number",
+  //       pattern: "[0-9]*",
+  //       inputmode: "numeric",
+  //       placeholder: "00",
+  //       optional: true
+  //     }
+  //   ]
+  // },
   {
     key: "weight&height",
     inputs: [

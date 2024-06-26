@@ -1,13 +1,13 @@
 import { boolean } from "zod";
 
 export type User = {
-  id: string;
-  name: string;
-  emailVerified: boolean;
-  email: string;
-  image: string;
-  password: string;
-  theme: string;
+  id?: string;
+  name?: string;
+  emailVerified?: boolean;
+  email?: string;
+  image?: string;
+  password?: string;
+  theme?: string;
   assessment?: boolean;
   onboarding?: boolean;
   createdAt?: string;

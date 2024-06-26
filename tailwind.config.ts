@@ -42,7 +42,7 @@ const config: Config = {
           "primary": "#53f074",
           "secondary": "#56198b",
           "--primary-muted": "259 94% 71%",
-          "--rounded-btn": "1.5rem",
+          "--rounded-btn": "14px",
         },
       },
       {
@@ -51,7 +51,7 @@ const config: Config = {
           "primary": "#53f074",
           "secondary": "#56198b",
           "--primary-muted": "262 80% 30%",
-          "--rounded-btn": "1.5rem",
+          "--rounded-btn": "14px",
         },
       },
       'cupcake',

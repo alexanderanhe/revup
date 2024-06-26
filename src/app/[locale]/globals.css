@@ -59,3 +59,12 @@ section {
   background: linear-gradient(90deg, #56198b 0%, #260b3e 100%);
   /* background: linear-gradient(90deg, #56198b 0%, #53f074 100%); */
 }
+
+.blue-lineal {
+  background: linear-gradient(274.42deg, #92A3FD 0%, #9DCEFF 124.45%);
+  border-radius: 99px;
+}
+
+input {
+  background-color: #F7F8F8;
+}

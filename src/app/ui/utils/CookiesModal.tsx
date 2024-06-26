@@ -8,7 +8,7 @@ import { useFormState } from "react-dom";
 import HeartIcon from "@/components/utils/icons/HeartIcon";
 import CookiesIcon from "@/components/utils/icons/CookiesIcon";
 import SubmitButton from "@/app/ui/utils/SubmitButton";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+// import { XMarkIcon } from "@heroicons/react/24/solid";
 
 type CookiesModalProps = {
   message: string;
@@ -51,9 +51,9 @@ export default function CookiesModal({message, privacyPolicyBtn, aceptBtn}: Cook
             <HeartIcon className="w-6 h-6 text-primary inline opacity-80" />
           </p>
           { formState ?? '' }
-          <button type="button" className="btn btn-ghost absolute top-0 right-0" onClick={handleClose}>
+          {/* <button type="button" className="btn btn-ghost absolute top-0 right-0" onClick={handleClose}>
             <XMarkIcon className="w-6 h-6" />
-          </button>
+          </button> */}
         </div>
         <form action={formAction} className="modal-action flex flex-row-reverse grow items-center justify-between m-0 p-4">
           <SubmitButton className="btn btn btn-primary btn-sm w-24">
