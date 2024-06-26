@@ -2,9 +2,10 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User } from "@/lib/definitions";
+import { THEMES, User as LocalUser } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
+import { User } from "next-auth";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -144,23 +145,23 @@ export async function fetchMedia() {
   ]
 }
 
-export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}) {
-  await wait(2000);
+// export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}) {
+//   await wait(2000);
 
-  return {
-    _id: '629924078f28b719d95f61af',
-    email: 'alex.angulo@gmail.com',
-    password: '123456'
-  }
-}
+//   return {
+//     _id: '629924078f28b719d95f61af',
+//     email: 'alex.angulo@gmail.com',
+//     password: '123456'
+//   }
+// }
 
-export async function comparePassword(password: string, hash: string) {
-  await wait(2000);
+// export async function comparePassword(password: string, hash: string) {
+//   await wait(2000);
 
-  return password === hash;
-}
+//   return password === hash;
+// }
 
-export async function getUser(email: string): Promise<User | undefined> {
+export async function getUser(email: string): Promise<any> {
   try {
     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
     return user.rows[0];
@@ -170,7 +171,7 @@ export async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
-export async function createUser({name, email, password}: User): Promise<User> {
+export async function createUser({name, email, password}: LocalUser): Promise<User> {
   try {
     const passwordEncrypt = password ? bcrypt.hashSync(password, 10) : '';
     const result = await sql<User>`INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${passwordEncrypt}) RETURNING *`;

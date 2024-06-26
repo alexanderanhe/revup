@@ -134,10 +134,12 @@ export default function vercelPostgresAdapter(): Adapter {
         SELECT * 
         FROM auth_sessions 
         WHERE session_token = ${sessionToken}`;
+      if (!session.rows[0]) return null;
+
       const { rows } = await sql`
         SELECT u.*, ui.theme, ui.assessment, ui.onboarding 
         FROM users u join users_info ui on u.id = ui.user_id
-        WHERE u.id = ${session.rows[0].user_id}`;
+        WHERE u.id = ${session.rows[0]?.user_id}`;
       const expiresDate = new Date(session.rows[0].expires);
       const sessionAndUser: { session: AdapterSession; user: AdapterUser & AdapterUserInfo } = {
         session: {
