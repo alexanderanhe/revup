@@ -20,9 +20,6 @@ export default function Quizz ({ selected, quizz, formState: formData, setSelect
   const [ formState, formAction ] = useFormState(handleSetAssessment, null);
   const header = <Stepper steps={quizz} selected={selected} form={form} setSelected={setSelected} />;
 
-  // const handleSubmit = () => {
-  //   setSelected(selected + 1);
-  // }
   const handleChangeAnswers = () => {
     setSelected(0);
   }

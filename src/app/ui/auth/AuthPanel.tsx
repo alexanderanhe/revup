@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useSession } from 'next-auth/react';
 import { LoginModal } from '@/lib/features/app';
@@ -29,7 +29,7 @@ type AuthPanelProps = {
 export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   const [ modal, setModal ] = useState<MultipleLoginModal>(initModal);
   const [ form, setForm ] = useState<Form>(FORM_INIT);
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const props = {
     setModal,
     globalForm: form,
@@ -37,10 +37,6 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   }
 
   if (!modal) return null;
-  
-  useEffect(() => {
-    console.log('status:', status)
-  }, [status]);
 
   if (status === "loading") {
     return <Loader show />;
