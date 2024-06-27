@@ -20,7 +20,7 @@ const Stats = () => {
           href="/workout"
           className="w-full text-white"
         >
-          <h2>Progreso del Ejercicios</h2>
+          <strong>Progreso del Ejercicios</strong>
           <p>12 rutinas restantes</p>
         </Link>
         <div className="radial-progress text-white text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>

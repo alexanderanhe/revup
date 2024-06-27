@@ -44,13 +44,19 @@
 }
 
 h1 {
-  @apply w-full text-xl font-bold;
+  @apply w-full text-[1.6rem] font-bold;
 }
 h2 {
-  @apply w-full text-lg font-semibold;
+  @apply w-full text-2xl font-semibold;
 }
 h3 {
-  @apply w-full text-base font-semibold;
+  @apply w-full text-[1.3rem] font-semibold;
+}
+h4 {
+  @apply w-full text-xl font-semibold;
+}
+strong {
+  @apply font-semibold;
 }
 section {
   @apply flex flex-col items-start w-full gap-2 justify-start;

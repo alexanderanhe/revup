@@ -3,7 +3,7 @@ import { Link } from "@/navigation";
 import Image from "next/image";
 
 import { LogoIcon } from "@/components/utils/icons";
-import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
+import OpenLoginDialog from "@/app/ui/dialogs/buttons/OpenLoginDialog";
 import NavHeader from "./NavHeader";
 
 export default async function MainPage() {

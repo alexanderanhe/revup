@@ -6,16 +6,14 @@ export type User = {
   emailVerified?: boolean | null;
   email?: string | null;
   image?: string | null;
-  gender?: string | null;
+  gender?: 'H' | 'F' | 'O' | null;
   password?: string | null;
-  theme?: string | null;
-  assessment?: boolean | null;
-  onboarding?: boolean | null;
+  info?: UserInfo | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }
 
-export type AdapterUserInfo = {
+export type UserInfo = {
   theme: string;
   assessment: boolean;
   onboarding: boolean;

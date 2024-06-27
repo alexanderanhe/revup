@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { auth } from "@/auth";
 
-import LayoutContent from "@/components/templates/LayoutContent";
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import Stats from "@/app/ui/home/Stats";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
 import { APPCOOKIES, User } from "@/lib/definitions";
@@ -11,10 +11,9 @@ import { APPCOOKIES, User } from "@/lib/definitions";
 export default async function HomePage() {
   const session = await auth();
   const user = session?.user;
-  console.log(user);
 
   const Assessment = async () => {
-    const hasAssessment = (user as User)?.assessment || cookies().has(APPCOOKIES.ASSESSMENT);
+    const hasAssessment = (user as User)?.info?.assessment || cookies().has(APPCOOKIES.ASSESSMENT);
     if (hasAssessment) {
       return;
     }

@@ -1,5 +1,5 @@
 import { fetchEvents } from "@/lib/data";
-import LayoutContent from "@/components/templates/LayoutContent";
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import SmallCalendar from "@/components/calendar/SmallCalendar";
 
 export default async function WorkoutPage() {

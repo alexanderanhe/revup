@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 import { useSession } from 'next-auth/react';
 import { LoginModal } from '@/lib/features/app';
@@ -8,6 +8,7 @@ import SignIn from '@/app/ui/auth/SignIn';
 import SignUp from '@/app/ui/auth/SignUp';
 import ForgotPassword from '@/app/ui/auth/ForgotPassword';
 import WelcomeBack from '@/app/ui/auth/WelcomeBack';
+import Loader from '../utils/Loader';
 
 const FORM_INIT = {
   name: "",
@@ -36,9 +37,17 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   }
 
   if (!modal) return null;
+  
+  useEffect(() => {
+    console.log('status:', status)
+  }, [status]);
+
+  if (status === "loading") {
+    return <Loader show />;
+  }
 
   if (status === "authenticated") {
-    return <WelcomeBack {...props} session={session} />;
+    return <WelcomeBack {...props} />;
   }
 
   switch(modal) {

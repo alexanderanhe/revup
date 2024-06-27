@@ -16,7 +16,7 @@ import { HeartIcon } from "@heroicons/react/24/outline"
 import { CalendarContent, CalendarDayContent } from '@/lib/definitions';
 import WorkoutDay from '@/components/calendar/WorkoutDay';
 import Link from 'next/link';
-import BackButton from '@/components/utils/BackButton';
+import BackButton from '@/app/ui/utils/BackButton';
 
 export default function SmallCalendar({ data }: { data: CalendarContent[] }) {
   let today = startOfToday()

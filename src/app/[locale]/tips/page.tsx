@@ -1,4 +1,4 @@
-import LayoutContent from "@/components/templates/LayoutContent"
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
 
 const TipsPage = () => {
   return (

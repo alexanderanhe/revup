@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Section from '@/components/templates/Section';
+import Section from '@/app/ui/utils/templates/Section';
 
 import { Question } from '@/lib/definitions';
 import clsx from 'clsx';

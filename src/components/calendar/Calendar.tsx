@@ -23,7 +23,7 @@ import { HeartIcon } from "@heroicons/react/24/outline"
 
 import { CalendarDrawer } from './CalendarDrawer';
 import { CalendarContent, CalendarDayContent } from '@/lib/definitions';
-import BackButton from '../utils/BackButton';
+import BackButton from '../../app/ui/utils/BackButton';
 
 export default function Calendar() {
   const [ events, setEvents ] = useState<CalendarContent[]>([]);

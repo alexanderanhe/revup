@@ -8,7 +8,7 @@ import Credentials from 'next-auth/providers/credentials';
 import vercelPostgresAdapter from "@/lib/vercelPostgresAdapter";
 import { z } from 'zod';
 import { getUser } from "@/lib/data";
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs'; 
 
 export const {
   handlers: { GET, POST },
@@ -17,7 +17,7 @@ export const {
   signOut
 } = NextAuth({
   adapter: vercelPostgresAdapter(),
-  ...authConfig(),
+  ...authConfig,
   providers: [Google, Facebook, GitHub,
     Credentials({
       async authorize(credentials) {

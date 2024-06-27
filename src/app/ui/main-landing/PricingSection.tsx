@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog"
+import OpenLoginDialog from "@/app/ui/dialogs/buttons/OpenLoginDialog"
 
 export default async function PricingSection() {
   const t = await getTranslations("MainLangingPage");

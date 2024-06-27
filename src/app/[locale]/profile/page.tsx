@@ -1,10 +1,10 @@
-import LayoutContent from "@/components/templates/LayoutContent"
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
 import { ArrowRightIcon, BellIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, EnvelopeIcon, NewspaperIcon, ShieldCheckIcon, UserIcon } from "@heroicons/react/24/outline"
 
 import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
 import { auth } from "@/auth"
-import ProfileImage from "@/app/ui/ProfileImage"
+import ProfileImage from "@/app/ui/utils/ProfileImage"
 
 export default async function ProfilePage() {
   const session = await auth();

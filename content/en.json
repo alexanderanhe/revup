@@ -1,4 +1,8 @@
 {
+  "Root": {
+    "title": "bray Fit",
+    "description": "Web application for planning and monitoring training"
+  },
   "MainLangingPage": {
     "navigation": {
       "about": "About",

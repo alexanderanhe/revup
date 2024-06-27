@@ -8,7 +8,6 @@ import {
   AdapterUser,
   VerificationToken,
 } from "next-auth/adapters";
-import { AdapterUserInfo } from "./definitions";
 
 export default function vercelPostgresAdapter(): Adapter {
   try {
@@ -128,20 +127,18 @@ export default function vercelPostgresAdapter(): Adapter {
     };
 
     const getSessionAndUser = async (
-      sessionToken: string
-    ): Promise<{ session: AdapterSession; user: AdapterUser & AdapterUserInfo } | null> => {
+      sessionToken: string | undefined
+    ): Promise<{ session: AdapterSession; user: AdapterUser } | null> => {
       const session = await sql`
         SELECT * 
         FROM auth_sessions 
         WHERE session_token = ${sessionToken}`;
-      if (!session.rows[0]) return null;
 
       const { rows } = await sql`
-        SELECT u.*, ui.theme, ui.assessment, ui.onboarding 
-        FROM users u join users_info ui on u.id = ui.user_id
-        WHERE u.id = ${session.rows[0]?.user_id}`;
+        SELECT * FROM users
+        WHERE id = ${session.rows[0]?.user_id}`;
       const expiresDate = new Date(session.rows[0].expires);
-      const sessionAndUser: { session: AdapterSession; user: AdapterUser & AdapterUserInfo } = {
+      const sessionAndUser: { session: AdapterSession; user: AdapterUser } = {
         session: {
           sessionToken: session.rows[0].session_token,
           userId: session.rows[0].user_id,
@@ -153,10 +150,6 @@ export default function vercelPostgresAdapter(): Adapter {
           email: rows[0].email,
           name: rows[0].name,
           image: rows[0].image,
-          // AdapterUserInfo
-          theme: rows[0].theme.trim(),
-          assessment: rows[0].assessment,
-          onboarding: rows[0].onboarding,
         },
       };
 

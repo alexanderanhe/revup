@@ -1,11 +1,15 @@
 import { cookies } from "next/headers";
 import Slides from "@/app/ui/on-boarding/Slides";
 import Login from "@/app/ui/on-boarding/Login";
-import { APPCOOKIES } from "@/lib/definitions";
+import { APPCOOKIES, User } from "@/lib/definitions";
+import { auth } from "@/auth";
 
-export default function OnBoardingPage() {
+export default async function OnBoardingPage() {
+  const session = await auth();
+  const user = (session?.user as User);
   const cookieStore = cookies();
-  const hasOnBoarding = cookieStore.has(APPCOOKIES.ONBOARDING);
+  const hasOnBoarding = user && !user?.info?.onboarding
+    || !user && cookieStore.has(APPCOOKIES.ONBOARDING);
 
   return (
     !hasOnBoarding ? <Slides />

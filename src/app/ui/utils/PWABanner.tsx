@@ -25,7 +25,7 @@ export default function PWABanner({
   const [promptInstall, setPromptInstall] = useState<Event | null>(null);
   const [ formState, formAction ] = useFormState(handleHidePWABanner, null);
   const p = usePathname();
-  const isHome = [PAGES.HOME].includes(p);
+  const isHome = [PAGES.HOME, PAGES.ROOT].includes(p);
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

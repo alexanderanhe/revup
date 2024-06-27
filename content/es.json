@@ -1,4 +1,8 @@
 {
+  "Root": {
+    "title": "bray Fit",
+    "description": "Aplicación web para planificación y seguimiento de entrenamientos"
+  },
   "MainLangingPage": {
     "navigation": {
       "about": "Acerca de",

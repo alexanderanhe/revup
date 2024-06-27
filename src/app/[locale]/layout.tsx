@@ -3,27 +3,33 @@ import { cookies } from 'next/headers';
 
 import "./globals.css";
 import Providers from "../Providers";
-import LogInDialog from "@/components/utils/dialogs/LogIn";
+import LogInDialog from "@/app/ui/dialogs/LogIn";
 import { locales } from "@/i18n";
-import { unstable_setRequestLocale } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import Banners from "@/components/utils/Banners";
 import { auth } from "@/auth";
 import { poppins } from "@/app/ui/fonts";
-import { APPCOOKIES } from "@/lib/definitions";
+import { APPCOOKIES, User } from "@/lib/definitions";
 import { Toaster } from "sonner";
 
-export const metadata: Metadata = {
-  title: "bray.fit",
-  description: "bray.fit Fitness Club - Aumenta tus músculos, tu resistencia y tu fuerza máxima o tonifícate con Ejercicios en el Gimnasio con series, repeticiones y pesos diseñados por expertos.",
-  manifest: "/manifest.json",
-};
- 
-export const viewport: Viewport = {
-  themeColor: '#FFFFFF',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+export async function generateMetadata() {
+  const t = await getTranslations("Root");
+  return {
+    title: t("title"),
+    description: t("description"),
+    manifest: "/manifest.json",
+  }
+}
+
+export async function generateViewport() {
+  const theme = await checkTheme();
+  return {
+    themeColor: theme === 'dark' ? '#1d232a' :'#FFFFFF',
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  }
 }
 
 export function generateStaticParams() {
@@ -32,9 +38,9 @@ export function generateStaticParams() {
 
 async function checkTheme() {
   const session = await auth();
-  const user: any = session?.user;
+  const user: User | undefined = session?.user;
   const cookieStore = cookies()
-  return user?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? 'light';
+  return user?.info?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? 'light';
 }
 
 export default async function LocaleLayout({

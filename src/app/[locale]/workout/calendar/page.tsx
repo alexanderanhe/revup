@@ -1,4 +1,4 @@
-import LayoutContent from "@/components/templates/LayoutContent";
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import Calendar from "@/components/calendar/Calendar";
 
 export default function CalendarPage() {

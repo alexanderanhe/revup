@@ -26,7 +26,6 @@ type SignInProps = {
 
 export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInProps) {
   const { data: session, status } = useSession();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [ form, setForm ] = useState<Form>(globalForm);
   const [ showPassword, setShowPassword] = useState<boolean>(false);
   const [ formState, formAction ] = useFormState(authenticate, undefined);
@@ -45,10 +44,6 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
     }
   }, [formState]);
 
-  useEffect(() => {
-    if (inputRef.current) inputRef.current.focus();
-  }, []);
-
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 h-full">
       <div className="flex flex-col gap-7">
@@ -61,7 +56,7 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
         <div className="flex flex-col gap-4">
           <Input>
             <EnvelopeIcon className="h-4 w-4 opacity-70" />
-            <input type="text" name="email" ref={inputRef} onChange={handleChange} className="grow" placeholder="Email" defaultValue={form.email} autoComplete="off" />
+            <input type="text" name="email" onChange={handleChange} className="grow" placeholder="Email" defaultValue={form.email} autoComplete="off" />
           </Input>
           <Input>
             <LockClosedIcon className="h-4 w-4 opacity-70" />

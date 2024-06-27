@@ -1,6 +1,6 @@
 import { Link } from "@/navigation";
 import { auth } from "@/auth";
-import OpenLoginDialog from "@/components/utils/dialogs/buttons/OpenLoginDialog";
+import OpenLoginDialog from "@/app/ui/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
 import Nav from "@/app/ui/main-landing/Nav";
 import NavLogo from "@/app/ui/main-landing/NavLogo";

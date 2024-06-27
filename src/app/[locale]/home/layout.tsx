@@ -1,19 +1,31 @@
 import { cookies } from "next/headers";
 import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
-import { APPCOOKIES } from "@/lib/definitions";
+import { APPCOOKIES, User } from "@/lib/definitions";
+import { auth } from "@/auth";
 
 type HomeLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function HomeLayout({ children }: HomeLayoutProps) {
+export default async function HomeLayout({ children }: HomeLayoutProps) {
+  const session = await auth();
+  const user = (session?.user as User);
   const cookieStore = cookies();
-  const hasOnBoarding = cookieStore.has(APPCOOKIES.ONBOARDING);
-  const { ON_BOARDING } = PAGES;
 
-  if (!hasOnBoarding) {
+  const userHasOnboarding = user?.info?.onboarding;
+  const userAssessment = user?.info?.assessment;
+  const cookiesHasOnBoarding = cookieStore.has(APPCOOKIES.ONBOARDING);
+  const { ON_BOARDING, ASSESSMENT } = PAGES;
+
+  if (
+    user && !userHasOnboarding
+    || !user && !cookiesHasOnBoarding) {
     redirect(ON_BOARDING);
+  }
+  if (
+    user && !userAssessment) {
+    redirect(ASSESSMENT);
   }
   return children;
 }

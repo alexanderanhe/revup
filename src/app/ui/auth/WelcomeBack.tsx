@@ -2,13 +2,18 @@
 
 import { DEFAULT_REDIRECT } from "@/lib/routes";
 import { Link } from "@/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { MultipleLoginModal } from "@/app/ui/auth/AuthPanel";
 
 type WelcomeBackProps = {
-  session: any;
+  setModal: (modal: MultipleLoginModal) => void;
 }
 
-export default function WelcomeBack({ session }: WelcomeBackProps) {
+export default function WelcomeBack({ setModal }: WelcomeBackProps) {
+  const { data: session } = useSession();
+
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 h-full pb-4">
       <div className="flex flex-col items-center justify-between gap-4">

@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -165,6 +165,24 @@ export async function getUser(email: string): Promise<any> {
   try {
     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
     return user.rows[0];
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
+export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
+  try {
+    const userInfo = await sql<User>`SELECT * FROM users_info WHERE user_id=${user_id}`;
+    if (userInfo.rowCount === 0) {
+      return null
+    }
+    const { theme, onboarding, assessment } = userInfo.rows[0] as UserInfo;
+    return {
+      theme: theme.trim(),
+      onboarding: onboarding,
+      assessment: assessment
+    };
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');

@@ -1,4 +1,4 @@
-import LayoutContent from "@/components/templates/LayoutContent"
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
 import Discover from "@/app/ui/explore/Discover"
 import { fetchMedia } from "@/lib/data";
 

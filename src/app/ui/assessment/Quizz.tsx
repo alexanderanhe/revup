@@ -1,5 +1,5 @@
 import QuizzItem from "./QuizzItem"
-import Section from "@/components/templates/Section"
+import Section from "@/app/ui/utils/templates/Section"
 import Stepper from "./Stepper"
 import { Question } from '@/lib/definitions'
 import { handleSetAssessment } from "@/lib/actions"

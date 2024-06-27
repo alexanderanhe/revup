@@ -4,22 +4,22 @@ import { PAGES } from "@/lib/routes";
 import { auth } from "@/auth";
 import { APPCOOKIES, User } from "@/lib/definitions";
 
-type OnBoardingLayoutProps = {
+type AssessmentLayoutProps = {
   children: React.ReactNode;
 };
 
-export default async function OnBoardingLayout({ children }: OnBoardingLayoutProps) {
+export default async function AssessmentLayout({ children }: AssessmentLayoutProps) {
   const session = await auth();
   const user = (session?.user as User);
   const cookieStore = cookies();
 
-  const userHasOnboarding = user?.info?.onboarding;
-  const cookiesHasOnBoarding = cookieStore.has(APPCOOKIES.ONBOARDING);
+  const userHasAssessment = user?.info?.assessment;
+  const cookiesHasAssessment = cookieStore.has(APPCOOKIES.ASSESSMENT);
   const { HOME } = PAGES;
 
   if (
-    user && userHasOnboarding
-    || !user && cookiesHasOnBoarding) {
+    user && userHasAssessment
+    || !user && cookiesHasAssessment) {
     redirect(HOME);
   }
   return children;

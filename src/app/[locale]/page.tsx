@@ -7,6 +7,7 @@ import WorkoutPlanerSection from '@/app/ui/main-landing/WorkoutPlanerSection';
 import PricingSection from '@/app/ui/main-landing/PricingSection';
 import CallToActionSection from '@/app/ui/main-landing/CallToActionSection';
 import FooterSection from '@/app/ui/main-landing/FooterSection';
+import GetInstalledRelatedApps from '@/app/ui/utils/GetInstalledRelatedApps';
 
 export default async function IndexPage() {
   const t = await getTranslations("MainLangingPage"); // Await the getTranslations function call
@@ -20,6 +21,7 @@ export default async function IndexPage() {
       <PricingSection />
       <CallToActionSection />
       <FooterSection />
+      <GetInstalledRelatedApps />
     </div>
   );
 }

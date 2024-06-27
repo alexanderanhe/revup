@@ -25,7 +25,7 @@ export default function Footer() {
             <Link
               href={href}
               key={`navLinkFooter${href}`}
-              className={`btn ${pathname === href ? "btn-primary rounded-3xl w-full grid grid-cols-[auto_1fr] place-items-center col-span-2" : 'btn-ghost btn-square [&>span]:hidden'} p-3`}
+              className={`btn ${pathname.startsWith(href) ? "btn-primary rounded-3xl w-full grid grid-cols-[auto_1fr] place-items-center col-span-2" : 'btn-ghost btn-square [&>span]:hidden'} p-3`}
             >
               <Icon className="size-5" />
               <span className="text-xs whitespace-nowrap">{name}</span>
