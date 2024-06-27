@@ -5,10 +5,15 @@ import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
 import { auth } from "@/auth"
 import ProfileImage from "@/app/ui/utils/ProfileImage"
+import { User } from "@/lib/definitions"
+import { getTranslations } from "next-intl/server"
 
 export default async function ProfilePage() {
   const session = await auth();
-  const user = session?.user;
+  const user = session?.user as User;
+  const t = await getTranslations("Profile");
+  const tAssessmentOpts = await getTranslations("Assessment.options");
+
   return (
     <LayoutContent
       title="Profile"
@@ -26,75 +31,75 @@ export default async function ProfilePage() {
           <h2 className="text-xl font-bold truncate overflow-hidden w-full">
             { user?.name }
           </h2>
-          <p>Lose a Fat Program</p>
+          <p>{ tAssessmentOpts(`goal:${user?.info?.goal}`) }</p>
         </div>
         <Link href="/profile/edit" className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl min-w-20">Edit</Link>
       </section>
       <section className="grid grid-cols-3">
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>180 cm</strong>
-          Height
+          <strong>{ user?.info?.height }{ " " }{ t("height:unit") }</strong>
+          { t("height") }
         </Card>
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>65 kg</strong>
-          Weight
+          <strong>{ user?.info?.weight }{ " " }{ t("weight:unit") }</strong>
+          { t("weight") }
         </Card>
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>33yo</strong>
-          Age
+          <strong>{ user?.info?.age }{ t("age:unit") }</strong>
+          { t("age") }
         </Card>
       </section>
       <section>
         <Card>
-          <h3 className="text-lg font-semibold">Account</h3>
+          <h3 className="text-lg font-semibold">{ t("account.title") }</h3>
           <button className="btn btn-ghost w-full">
             <UserIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Personal Data</span>
+            <span className="grow flex justify-start">{ t("account.personalData") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
           <button className="btn btn-ghost w-full">
             <NewspaperIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Achievement</span>
+            <span className="grow flex justify-start">{ t("account.achievement") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
           <button className="btn btn-ghost w-full">
             <ChartPieIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Activity History</span>
+            <span className="grow flex justify-start">{ t("account.activityHistory") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
           <button className="btn btn-ghost w-full">
             <ChartBarSquareIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Workout Progress</span>
+            <span className="grow flex justify-start">{ t("account.workoutProgress") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
         </Card>
       </section>
       <section>
         <Card>
-          <h3 className="text-lg font-semibold">Notification</h3>
+          <h3 className="text-lg font-semibold">{ t("notification.title") }</h3>
           <label className="btn btn-ghost w-full">
             <BellIcon className="size-5 text-primary" />
-            <span className="label-text grow flex justify-start">Remember me</span>
+            <span className="label-text grow flex justify-start">{ t("notification.popUpNotification") }</span>
             <input type="checkbox" className="toggle toggle-md toggle-secondary" defaultChecked />
           </label>
         </Card>
       </section>
       <section>
         <Card>
-          <h3 className="text-lg font-semibold">Other</h3>
+          <h3 className="text-lg font-semibold">{ t("other.title") }</h3>
           <button className="btn btn-ghost w-full">
             <EnvelopeIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Contact Us</span>
+            <span className="grow flex justify-start">{ t("other.contactUs") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
           <button className="btn btn-ghost w-full">
             <ShieldCheckIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Privacy Policy</span>
+            <span className="grow flex justify-start">{ t("other.privacyPolicy") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
           <Link href="/profile/settings" className="btn btn-ghost w-full">
             <Cog6ToothIcon className="size-5 text-primary" />
-            <span className="grow flex justify-start">Settings</span>
+            <span className="grow flex justify-start">{ t("other.settings") }</span>
             <ArrowRightIcon className="size-5" />
           </Link>
         </Card>

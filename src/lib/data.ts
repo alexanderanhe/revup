@@ -173,19 +173,18 @@ export async function getUser(email: string): Promise<any> {
 
 export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   try {
-    const userInfo = await sql<User>`SELECT * FROM users_info WHERE user_id=${user_id}`;
+    const userInfo = await sql<User>`
+      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment,
+        CASE WHEN ua.gender = 'M' THEN 'male' WHEN ua.gender = 'F' THEN 'female' ELSE 'other' END AS gender,
+        TO_CHAR(ua.birthdate, 'yyyy-mm-dd') as birthdate, ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
+      FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${user_id}`;
     if (userInfo.rowCount === 0) {
       return null
     }
-    const { theme, onboarding, assessment } = userInfo.rows[0] as UserInfo;
-    return {
-      theme: theme.trim(),
-      onboarding: onboarding,
-      assessment: assessment
-    };
+    return userInfo.rows[0] as UserInfo;
   } catch (error) {
     console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
+    return null;
   }
 }
 

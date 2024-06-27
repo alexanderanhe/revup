@@ -6,7 +6,6 @@ export type User = {
   emailVerified?: boolean | null;
   email?: string | null;
   image?: string | null;
-  gender?: 'H' | 'F' | 'O' | null;
   password?: string | null;
   info?: UserInfo | null;
   createdAt?: string | null;
@@ -14,6 +13,12 @@ export type User = {
 }
 
 export type UserInfo = {
+  gender?: 'male' | 'female' | 'other' | null;
+  birthdate?: string | null;
+  weight?: number;
+  height?: number;
+  goal?: string | null;
+  age?: string | null | number;
   theme: string;
   assessment: boolean;
   onboarding: boolean;

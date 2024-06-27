@@ -81,35 +81,69 @@
       "frequency:description": "",
       "health:title": "¿Tienes alguna caracteristica física o de salud que debamos tener en cuenta?",
       "health:shortTitle": "Salud o física",
-      "health:description": "",
-      "options": {
-        "optional": "Opcional",
-        "gender:M": "Hombre",
-        "gender:F": "Mujer",
-        "birthdate:birthdate:title": "",
-        "weight&height:weight:title": "Peso (kg)",
-        "weight&height:height:title": "Altura (cm)",
-        "goal:GLSW": "Perder peso",
-        "goal:GKPF": "Mantenerme en forma",
-        "goal:GGMM": "Ganar masa muscular",
-        "training:T00X": "No entrené",
-        "training:T01X": "Entrené 1x a la semana",
-        "training:T23X": "Entrené de 2x a 3x a la semana",
-        "training:T4+X": "Entrené 4x a más a la semana",
-        "gym:GY1T": "Es la primera vez que voy a un gimnasio",
-        "gym:GY2T": "He ido a un gimnasio pero no sé cómo entrenar",
-        "gym:GY3T": "He ido a un gimnasio y sé cómo entrenar",
-        "gym:GY4T": "Puedo entrenar de forma autónoma",
-        "frequency:F01X": "1x a la semana",
-        "frequency:F02X": "2x a la semana",
-        "frequency:F3+X": "3x a la semana o más",
-        "health:DISY": "DISCAPACIDAD",
-        "health:INJY": "LESION",
-        "health:DISS": "ENFERMEDAD",
-        "health:PREG": "EMBARAZO",
-        "health:HOTH": "OTRAS",
-        "health:HNON": "NO POSEO"
-      }
+      "health:description": ""
+    },
+    "options": {
+      "optional": "Opcional",
+      "gender:M": "Hombre",
+      "gender:F": "Mujer",
+      "birthdate:birthdate:title": "",
+      "weight&height:weight:title": "Peso (kg)",
+      "weight&height:height:title": "Altura (cm)",
+      "goal:GLSW": "Perder peso",
+      "goal:GKPF": "Mantenerme en forma",
+      "goal:GGMM": "Ganar masa muscular",
+      "training:T00X": "No entrené",
+      "training:T01X": "Entrené 1x a la semana",
+      "training:T23X": "Entrené de 2x a 3x a la semana",
+      "training:T4+X": "Entrené 4x a más a la semana",
+      "gym:GY1T": "Es la primera vez que voy a un gimnasio",
+      "gym:GY2T": "He ido a un gimnasio pero no sé cómo entrenar",
+      "gym:GY3T": "He ido a un gimnasio y sé cómo entrenar",
+      "gym:GY4T": "Puedo entrenar de forma autónoma",
+      "frequency:F01X": "1x a la semana",
+      "frequency:F02X": "2x a la semana",
+      "frequency:F3+X": "3x a la semana o más",
+      "health:DISY": "DISCAPACIDAD",
+      "health:INJY": "LESION",
+      "health:DISS": "ENFERMEDAD",
+      "health:PREG": "EMBARAZO",
+      "health:HOTH": "OTRAS",
+      "health:HNON": "NO POSEO"
+    }
+  },
+  "Profile": {
+    "title": "Perfil",
+    "weight": "Peso",
+    "weight:unit": "kg",
+    "height": "Altura",
+    "height:unit": "cm",
+    "age": "Edad",
+    "age:unit": "años",
+    "account": {
+      "title": "Cuenta",
+      "personalData": "Datos Personales",
+      "achievement": "Logros",
+      "activityHistory": "Historial de Actividad",
+      "workoutProgress": "Progreso de Ejercicio"
+    },
+    "notification": {
+      "title": "Notificación",
+      "popUpNotification": "Notificación Pop-up"
+    },
+    "other": {
+      "title": "Otros",
+      "contactUs": "Contactanos",
+      "privacyPolicy": "Politica de Privacidad",
+      "settings": "Ajustes",
+      "settings:language": "Idioma",
+      "settings:languages": {
+        "en": "Inglés",
+        "es": "Español"
+      },
+      "settings:theme": "Tema",
+      "settings:logout": "Cerrar Sesión",
+      "settings:deleteCookies": "Borrar Cookies"
     }
   },
   "auth": {

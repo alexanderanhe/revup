@@ -10,7 +10,11 @@ import SubmitButton from "../utils/SubmitButton";
 import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
 
-export default function DeleteAllCookies() {
+type DeleteAllCookiesProps = {
+  title: string;
+}
+
+export default function DeleteAllCookies({ title }: DeleteAllCookiesProps) {
   const [ formState, formAction ] = useFormState(handleDeleteCookies, null);
 
   useEffect(() => {
@@ -22,7 +26,7 @@ export default function DeleteAllCookies() {
     <form action={formAction}>
       <SubmitButton className="btn btn-ghost w-full">
         <TrashIcon className="size-5 text-primary" />
-        <span className="grow flex justify-start">Delete Cookies</span>
+        <span className="grow flex justify-start">{ title }</span>
         <ArrowRightIcon className="size-5" />
       </SubmitButton>
     </form>

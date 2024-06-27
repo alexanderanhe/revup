@@ -63,7 +63,7 @@ const quizz: Question[] = [
 
 export default async function AssessmentPage() {
   const t = await getTranslations("Assessment");
-  const translations = t.raw("questions.options")
+  const translations = t.raw("options")
   const questions = quizz.map(({key, ...rest}) => ({
     key,
     title: t(`questions.${key}:title`),

@@ -6,7 +6,11 @@ import { useEffect } from "react";
 import { useFormState } from "react-dom";
 import SubmitButton from "../utils/SubmitButton";
 
-export default function Logout() {
+type LogoutProps = {
+  title: string;
+}
+
+export default function Logout({ title }: LogoutProps) {
   const [ formState, formAction ] = useFormState(logOut, undefined);
 
   useEffect(() => {
@@ -18,7 +22,7 @@ export default function Logout() {
     <form action={formAction}>
       <SubmitButton className="btn btn-ghost w-full">
         <ArrowLeftStartOnRectangleIcon className="size-5 text-primary" />
-        <span className="grow flex justify-start">Log out</span>
+        <span className="grow flex justify-start">{ title }</span>
         <ArrowRightIcon className="size-5" />
       </SubmitButton>
     </form>
