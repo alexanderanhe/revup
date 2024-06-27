@@ -6,7 +6,12 @@ import DeleteAllCookies from "@/app/ui/profile/DeleteAllCookies"
 import { getTranslations } from "next-intl/server"
 import Language from "@/app/ui/profile/Language"
 
-export default async function ProfileSettingsPage ({ params }) {
+type ProfileSettingsPageProps = {
+  params: {
+    locale: string;
+  }
+}
+export default async function ProfileSettingsPage ({ params }: ProfileSettingsPageProps) {
   const t = await getTranslations("Profile.other");
   const locale = params.locale;
 
