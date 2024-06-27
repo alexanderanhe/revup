@@ -18,7 +18,7 @@ export default function GetInstalledRelatedApps() {
   return (
     <div>
       {relatedApps.map(([platform, url, id]) => (
-        <div className="flex">
+        <div className="flex" key={id}>
           <span>{platform}</span>
           <span>{url}</span>
           <span>{id}</span>
