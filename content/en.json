@@ -136,13 +136,13 @@
       "privacyPolicy": "Privacy Policy",
       "settings": "Settings",
       "settings:language": "Language",
+      "settings:theme": "Theme",
       "settings:languages": {
         "en": "English",
         "es": "Spanish"
       },
-      "settings:theme": "Theme",
-      "settings:logout": "Logout",
-      "settings:deleteCookies": "Delete Cookies"
+      "settings:deleteCookies": "Delete Cookies",
+      "logout": "Logout"
     }
   },
   "auth": {

@@ -4,6 +4,9 @@ export const PAGES = {
   LOGIN: '/login',
   ON_BOARDING: '/on-boarding',
   ASSESSMENT: '/assessment',
+  EXPLORE: '/explore',
+  PROFILE: '/profile',
+  CONTACT_US: '/contact-us',
   PRIVACY: '/privacy-policy',
   TERMS: '/terms-of-service',
   COOKIES: '/cookie-policy'

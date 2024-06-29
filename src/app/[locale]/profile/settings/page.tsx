@@ -20,14 +20,18 @@ export default async function ProfileSettingsPage ({ params }: ProfileSettingsPa
       <section>
         <Card>
           {/* <h3 className="text-lg font-semibold">Settings</h3> */}
+          <ThemeToggle title={t("settings:theme")} />
           <Language
             title={t("settings:language")}
             languages={t.raw("settings:languages")}
             locale={locale}
           />
-          <ThemeToggle title={t("settings:theme")} />
+        </Card>
+      </section>
+      <section>
+        <Card>
+          {/* <h3 className="text-lg font-semibold">Danger Zone</h3> */}
           <DeleteAllCookies title={t("settings:deleteCookies")} />
-          <Logout title={t("settings:logout")} />
         </Card>
       </section>
     </LayoutContent>

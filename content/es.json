@@ -133,17 +133,17 @@
     },
     "other": {
       "title": "Otros",
-      "contactUs": "Contactanos",
+      "contactUs": "Contáctanos",
       "privacyPolicy": "Politica de Privacidad",
       "settings": "Ajustes",
       "settings:language": "Idioma",
+      "settings:theme": "Tema",
       "settings:languages": {
         "en": "Inglés",
         "es": "Español"
       },
-      "settings:theme": "Tema",
-      "settings:logout": "Cerrar Sesión",
-      "settings:deleteCookies": "Borrar Cookies"
+      "settings:deleteCookies": "Borrar Cookies",
+      "logout": "Cerrar Sesión"
     }
   },
   "auth": {

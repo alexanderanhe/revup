@@ -2,30 +2,35 @@
 
 import SubmitButton from "@/app/ui/utils/SubmitButton";
 import { handleHidePWABanner } from "@/lib/actions";
-import { PAGES } from "@/lib/routes";
 import { usePathname } from "@/navigation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
 type PWABannerProps = {
-  title: string;
-  description: string;
-  installBtn: string;
-  closeBtn: string;
+  pages: string[];
+  traductions: {
+    title: string;
+    description: string;
+    installBtn: string;
+    closeBtn: string;
+  }
 };
 export default function PWABanner({
-  title,
-  description,
-  installBtn,
-  closeBtn
+  pages,
+  traductions: {
+    title,
+    description,
+    installBtn,
+    closeBtn
+}
 }: PWABannerProps){
   const form = useRef<HTMLFormElement>();
   const [supportsPWA, setSupportsPWA] = useState<boolean>(false);
   const [promptInstall, setPromptInstall] = useState<Event | null>(null);
   const [ formState, formAction ] = useFormState(handleHidePWABanner, null);
-  const p = usePathname();
-  const isHome = [PAGES.HOME, PAGES.ROOT].includes(p);
+  const pathname = usePathname();
+  const isHome = pages.some((path) => pathname.startsWith(path));
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

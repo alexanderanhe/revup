@@ -1,5 +1,5 @@
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
-import { ArrowRightIcon, BellIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, EnvelopeIcon, NewspaperIcon, ShieldCheckIcon, UserIcon } from "@heroicons/react/24/outline"
+import { ArrowRightIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, EnvelopeIcon, StarIcon, ShieldCheckIcon, UserIcon } from "@heroicons/react/24/outline"
 
 import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
@@ -7,6 +7,10 @@ import { auth } from "@/auth"
 import ProfileImage from "@/app/ui/utils/ProfileImage"
 import { User } from "@/lib/definitions"
 import { getTranslations } from "next-intl/server"
+import { PencilIcon } from "@heroicons/react/24/solid"
+import Logout from "@/app/ui/profile/Logout"
+import { PAGES } from "@/lib/routes"
+import PopUpNotification from "@/app/ui/profile/PopUpNotification"
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -15,12 +19,7 @@ export default async function ProfilePage() {
   const tAssessmentOpts = await getTranslations("Assessment.options");
 
   return (
-    <LayoutContent
-      title="Profile"
-      // bg="blur bg-[url('/images/pngegg_4.webp')]"
-      // head
-      footer
-    >
+    <LayoutContent title="Profile" footer>
       <section className="grid grid-cols-[auto_1fr_auto] gap-4">
         <div className="avatar">
           <div className="w-14 rounded-full">
@@ -33,7 +32,10 @@ export default async function ProfilePage() {
           </h2>
           <p>{ tAssessmentOpts(`goal:${user?.info?.goal}`) }</p>
         </div>
-        <Link href="/profile/edit" className="btn btn-ghost blue-lineal text-white font-bold rounded-2xl min-w-20">Edit</Link>
+        <Link href="/profile/edit" className="btn btn-sm btn-primary">
+          <PencilIcon className="size-4" />
+          Edit
+        </Link>
       </section>
       <section className="grid grid-cols-3">
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
@@ -58,7 +60,7 @@ export default async function ProfilePage() {
             <ArrowRightIcon className="size-5" />
           </button>
           <button className="btn btn-ghost w-full">
-            <NewspaperIcon className="size-5 text-primary" />
+            <StarIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("account.achievement") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
@@ -76,32 +78,31 @@ export default async function ProfilePage() {
       </section>
       <section>
         <Card>
-          <h3 className="text-lg font-semibold">{ t("notification.title") }</h3>
-          <label className="btn btn-ghost w-full">
-            <BellIcon className="size-5 text-primary" />
-            <span className="label-text grow flex justify-start">{ t("notification.popUpNotification") }</span>
-            <input type="checkbox" className="toggle toggle-md toggle-secondary" defaultChecked />
-          </label>
+          <PopUpNotification
+            title={ t("notification.title") }
+            text={t("notification.popUpNotification")}
+          />
         </Card>
       </section>
       <section>
         <Card>
           <h3 className="text-lg font-semibold">{ t("other.title") }</h3>
-          <button className="btn btn-ghost w-full">
+          <Link href={ PAGES.CONTACT_US } className="btn btn-ghost w-full">
             <EnvelopeIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("other.contactUs") }</span>
             <ArrowRightIcon className="size-5" />
-          </button>
-          <button className="btn btn-ghost w-full">
+          </Link>
+          <Link href={ PAGES.PRIVACY }  className="btn btn-ghost w-full">
             <ShieldCheckIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("other.privacyPolicy") }</span>
             <ArrowRightIcon className="size-5" />
-          </button>
-          <Link href="/profile/settings" className="btn btn-ghost w-full">
+          </Link>
+          <Link href={`${PAGES.PROFILE}/settings`} className="btn btn-ghost w-full">
             <Cog6ToothIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("other.settings") }</span>
             <ArrowRightIcon className="size-5" />
           </Link>
+          <Logout title={t("other.logout")} />
         </Card>
       </section>
     </LayoutContent>
