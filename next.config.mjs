@@ -38,6 +38,19 @@ const nextConfig = withNextIntl()({
         port: '',
         pathname: '/public/**',
       },
+      // images external
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   webpack: (config) => {

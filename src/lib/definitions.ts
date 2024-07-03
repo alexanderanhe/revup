@@ -1,5 +1,3 @@
-import { boolean } from "zod";
-
 export type User = {
   id?: string | null;
   name?: string | null;
@@ -71,6 +69,34 @@ export type Providers = 'Google' | 'Facebook' | 'GitHub' | 'X';
 export type AuthProviders = {
   [key in Providers]: AuthProvider
 }
+
+export type WorkoutImageLink = {
+  url: string;
+}
+
+export type WorkoutImage = {
+  name: string;
+} & ({
+  type: 'external';
+  external: WorkoutImageLink;
+} | {
+  type: 'file';
+  file: WorkoutImageLink;
+})
+export type Workout = {
+  id?: string;
+  name: string;
+  description: string;
+  tags: string | string[];
+  images?: WorkoutImage[] | null;
+  instructions: string;
+  warnings: string;
+}
+export type GroupsWorkout = {
+  name: string;
+  defaultName: string;
+}
+
 export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
 export const APPCOOKIES = {
   PWA: 'app.installpwa',

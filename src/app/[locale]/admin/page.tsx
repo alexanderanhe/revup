@@ -7,6 +7,6 @@ export default async function AdminPage() {
   const page = await getPage();
   console.log(page);
   return (
-    <div>AdminPage</div>
+    <pre>{JSON.stringify(page)}</pre>
   )
 }

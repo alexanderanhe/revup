@@ -8,7 +8,7 @@ export default async function OnBoardingPage() {
   const session = await auth();
   const user = (session?.user as User);
   const cookieStore = cookies();
-  const hasOnBoarding = user && !user?.info?.onboarding
+  const hasOnBoarding = user && user?.info?.onboarding
     || !user && cookieStore.has(APPCOOKIES.ONBOARDING);
 
   return (

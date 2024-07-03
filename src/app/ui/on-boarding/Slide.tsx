@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { useFormState, useFormStatus } from 'react-dom';
 import { handleOnboarding } from "@/lib/actions";
 import SubmitButton from '@/app/ui/utils/SubmitButton';
@@ -33,6 +33,12 @@ export default function Slide({ submit, ...slide }: SlideProps) {
     window.location.replace(`${path}${hash}`)
   }
 
+  useEffect(() => {
+    if (formState === 'done') {
+      window.location.replace('/home');
+    }
+  }, [formState]);
+
   return (
     <Fragment>
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg" style={{ gridColumn: 'full-width'}}>
@@ -58,7 +64,6 @@ export default function Slide({ submit, ...slide }: SlideProps) {
         </div>
         { submit ? (
           <form action={formAction}>
-            { formState ?? '' }
             <SubmitButton className={ slide.buttonClass }>
               { slide.buttonText }
             </SubmitButton>

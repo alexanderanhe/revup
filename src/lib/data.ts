@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -49,100 +49,6 @@ export async function fetchEvents(date: Date) {
       "active": true
     },
   ];
-}
-
-export async function fetchMedia() {
-  await wait(2000);
-
-  return [
-    {
-      id: 'all',
-      title: 'Todos',
-      contentType: '2',
-      content: [
-        {
-          id: 1,
-          title: 'Yoga',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/coiWR0gT8Cw-unsplash.webp'
-        },
-        {
-          id: 2,
-          title: 'Peso',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/fS3tGOkp0xY-unsplash.webp'
-        },
-        {
-          id: 3,
-          title: 'Yoga',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/coiWR0gT8Cw-unsplash.webp'
-        },
-        {
-          id: 4,
-          title: 'Peso',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/fS3tGOkp0xY-unsplash.webp'
-        },
-        {
-          id: 5,
-          title: 'Yoga',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/coiWR0gT8Cw-unsplash.webp'
-        },
-        {
-          id: 6,
-          title: 'Peso',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/fS3tGOkp0xY-unsplash.webp'
-        },
-      ]
-    },
-    {
-      id: 'resources',
-      title: 'Recursos',
-      contentType: '2',
-      content: [
-        {
-          id: 1,
-          title: 'Yoga',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/coiWR0gT8Cw-unsplash.webp'
-        },
-        {
-          id: 2,
-          title: 'Peso',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/fS3tGOkp0xY-unsplash.webp'
-        }
-      ]
-    },
-    {
-      id: 'workout',
-      title: 'Ejecicios',
-      contentType: 'autofit',
-      content: [
-        {
-          id: 1,
-          title: 'Yoga',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/coiWR0gT8Cw-unsplash.webp'
-        },
-        {
-          id: 2,
-          title: 'Peso',
-          description: 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente. Esta práctica utiliza posturas físicas, ejercicios de respiración y meditación para mejorar la salud general.',
-          image: '/images/fS3tGOkp0xY-unsplash.webp'
-        }
-      ]
-    },
-    {
-      id: 'programs',
-      title: 'Programas',
-      contentType: 'autofit',
-      content: []
-    }
-  ]
 }
 
 // export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}) {
@@ -204,6 +110,58 @@ export async function getSession() {
   if (!session) return null;
   return session.user;
 }
+
+// export async function getTagsIds(tags: string[]): Promise<string[]> {
+//   const allTagsWordsQueryNums = tags.map((_, i) => `$${i + 1}`).join(", ");
+//   const { rows } = await sql`
+//     SELECT DISTINCT id FROM tags t
+//     JOIN tags_lang tl ON t.id = tl.tag_id
+//     WHERE TRIM(LOWER(tl.name)) IN (${allTagsWordsQueryNums})
+//   `, [ ...tags ]);
+//   return rows.map(({ id }: { id: string }) => id);
+// }
+
+export async function getWorkouts(
+  lang: string,
+  opts: { match?: any, filters?: any, groupBy?: any}
+): Promise<Workout[] | GroupsWorkout[] | null> {
+  try {
+    if (opts.groupBy.length) {
+      const { rowCount, rows: groups } = await sql<GroupsWorkout>`
+        SELECT tags.id, tags.type, tl.name,
+        tld.name as defaultName
+        FROM tags_lang tl JOIN tags ON tags.id = tl.tag_id
+        JOIN tags_lang tld ON tags.id = tld.tag_id AND tld.language_id=(
+          SELECT code FROM languages WHERE is_default=true
+        )
+        WHERE tags.type=${opts.groupBy[0].tags} AND tl.language_id=${lang};
+      `;
+      if (rowCount === 0) {
+        return null
+      }
+      return groups as GroupsWorkout[];
+    }
+    const { rowCount, rows: workouts } = await sql<Workout>`
+      SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
+        SELECT string_agg(tags_lang.name, ','  order by tags_lang.name)
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id  = ANY((Array[workouts.tags])::uuid[])
+      ) as tags, workouts.images
+      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${lang};
+    `;
+    if (rowCount === 0) {
+      return null
+    }
+    return workouts.map(({ tags, ...workout}: Workout) => ({
+      ...workout,
+      tags: (tags as string)?.split(',')
+    })) as Workout[];
+  } catch (error) {
+    console.error('Failed to fetch workouts:', error);
+    return null;
+  }
+}
+
 
 export async function saveAssessment(formData: FormData): Promise<{assessment_id: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));
@@ -290,7 +248,6 @@ export async function saveOnBoarding(): Promise<void>{
     await sql`UPDATE users_info
       SET onboarding=${true}
       WHERE user_id=${user.id}`;
-    
   } catch (error) {
     console.error('Failed to update user onboarding:', error);
     throw new Error('Failed to update user onboarding.');

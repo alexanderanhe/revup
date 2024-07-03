@@ -9,6 +9,7 @@ const Thankyou = () => {
           key={"nextConfirm"}
           href='/home'
           className="btn btn-primary w-full"
+          replace
         >
           Finalizar
         </Link>

@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
-import { signIn, signOut } from '@/auth';
+import { auth, signIn, signOut } from '@/auth';
 import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme, wait } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
  
@@ -168,7 +168,13 @@ export async function handleOnboarding(
   formData: FormData
 ) {
   try {
-    cookies().set(APPCOOKIES.ONBOARDING, '1', { httpOnly: true });
+    const session = await auth();
+    const user = (session?.user as User);
+    if (!user) {
+      cookies().set(APPCOOKIES.ONBOARDING, '1', { httpOnly: true });
+      return 'done';
+    }
+    await saveOnBoarding();
     return 'done';
   } catch (error) {
     return 'error';

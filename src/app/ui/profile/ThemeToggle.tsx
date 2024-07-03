@@ -42,6 +42,7 @@ const ThemeToggle = ({ title }: ThemeToggleProps) => {
       },
     });
     setState(null);
+    window.location.reload();
   }
 
   useEffect(() => {
