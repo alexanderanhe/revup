@@ -1,3 +1,5 @@
+type UUID = string;
+
 export type User = {
   id?: string | null;
   name?: string | null;
@@ -93,6 +95,7 @@ export type Workout = {
   warnings: string;
 }
 export type GroupsWorkout = {
+  id: UUID;
   name: string;
   defaultName: string;
 }

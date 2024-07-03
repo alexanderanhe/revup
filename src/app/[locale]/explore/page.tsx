@@ -19,11 +19,11 @@ export default async function ExplorePage({
   params: { locale }, searchParams
 }: ExplorePageProps) {
   const filter: any = { match: null, filters: [], groupBy: []}
-  const query = searchParams?.query;
-  const tags = searchParams?.tags;
+  const query: string = searchParams?.query ?? '';
+  const tags: string[] = searchParams?.tags ?? [];
 
-  if (query || tags) {
-    filter.match.name = query;
+  if (query || tags.length) {
+    filter.match = { name: query };
     filter.filters.push({ tags });
   } else {
     filter.groupBy.push({'tags': 'muscle'});
@@ -33,9 +33,9 @@ export default async function ExplorePage({
 
   return (
     <LayoutContent title="Explore" footer>
-      <Search />
+      <Search selector="query" placeholder="Search for workouts" />
       <section className="w-full p-0">
-        { (query || tags) ? <Workouts workouts={results as Workout[]} /> : (
+        { (query || tags.length) ? <Workouts workouts={results as Workout[]} /> : (
           <Groups groups={results as GroupsWorkout[]} />
         )}
       </section>

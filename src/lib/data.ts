@@ -141,13 +141,16 @@ export async function getWorkouts(
       }
       return groups as GroupsWorkout[];
     }
+
     const { rowCount, rows: workouts } = await sql<Workout>`
       SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
         SELECT string_agg(tags_lang.name, ','  order by tags_lang.name)
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
-        WHERE tags.id  = ANY((Array[workouts.tags])::uuid[])
+        WHERE tags.id = ANY((Array[workouts.tags])::uuid[])
       ) as tags, workouts.images
-      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${lang};
+      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${lang}
+      WHERE wl.name ILIKE ${`%${opts.match.name ?? ''}%`}
+      AND ${opts.filters[0].tags} = ANY((Array[workouts.tags])::uuid[]);
     `;
     if (rowCount === 0) {
       return null
