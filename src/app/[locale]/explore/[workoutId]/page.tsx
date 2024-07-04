@@ -3,6 +3,7 @@ import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getWorkout, getWorkoutIDs } from "@/lib/data";
 import { WorkoutImage, WorkoutImageLink } from "@/lib/definitions";
 import clsx from "clsx";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
 export async function generateStaticParams({}) {
@@ -18,6 +19,7 @@ export default async function WorkoutItemPage({
     workoutId: string;
   }
 }) {
+  const t = await getTranslations("Workout");
   const workout = await getWorkout(workoutId, locale);
   const [title] = workout?.tags?.find(([_, type]) => type === 'muscle') ?? [''];
   const [_, ...images] = (workout?.images ?? []);
@@ -45,13 +47,13 @@ export default async function WorkoutItemPage({
         <p>{ workout?.description }</p>
       </section>
       <section className="w-full p-0 space-y-4">
-        <h4>Instructions</h4>
+        <h4>{ t("instructions") }</h4>
         { workout?.instructions.split("/n").map((instruction, i) => (
             <p key={`instruction${i}`}>{ instruction }</p>
         ))}
       </section>
       <section className="w-full p-0 space-y-4">
-        <h4>Warnings</h4>
+        <h4>{ t("warnings") }</h4>
         { workout?.warnings.split("/n").map((instruction, i) => (
             <p key={`instruction${i}`}>{ instruction }</p>
         ))}

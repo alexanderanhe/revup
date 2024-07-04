@@ -149,6 +149,11 @@
     "title": "Explore",
     "search": "Search for workouts"
   },
+  "Workout": {
+    "title": "Workout",
+    "instructions": "Idioma",
+    "warnings": "Warnings"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Sign up"

@@ -150,6 +150,11 @@
     "title": "Explorar",
     "search": "Buscar entrenamientos"
   },
+  "Workout": {
+    "title": "Ejercicio",
+    "instructions": "Instrucciones",
+    "warnings": "Advertencias"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Registro"
