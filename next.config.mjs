@@ -47,9 +47,9 @@ const nextConfig = withNextIntl()({
       },
       {
         protocol: 'https',
-        hostname: '**.amazonaws.com',
+        hostname: 'imagedelivery.net',
         port: '',
-        pathname: '/**',
+        pathname: '/UI9du3cl2o0e9fkY_DKS8Q/**',
       },
     ],
   },

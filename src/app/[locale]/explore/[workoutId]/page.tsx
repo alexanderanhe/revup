@@ -1,6 +1,7 @@
 import LikeButton from "@/app/ui/explore/LikeButton";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getWorkout, getWorkoutIDs } from "@/lib/data";
+import { WorkoutImage, WorkoutImageLink } from "@/lib/definitions";
 import clsx from "clsx";
 import Image from "next/image";
 
@@ -19,7 +20,7 @@ export default async function WorkoutItemPage({
 }) {
   const workout = await getWorkout(workoutId, locale);
   const [title] = workout?.tags?.find(([_, type]) => type === 'muscle') ?? [''];
-  const [_, ...images] = workout?.images ?? [''];
+  const [_, ...images] = (workout?.images ?? []);
   
   return (
     <LayoutContent
@@ -27,13 +28,14 @@ export default async function WorkoutItemPage({
       pageMenu={<LikeButton />}
       footer
     >
-      {images.map(({name, type, ...image}: any, i) => (
+      {images?.map(({name, type, ...image}: WorkoutImage, i) => (
         <Image
           key={`w${i}${name}`}
-          src={image?.[type]?.url}
+          className="rounded-lg w-full h-48 object-cover object-center"
+          src={ (image as { external: WorkoutImageLink }).external?.url ?? (image as { file: WorkoutImageLink }).file?.url }
           alt={name}
-          width={100}
-          height={100}
+          width={1200}
+          height={393}
         />
       ))}
       <header className="w-full p-0">
