@@ -24,7 +24,7 @@ export default function LayoutContentTitle({ title, pageMenu, hasMenu, showBackB
             <ChevronLeftIcon className="size-2.5 text-[#1D1617]" />
           </BackButton>
         ) : <div className="w-8"></div>}
-        <h1 className="text-base font-bold text-center">{ title }</h1>
+        <h1 className="text-base font-bold text-center [&::first-letter]:capitalize">{ title }</h1>
         { pageMenu ?? <div className="w-8"></div> }
       </div>
     </div>

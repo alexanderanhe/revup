@@ -1,17 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
 import { useFormState } from 'react-dom';
-
-import { AuthFacebook, AuthGithub, AuthGoogle } from '@/app/ui/auth/SocialButtons';
-import SubmitButton from '@/app/ui/utils/SubmitButton';
+import { useSearchParams } from 'next/navigation';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+
+import { authenticate } from '@/lib/actions';
+import { AuthFacebook, AuthGithub, AuthGoogle } from '@/app/ui/auth/SocialButtons';
+import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { Form, MultipleLoginModal } from '@/app/ui/auth/AuthPanel';
 import Input from '@/app/ui/Input';
-import { authenticate } from '@/lib/actions';
 
 const FORM_INIT = {
   email: "",
@@ -25,10 +24,11 @@ type SignInProps = {
 }
 
 export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInProps) {
-  const { data: session, status } = useSession();
   const [ form, setForm ] = useState<Form>(globalForm);
+  const [ error, setError ] = useState<string>('');
   const [ showPassword, setShowPassword] = useState<boolean>(false);
   const [ formState, formAction ] = useFormState(authenticate, undefined);
+  const searchParams = useSearchParams();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const keyName = event.target.name;
@@ -43,6 +43,14 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
       setForm(FORM_INIT);
     }
   }, [formState]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (params.has('error')) {
+      const message = params.get('error');
+      setError(message ?? 'An error occurred');
+    }
+  }, [searchParams]);
 
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 h-full">
@@ -68,6 +76,10 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
           <p className="text-sm text-center">
             <button type='button' onClick={() => setModal('Forgot')} className="underline text-gray-400">Reset your password?</button>
           </p>
+          {error ? <div className="label">
+            <span className="label-text-alt text-error font-semibold">Error: { error }</span>
+            <span className="label-text-alt"></span>
+          </div> : null}
           { formState ?? ''}
         </div>
       </div>

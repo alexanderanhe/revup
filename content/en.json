@@ -145,6 +145,10 @@
       "logout": "Logout"
     }
   },
+  "Explore": {
+    "title": "Explore",
+    "search": "Search for workouts"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Sign up"

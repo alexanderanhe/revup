@@ -60,6 +60,10 @@ type WorkoutsProps = {
 
 export default function Workouts({ workouts }: WorkoutsProps) {
   return (
-    workouts?.map((workout) => <WorkoutItem key={workout.id} workout={workout} />)
+    <section className="w-full p-0">
+      {workouts?.map((workout) => (
+        <WorkoutItem key={workout.id} workout={workout} />
+      ))}
+    </section>
   )
 }

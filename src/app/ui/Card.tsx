@@ -1,10 +1,10 @@
-type CardProps = {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
-  children: React.ReactNode;
 }
-export default function Card({ className, children }: CardProps) {
+
+export default function Card({ className, children, ...props }: CardProps) {
   return (
-    <div className={`grid grid-cols-1 gap-2 items-center justify-start bg-base-100 shadow-2xl rounded-2xl w-full p-5 ${className ?? ''}`}>
+    <div {...props} className={`grid grid-cols-1 gap-2 items-center justify-start bg-base-100 shadow-2xl rounded-2xl w-full p-5 ${className ?? ''}`}>
       { children }
     </div>
   )

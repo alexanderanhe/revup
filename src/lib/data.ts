@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -121,43 +121,83 @@ export async function getSession() {
 //   return rows.map(({ id }: { id: string }) => id);
 // }
 
-export async function getWorkouts(
-  lang: string,
-  opts: { match?: any, filters?: any, groupBy?: any}
-): Promise<Workout[] | GroupsWorkout[] | null> {
+export async function getTags(type: string, locale: string): Promise<GroupsWorkout[] | null> {
   try {
-    if (opts?.groupBy?.length) {
-      const { rowCount, rows: groups } = await sql<GroupsWorkout>`
-        SELECT tags.id, tags.type, tl.name,
-        tld.name as defaultName
-        FROM tags_lang tl JOIN tags ON tags.id = tl.tag_id
-        JOIN tags_lang tld ON tags.id = tld.tag_id AND tld.language_id=(
-          SELECT code FROM languages WHERE is_default=true
-        )
-        WHERE tags.type=${opts.groupBy[0].tags} AND tl.language_id=${lang};
-      `;
-      if (rowCount === 0) {
-        return null
-      }
-      return groups as GroupsWorkout[];
-    }
-
-    const { rowCount, rows: workouts } = await sql<Workout>`
-      SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
-        SELECT string_agg(tags_lang.name, ','  order by tags_lang.name)
-        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
-        WHERE tags.id = ANY((Array[workouts.tags])::uuid[])
-      ) as tags, workouts.images
-      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${lang}
-      WHERE wl.name ILIKE ${`%${opts.match.name ?? ''}%`}
-      AND ${opts.filters[0].tags} = ANY((Array[workouts.tags])::uuid[]);
+    const { rowCount, rows: groups } = await sql<GroupsWorkout>`
+      SELECT tags.id, tags.type, tl.name,
+      tld.name as defaultName
+      FROM tags_lang tl JOIN tags ON tags.id = tl.tag_id
+      JOIN tags_lang tld ON tags.id = tld.tag_id AND tld.language_id=(
+        SELECT code FROM languages WHERE is_default=true
+      )
+      WHERE tags.type=${type} AND tl.language_id=${locale};
     `;
     if (rowCount === 0) {
       return null
     }
-    return workouts.map(({ tags, ...workout}: Workout) => ({
+    return groups as GroupsWorkout[];
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    return [];
+  }
+}
+
+export async function getWorkoutIDs(): Promise<string[]> {
+  try {
+    const { rows } = await sql`SELECT id FROM workouts`;
+    return rows.map(({ id }: any) => id);
+  } catch (error) {
+    console.error('Failed to fetch workout IDs:', error);
+    return [];
+  }
+}
+
+export async function getWorkout(workoutId: string, locale: string): Promise<Workout | null> {
+  try {
+    const { rowCount, rows: workouts } = await sql<Omit<Workout, 'tags'> & { tags: string}>`
+      SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id = ANY((Array[workouts.tags])::uuid[]) AND tags_lang.language_id=${locale}
+      ) as tags, workouts.images
+      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${locale}
+      WHERE workouts.id=${workoutId};
+    `;
+    if (rowCount === 0) {
+      return null
+    }
+    const workout = workouts[0];
+    return {
       ...workout,
-      tags: (tags as string)?.split(',')
+      tags: (workout.tags as string)?.split(',').map((tag) => tag.split(':'))
+    } as Workout;
+  } catch (error) {
+    console.error('Failed to fetch workout:', error);
+    return null;
+  }
+}
+
+export async function getWorkouts(searchParams: FilterSearchParams, locale: string): Promise<Workout[] | GroupsWorkout[] | null> {
+  try {
+    const tag = Array.isArray(searchParams.tags?.length)
+      ? searchParams?.tags?.[0] ?? ''
+      : searchParams?.tags ?? '';
+    const { rowCount, rows: workouts } = await sql<Omit<Workout, 'tags'> & { tags: string}>`
+      SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id AND tags_lang.language_id=${locale}
+        WHERE tags.id = ANY((Array[workouts.tags])::uuid[])
+      ) as tags, workouts.images
+      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${locale}
+      WHERE wl.name ILIKE ${`%${searchParams?.query ?? ''}%`}
+      AND ${<string>tag} = ANY((Array[workouts.tags])::uuid[]);
+    `;
+    if (rowCount === 0) {
+      return null
+    }
+    return workouts.map(({ tags, ...workout}: Omit<Workout, 'tags'> & { tags: string}) => ({
+      ...workout,
+      tags: tags?.split(',').map((tag) => tag.split(':'))
     })) as Workout[];
   } catch (error) {
     console.error('Failed to fetch workouts:', error);

@@ -146,6 +146,10 @@
       "logout": "Cerrar Sesión"
     }
   },
+  "Explore": {
+    "title": "Explorar",
+    "search": "Buscar entrenamientos"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Registro"

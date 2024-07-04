@@ -1,10 +1,10 @@
 'use client'
 
-import { DEFAULT_REDIRECT } from "@/lib/routes";
-import { Link } from "@/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect } from "react";
+
+import { Link } from "@/navigation";
+import { DEFAULT_REDIRECT } from "@/lib/routes";
 import { MultipleLoginModal } from "@/app/ui/auth/AuthPanel";
 
 type WelcomeBackProps = {

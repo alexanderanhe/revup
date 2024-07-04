@@ -29,23 +29,23 @@ export default function Language({ title, languages, locale }: LanguageProps) {
   };
 
   return (
-    <button className="btn btn-ghost w-full">
+    <div className="btn btn-ghost no-animation w-full">
       <LanguageIcon className="size-5 text-primary" />
       <div className="grow flex items-center justify-start">
           { title }
           { ": " }
         <div className="dropdown flex justify-start">
-          <div tabIndex={0} role="button" className="btn btn-sm m-1">
+          <button tabIndex={0} role="button" className="btn btn-sm z-[1] m-1">
             { !!locale && (FLAGS[locale] ?? '') }
             { " " }
             { !!locale && (languages[locale] ?? '') }
-          </div>
+          </button>
           <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[2] w-52 p-2 shadow">
             {Object.keys(languages).map((lang: string) => (
               <li key={lang} onClick={handleClick}>
                 <Link
                   href={`${PAGES.PROFILE}/settings`}
-                  lang={lang}
+                  locale={lang}
                   replace
                 >
                   { FLAGS[lang] ?? '' }
@@ -58,6 +58,6 @@ export default function Language({ title, languages, locale }: LanguageProps) {
         </div>
       </div>
       <ArrowRightIcon className="size-5" />
-    </button>
+    </div>
   )
 }

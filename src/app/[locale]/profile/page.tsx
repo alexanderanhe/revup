@@ -19,7 +19,7 @@ export default async function ProfilePage() {
   const tAssessmentOpts = await getTranslations("Assessment.options");
 
   return (
-    <LayoutContent title="Profile" footer>
+    <LayoutContent title={t("title")} footer>
       <section className="grid grid-cols-[auto_1fr_auto] gap-4">
         <div className="avatar">
           <div className="w-14 rounded-full">

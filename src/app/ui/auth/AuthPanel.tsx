@@ -8,7 +8,7 @@ import SignIn from '@/app/ui/auth/SignIn';
 import SignUp from '@/app/ui/auth/SignUp';
 import ForgotPassword from '@/app/ui/auth/ForgotPassword';
 import WelcomeBack from '@/app/ui/auth/WelcomeBack';
-import Loader from '../utils/Loader';
+import Loader from '@/app/ui/utils/Loader';
 
 const FORM_INIT = {
   name: "",

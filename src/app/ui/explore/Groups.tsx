@@ -1,11 +1,13 @@
 'use client'
 
-import { GroupsWorkout } from "@/lib/definitions"
+import { useState } from "react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
-import Card from "@/app/ui/Card"
+import { ArrowRightIcon } from "@heroicons/react/24/outline"
 import { useSearchParams } from "next/navigation"
+
 import { usePathname, useRouter } from "@/navigation"
+import Card from "@/app/ui/Card"
+import { GroupsWorkout } from "@/lib/definitions"
 
 
 type Image = {
@@ -13,7 +15,7 @@ type Image = {
   name: string;
 }
 const DEFAULT_FALLBACK_IMAGE: Image = {
-  src: "/images/tags/abs.svg",
+  src: "/images/tags/default.svg",
   name: "Default fallback image"
 }
 // images: https://www.simplyfitness.com/es/pages/abdominals-exercise-guides
@@ -23,7 +25,7 @@ function GroupItem({ group }: {
 }) {
   const [image, setImage] = useState<Image>({
     name: group.name,
-    src: `/images/tags/${group.defaultName}.svg`
+    src: `/images/tags/${group.defaultname}.svg`
   });
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -36,33 +38,37 @@ function GroupItem({ group }: {
   }
 
   return (
-    <button onClick={handleClick} className="w-full">
-      <Card className="relative h-28">
+    <Card className="btn btn-ghost relative h-28 w-full" onClick={handleClick}>
+      <div className="grid grid-cols-[1fr_auto] w-full">
         <div className="grid items-end justify-start w-full h-full z-[1] font-semibold">
-          {group.name}
+          <span className="[&::first-letter]:capitalize">{group.name}</span>
         </div>
-        { image && (
-          <Image
-            src={image.src}
-            alt={image.name}
-            onError={() => setImage(DEFAULT_FALLBACK_IMAGE)}
-            width={100}
-            height={100}
-            className="absolute inset-0 w-full h-full object-contain object-right rounded-lg"
-            style={{ maskImage: "linear-gradient(to left, black -10%, transparent)"}}
-          />
-        )}
-      </Card>
-    </button>
+        <ArrowRightIcon className="size-5" />
+      </div>
+      { image && (
+        <Image
+          src={image.src}
+          alt={image.name}
+          onError={() => setImage(DEFAULT_FALLBACK_IMAGE)}
+          width={100}
+          height={100}
+          className="absolute inset-0 w-full h-full object-contain object-right rounded-lg text-primary fill-primary"
+          style={{ maskImage: "linear-gradient(to left, black -10%, transparent)"}}
+        />
+      )}
+    </Card>
   )
 }
 
-type GroupsProps = {
+export default function Groups({ groups }: {
   groups: GroupsWorkout[] | null
-}
-
-export default function Groups({ groups }: GroupsProps) {
+}) {
   return (
-    groups?.map((group) => <GroupItem key={group.id} group={group} />)
+    <section className="w-full p-0">
+      {groups?.map((group) => (
+        <GroupItem key={group.id} group={group} />
+      ))}
+    </section>
+
   )
 }

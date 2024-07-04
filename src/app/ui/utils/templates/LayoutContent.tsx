@@ -21,7 +21,10 @@ export default function LayoutContent({ title, pageMenu, bg, children, className
     <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
       { head && <Header />}
-      <main className={`content-grid grid-flow-row auto-rows-max hover:auto-rows-min place-items-start space-y-6 ${className}`}>
+      <main className={clsx(
+        "content-grid grid-flow-row auto-rows-max place-items-start space-y-6",
+        className
+      )}>
         <LayoutContentTitle title={title} pageMenu={pageMenu} hasMenu={Boolean(head || footer)} showBackButton={Boolean(showBackButton)} />
         { children }
       </main>

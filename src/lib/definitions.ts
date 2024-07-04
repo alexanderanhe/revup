@@ -89,7 +89,7 @@ export type Workout = {
   id?: string;
   name: string;
   description: string;
-  tags: string | string[];
+  tags: string[][];
   images?: WorkoutImage[] | null;
   instructions: string;
   warnings: string;
@@ -97,7 +97,12 @@ export type Workout = {
 export type GroupsWorkout = {
   id: UUID;
   name: string;
-  defaultName: string;
+  defaultname: string;
+}
+
+export type FilterSearchParams = {
+  query?: string;
+  tags?: string[];
 }
 
 export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
