@@ -25,7 +25,10 @@ export default auth((request) => {
     `^(/(${locales.join('|')}))?(${ROOT === '/' ? '|/' : ROOT})/?$`,
     'i'
   );
-  const isPublicPage = publicPathnameRegex.test(nextUrl.pathname);
+  const isPublicPage = publicPathnameRegex.test(
+    // Ignoring the child pathnames
+    nextUrl.pathname.split("/").slice(0, 3).join('/')
+  );
   const isRootPage = rootPathnameRegex.test(nextUrl.pathname);
 
   if (isPublicPage && isAuthenticated && isRootPage) {
