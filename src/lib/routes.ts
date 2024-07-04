@@ -18,6 +18,7 @@ export const PUBLIC_ROUTES = [
   PAGES.ON_BOARDING,
   PAGES.HOME,
   PAGES.ASSESSMENT,
+  PAGES.EXPLORE,
   PAGES.LOGIN,
   "/forgot-password",
   "/reset-password",
