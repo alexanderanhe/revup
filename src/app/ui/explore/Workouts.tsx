@@ -1,6 +1,6 @@
 'use client'
 
-import { Workout } from "@/lib/definitions"
+import { Workout, WorkoutImage, WorkoutImageLink } from "@/lib/definitions"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import Card from "@/app/ui/Card"
@@ -23,11 +23,12 @@ function WorkoutItem({ workout }: WorkoutProps) {
   const [image, setImage] = useState<Image>(DEFAULT_FALLBACK_IMAGE);
 
   useEffect(() => {
-    const firstImage =  workout?.images?.[0] as any;
+    const firstImage =  workout?.images?.[0] as WorkoutImage;
     if (firstImage) {
       setImage({
         name: firstImage.name,
-        src: firstImage?.file?.url ?? firstImage?.external?.url
+        src: (firstImage as { external: WorkoutImageLink }).external?.url
+          ?? (firstImage as { file: WorkoutImageLink }).file?.url
       })
     }
 }, []);

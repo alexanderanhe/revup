@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
-export async function generateStaticParams({}) {
+export async function generateStaticParams() {
   const workoutIDs = await getWorkoutIDs();
   return workoutIDs.map((workoutId) => ({ workoutId }))
 }
