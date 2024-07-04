@@ -8,9 +8,10 @@ type LayoutContentTitleProps = {
   title?: string;
   pageMenu?: React.ReactNode;
   hasMenu?: boolean;
+  showBackButton?: boolean;
 }
 
-export default function LayoutContentTitle({ title, pageMenu, hasMenu }: LayoutContentTitleProps) {
+export default function LayoutContentTitle({ title, pageMenu, hasMenu, showBackButton }: LayoutContentTitleProps) {
   const pathname = usePathname();
   const paths = pathname.split('/').filter(Boolean);
   const isChild = paths.length > 1;
@@ -18,7 +19,7 @@ export default function LayoutContentTitle({ title, pageMenu, hasMenu }: LayoutC
   return title && (
     <div className="sticky top-0 full-width bg-base-100 w-full z-30 py-4">
       <div className="grid grid-cols-[auto_1fr_auto] place-items-center w-full">
-        {isChild || !hasMenu ? (
+        {isChild || !hasMenu || showBackButton ? (
           <BackButton className="btn btn-sm btn-square btn-ghost bg-[#F7F8F8] rounded-lg btn-ghost">
             <ChevronLeftIcon className="size-2.5 text-[#1D1617]" />
           </BackButton>

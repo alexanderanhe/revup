@@ -21,8 +21,9 @@ export default async function ExplorePage({
   const filter: any = { match: null, filters: [], groupBy: []}
   const query: string = searchParams?.query ?? '';
   const tags: string[] = searchParams?.tags ?? [];
+  const showWorkouts = Boolean(query || tags.length);
 
-  if (query || tags.length) {
+  if (showWorkouts) {
     filter.match = { name: query };
     filter.filters.push({ tags });
   } else {
@@ -32,10 +33,10 @@ export default async function ExplorePage({
   const results = await getWorkouts(locale, filter);
 
   return (
-    <LayoutContent title="Explore" footer>
+    <LayoutContent title="Explore" showBackButton={showWorkouts} footer>
       <Search selector="query" placeholder="Search for workouts" />
       <section className="w-full p-0">
-        { (query || tags.length) ? <Workouts workouts={results as Workout[]} /> : (
+        { (showWorkouts) ? <Workouts workouts={results as Workout[]} /> : (
           <Groups groups={results as GroupsWorkout[]} />
         )}
       </section>

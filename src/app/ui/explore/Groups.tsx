@@ -62,7 +62,6 @@ type GroupsProps = {
 }
 
 export default function Groups({ groups }: GroupsProps) {
-  console.log(groups);
   return (
     groups?.map((group) => <GroupItem key={group.id} group={group} />)
   )

@@ -126,7 +126,7 @@ export async function getWorkouts(
   opts: { match?: any, filters?: any, groupBy?: any}
 ): Promise<Workout[] | GroupsWorkout[] | null> {
   try {
-    if (opts.groupBy.length) {
+    if (opts?.groupBy?.length) {
       const { rowCount, rows: groups } = await sql<GroupsWorkout>`
         SELECT tags.id, tags.type, tl.name,
         tld.name as defaultName
