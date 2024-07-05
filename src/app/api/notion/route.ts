@@ -1,10 +1,11 @@
-import { getPlansPage } from "@/lib/notion";
+import { getWorkoutsPage, getPlansPage } from "@/lib/notion";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const page = await getPlansPage();
-    return NextResponse.json(page);
+    const workoutsPage = await getWorkoutsPage();
+    const plansPage = await getPlansPage();
+    return NextResponse.json({workoutsPage, plansPage});
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || '' }, { status: 500 });
   }
