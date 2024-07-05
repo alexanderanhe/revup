@@ -81,7 +81,7 @@ export async function getWorkoutsPage() {
       type: "last_edited_by",
       property: "Last edited by",
       last_edited_by: {
-        does_not_contain: "c237602f-a458-402a-bfa3-fdd5ed08af8a"
+        does_not_contain: process.env.NOTION_BOT_USER_ID
       }
     });
 
@@ -224,7 +224,7 @@ export async function getPlansPage() {
       type: "last_edited_by",
       property: "Last edited by",
       last_edited_by: {
-        does_not_contain: "c237602f-a458-402a-bfa3-fdd5ed08af8a"
+        does_not_contain: process.env.NOTION_BOT_USER_ID
       }
     });
 
@@ -232,7 +232,7 @@ export async function getPlansPage() {
     //   type: "last_edited_by",
     //   property: "Last edited by",
     //   last_edited_by: {
-    //     does_not_contain: "c237602f-a458-402a-bfa3-fdd5ed08af8a"
+    //     does_not_contain: process.env.NOTION_BOT_USER_ID
     //   }
     // });
 
