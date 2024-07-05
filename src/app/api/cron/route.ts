@@ -1,4 +1,4 @@
-import { getPage } from '@/lib/notion';
+import { getWorkoutsPage } from '@/lib/notion';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({error: 'Unauthorized'}, { status: 401 });
   }
   try {
-    const page = await getPage();
+    const page = await getWorkoutsPage();
     return NextResponse.json({ ok: true, page });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || '' }, { status: 500 });

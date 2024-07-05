@@ -113,3 +113,32 @@ export const APPCOOKIES = {
   ASSESSMENT: 'app.assessment',
   THEME: 'app.theme'
 };
+
+export interface NotionTableProperties {
+  [key: string]: string;
+}
+
+// Notion
+export const tableWorkoutsProperties: NotionTableProperties = {
+  ID: "id",
+  Nombre_es: "name_es",
+  Nombre_en: "name_en",
+  Imagen: "image",
+  Descripcion_es: "description_es",
+  Descripcion_en: "description_en",
+  Etiquetas: "tags",
+  Instrucciones_es: "instructions_es",
+  Instrucciones_en: "instructions_en",
+  Advertencias_es: "warnings_es",
+  Advertencias_en: "warnings_en",
+  Estatus: "status",
+  "Last edited by": "last_edited_by",
+};
+
+export const tablePlansProperties: NotionTableProperties = {
+  ID: "id",
+  Nombre_es: "name_es",
+  Nombre_en: "name_en",
+  Estatus: "status",
+  "Last edited by": "last_edited_by"
+}
