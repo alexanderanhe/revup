@@ -22,7 +22,7 @@ export default async function WorkoutItemPage({
   const t = await getTranslations("Workout");
   const workout = await getWorkout(workoutId, locale);
   const [title] = workout?.tags?.find(([_, type]) => type === 'muscle') ?? [''];
-  const [_, ...images] = (workout?.images ?? []);
+  const images = (workout?.images ?? []);
   
   return (
     <LayoutContent

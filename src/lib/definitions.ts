@@ -90,6 +90,7 @@ export type Workout = {
   name: string;
   description: string;
   tags: string[][];
+  image_banner?: WorkoutImage[] | null;
   images?: WorkoutImage[] | null;
   instructions: string;
   warnings: string;
@@ -120,10 +121,11 @@ export interface NotionTableProperties {
 
 // Notion
 export const tableWorkoutsProperties: NotionTableProperties = {
-  ID: "id",
+  // ID: "idbd",
   Nombre_es: "name_es",
   Nombre_en: "name_en",
-  Imagen: "image",
+  "Imagen Banner": "image_banner",
+  Imagenes: "images",
   Descripcion_es: "description_es",
   Descripcion_en: "description_en",
   Etiquetas: "tags",

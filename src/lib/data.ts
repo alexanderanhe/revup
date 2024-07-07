@@ -142,6 +142,26 @@ export async function getTags(type: string, locale: string): Promise<GroupsWorko
   }
 }
 
+export async function getTagName(tagId: string | string[] | undefined, locale: string): Promise<string | null> {
+  try {
+    if (!tagId) {
+      return null;
+    }
+    const { rowCount, rows: tags } = await sql<{ name: string }>`
+      SELECT tl.name
+      FROM tags_lang tl
+      WHERE tl.tag_id=${tagId.toString()} AND tl.language_id=${locale};
+    `;
+    if (rowCount === 0) {
+      return null
+    }
+    return tags[0].name;
+  } catch (error) {
+    console.error('Failed to fetch tag name:', error);
+    return null;
+  }
+}
+
 export async function getWorkoutIDs(): Promise<string[]> {
   try {
     const { rows } = await sql`SELECT id FROM workouts`;
@@ -179,23 +199,36 @@ export async function getWorkout(workoutId: string, locale: string): Promise<Wor
 
 export async function getWorkouts(searchParams: FilterSearchParams, locale: string): Promise<Workout[] | GroupsWorkout[] | null> {
   try {
-    const tag = Array.isArray(searchParams.tags?.length)
-      ? searchParams?.tags?.[0] ?? ''
-      : searchParams?.tags ?? '';
-    const { rowCount, rows: workouts } = await sql<Omit<Workout, 'tags'> & { tags: string}>`
-      SELECT workouts.id, wl.name, wl.description, wl.instructions, wl.warnings, (
-        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
-        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id AND tags_lang.language_id=${locale}
-        WHERE tags.id = ANY((Array[workouts.tags])::uuid[])
-      ) as tags, workouts.images
-      FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${locale}
-      WHERE wl.name ILIKE ${`%${searchParams?.query ?? ''}%`}
-      AND ${<string>tag} = ANY((Array[workouts.tags])::uuid[]);
-    `;
+    const tag = String(searchParams?.tags ?? '');
+    type WorkoutMod = Omit<Workout, 'tags'> & { tags: string}
+    let workouts;
+    if (tag) {
+      workouts = await sql<WorkoutMod>`
+        SELECT workouts.id, wl.name, (
+          SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
+          FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+          WHERE tags.id = ANY((Array[workouts.tags])::uuid[]) AND tags_lang.language_id=${locale}
+        ) as tags, workouts.image_banner
+        FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${locale}
+        WHERE wl.name ILIKE ${`%${searchParams?.query ?? ''}%`}
+        AND ${<string>tag} = ANY((Array[workouts.tags])::uuid[]);
+      `;
+    } else { // search without tags:: !important refactor this code
+      workouts = await sql<WorkoutMod>`
+        SELECT workouts.id, wl.name, (
+          SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
+          FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+          WHERE tags.id = ANY((Array[workouts.tags])::uuid[]) AND tags_lang.language_id=${locale}
+        ) as tags, workouts.image_banner
+        FROM workouts JOIN workouts_lang wl ON wl.workout_id = workouts.id AND wl.language_id=${locale}
+        WHERE wl.name ILIKE ${`%${searchParams?.query ?? ''}%`};
+      `;
+    }
+    const { rowCount, rows } = workouts;
     if (rowCount === 0) {
       return null
     }
-    return workouts.map(({ tags, ...workout}: Omit<Workout, 'tags'> & { tags: string}) => ({
+    return rows.map(({ tags, ...workout}: Omit<Workout, 'tags'> & { tags: string}) => ({
       ...workout,
       tags: tags?.split(',').map((tag) => tag.split(':'))
     })) as Workout[];

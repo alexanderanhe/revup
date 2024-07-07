@@ -147,11 +147,12 @@
   },
   "Explore": {
     "title": "Explore",
-    "search": "Search for workouts"
+    "search": "Search for workouts",
+    "searchin": "Search for \"{tagName}\" workouts"
   },
   "Workout": {
     "title": "Workout",
-    "instructions": "Idioma",
+    "instructions": "Instructions",
     "warnings": "Warnings"
   },
   "auth": {

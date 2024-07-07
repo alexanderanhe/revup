@@ -148,7 +148,8 @@
   },
   "Explore": {
     "title": "Explorar",
-    "search": "Buscar entrenamientos"
+    "search": "Buscar entrenamientos",
+    "searchin": "Buscar entrenamientos de \"{tagName}\""
   },
   "Workout": {
     "title": "Ejercicio",

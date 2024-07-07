@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import Menu from "@/app/ui/explore/Menu";
 import Skeleton from "@/app/ui/explore/Skeleton";
 import { getTranslations } from "next-intl/server";
+import { getTagName } from "@/lib/data";
 
 type ExplorePageProps = {
   params: {
@@ -19,16 +20,17 @@ export default async function ExplorePage({
 }: ExplorePageProps) {
   const t = await getTranslations("Explore");
   const showWorkouts = searchParams && Boolean((searchParams?.query ?? '') || (searchParams?.tags ?? []).length);
+  const tagName = await getTagName(searchParams?.tags, locale) ?? t("title");
 
   return (
     <LayoutContent
-      title={ t("title") }
+      title={ !showWorkouts ? t("title") : tagName }
       showBackButton={showWorkouts}
       pageMenu={<Menu />}
       className="min-h-svh"
       footer
     >
-      <Search selector="query" placeholder="Search for workouts" />
+      <Search selector="query" placeholder={ !showWorkouts ? t("search") : t("searchin", { tagName }) } />
         <Suspense fallback={<Skeleton />}>
           <List searchParams={searchParams} locale={locale} />
         </Suspense>

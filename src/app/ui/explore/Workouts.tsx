@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
+import { useSearchParams } from "next/navigation"
 
 type WorkoutProps = {
   workout: Workout
@@ -21,9 +22,11 @@ const DEFAULT_FALLBACK_IMAGE: Image = {
 
 function WorkoutItem({ workout }: WorkoutProps) {
   const [image, setImage] = useState<Image>(DEFAULT_FALLBACK_IMAGE);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
-    const firstImage =  workout?.images?.[0] as WorkoutImage;
+    const firstImage =  workout?.image_banner?.[0] as WorkoutImage;
     if (firstImage) {
       setImage({
         name: firstImage.name,
@@ -50,6 +53,13 @@ function WorkoutItem({ workout }: WorkoutProps) {
             style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
           />
         )}
+        { !params.has('tags') && <div className="absolute top-1 right-1">{
+          workout?.tags?.filter(([_, type]) => type === 'muscle')
+            ?.map(([tag, type]) => (
+            <div key={`tag${tag}${type}`} className="badge badge-primary font-semibold p-3">
+              <span className="[&::first-letter]:capitalize">{ tag }</span>
+            </div>
+        ))}</div> }
       </Card>
     </Link>
   )

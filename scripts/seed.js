@@ -75,6 +75,7 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS workouts (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
+      image_banner JSONB NULL,
       images JSONB NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()

@@ -55,12 +55,16 @@ function refactorProperties(
       const property = properties[key];
       const content = property[property.type];
       switch (property.type) {
-        case "rich_text":
-        case "title": return content?.map(({ text }: { text : { content: string }}) => text.content).join('');
-        case "multi_select": return content?.map(({ name }: { name: string}) => name);
-        case "status": return content?.name;
-        case "files":
-        case "date": return content;
+        case "rich_text": case "title":
+          return content?.map(({ text }: { text : { content: string }}) => text.content).join('');
+        case "multi_select":
+          return content?.map(({ name }: { name: string}) => name);
+        case "status":
+          return content?.name;
+        case "last_edited_by":
+          return content?.id;
+        case "last_edited_time": case "url": case "files": case "date":
+          return content;
         default:
           console.log("Unknown property type", property.type)
           console.log("Content", property)
@@ -105,28 +109,18 @@ export async function getWorkoutsPage() {
 
       try {
         const refactoredProperties = refactorProperties(properties, tableWorkoutsProperties, propertiesKeys) as any;
-        const { id, tags: tagsWords, image, ...rest } = refactoredProperties;
-  
-        let workoutId = id as string;
-        if (!workoutId) {
-          const { rows: [ workout ]} = await client.sql`INSERT INTO workouts (tags, images) VALUES (NULL, NULL) RETURNING id`;
-          workoutId = workout.id;
-          console.log("Inserted new workout with id", workoutId);
-        } else {
-          await client.sql`UPDATE workouts SET tags = NULL, images = NULL WHERE id=${workoutId};`;
-          console.log("Updating workout with id", workoutId);
-        }
+        const { tags: tagsWords, image_banner, images, ...rest } = refactoredProperties;
   
         // Update the id and status of the page
         await updatePage(notion_id, {
-          ID: {
-            type: "rich_text",
-            rich_text: [{ text: {content: workoutId} }]
-          },
           Estatus: {
             type: "status",
             status: { name: "En progreso"}
-          }
+          },
+          Bot: {
+            type: "rich_text",
+            rich_text: [{ text: {content: ""} }]
+          },
         });
   
         const allTagsWords = tagsWords as string[];
@@ -136,18 +130,23 @@ export async function getWorkoutsPage() {
           JOIN tags_lang tl ON t.id = tl.tag_id
           WHERE TRIM(LOWER(tl.name)) IN (${allTagsWordsQueryNums})
         `, [ ...allTagsWords ]);
-        const tags = rows.map(({ id }: { id: string }) => id);
-  
+        
         // Update the workout in the database
-        const imageJson = image.length ? JSON.stringify(image) : null;
+        const tags = rows.map(({ id }: { id: string }) => id);
+        const imageBannerJson = image_banner.length ? JSON.stringify(image_banner) : null;
+        const imagesJson = images.length ? JSON.stringify(images) : null;
+
         await client.query(`
-          UPDATE workouts SET tags = Array[$1::uuid[]],
-          images=$2::jsonb
-          WHERE id=$3::uuid;
-        `, [ tags, imageJson, workoutId ]);
+          INSERT INTO workouts (id, tags, images)
+          VALUES ($1::uuid, NULL, NULL)
+          ON CONFLICT (id) DO UPDATE
+          SET tags = Array[$2::uuid[]],
+              image_banner=$3::jsonb,
+              images=$4::jsonb;
+        `, [ notion_id, tags, imageBannerJson, imagesJson ]);
   
         ['es', 'en'].forEach(async (lang) => {
-          const { rowCount } = await client.sql`SELECT * FROM workouts_lang WHERE workout_id=${workoutId} AND language_id=${lang}`;
+          const { rowCount } = await client.sql`SELECT * FROM workouts_lang WHERE workout_id=${notion_id} AND language_id=${lang}`;
           if (!rowCount) {
             await client.sql`INSERT INTO workouts_lang (name, description,instructions,warnings,language_id, workout_id)
               VALUES (
@@ -156,7 +155,7 @@ export async function getWorkoutsPage() {
                 ${<string>rest[`instructions_${lang}`]},
                 ${<string>rest[`warnings_${lang}`]},
                 ${lang},
-                ${workoutId}
+                ${notion_id}
               );
             `;
           } else {
@@ -165,7 +164,7 @@ export async function getWorkoutsPage() {
                   description=${<string>rest[`description_${ lang }`]},
                   instructions=${<string>rest[`instructions_${ lang }`]},
                   warnings=${<string>rest[`warnings_${ lang }`]}
-              WHERE workout_id=${workoutId} AND language_id=${ lang };
+              WHERE workout_id=${notion_id} AND language_id=${ lang };
             `;
           }
         });
