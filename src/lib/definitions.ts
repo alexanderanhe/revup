@@ -136,6 +136,7 @@ export const tableWorkoutsProperties: NotionTableProperties = {
   Estatus: "status",
   "Last edited by": "last_edited_by",
 };
+// https://video-a-gif.convertir-pdf.com/
 
 export const tablePlansProperties: NotionTableProperties = {
   ID: "id",
