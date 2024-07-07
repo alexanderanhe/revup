@@ -95,7 +95,7 @@ const sql = {
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
       password TEXT NULL,
-      email_verified BOOLEAN DEFAULT false,
+      email_verified TIMESTAMPTZ NULL,
       image TEXT,
       gender gender NULL,
       birthdate DATE NULL,
@@ -121,11 +121,11 @@ const sql = {
       provider_account_id VARCHAR(255) NOT NULL,
       refresh_token TEXT,
       access_token TEXT NOT NULL,
-      expires_at TIMESTAMP WITH TIME ZONE,
-      token_type VARCHAR(255),
-      scope TEXT,
+      expires_at BIGINT,
       id_token TEXT,
-      session_state TEXT
+      scope TEXT,
+      session_state TEXT,
+      token_type TEXT
     );`
   }, 'Created "accounts" table'],
   seedSessions: [{
@@ -138,9 +138,10 @@ const sql = {
   }, 'Created "sessions" table'],
   seedVerificationToken: [{
     createTable: `CREATE TABLE IF NOT EXISTS verification_tokens (
-      identifier VARCHAR(255) PRIMARY KEY,
+      identifier TEXT,
+      expires TIMESTAMPTZ NOT NULL,
       token TEXT NOT NULL,
-      expires TIMESTAMP WITH TIME ZONE NOT NULL
+      PRIMARY KEY (identifier, token)
     );`
   }, 'Created "verification_token" table'],
   seedAssessments: [{

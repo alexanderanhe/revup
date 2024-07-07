@@ -9,175 +9,91 @@ import {
   VerificationToken,
 } from "next-auth/adapters";
 
+export function mapExpiresAt(account: any): any {
+  const expires_at: number = parseInt(account.expires_at)
+  return {
+    ...account,
+    expires_at,
+  }
+}
+
 export default function vercelPostgresAdapter(): Adapter {
-  try {
-    const createUser = async (
-      user: Omit<AdapterUser, "id">
-    ): Promise<AdapterUser> => {
-      const { rows } = await sql`
-        INSERT INTO users (name, email, image) 
-        VALUES (${user.name}, ${user.email}, ${user.image}) 
-        RETURNING id, name, email, email_verified, image`;
-      // Create user info
-      const {rows: userInfo} = await sql`
-        INSERT INTO users_info (user_id) 
-        VALUES (${rows[0].id}) 
-        RETURNING theme, assessment, onboarding`;
-      const newUser: AdapterUser = {
-        ...rows[0],
-        id: rows[0].id.toString(),
-        emailVerified: rows[0].email_verified,
-        email: rows[0].email,
-        ...userInfo[0],
-      };
-      return newUser;
-    };
+  return {
+    async createVerificationToken(verificationToken: VerificationToken): Promise<VerificationToken | null | undefined> {
+      const { identifier, expires, token } = verificationToken
+      const { rows } = await sql<VerificationToken>`
+        INSERT INTO verification_tokens (identifier, token, expires) 
+        VALUES (${identifier}, ${token}, ${expires.toString()})`;
+      return rows[0];
+    },
+    //Return verification token from the database and delete it so it cannot be used again.
+    async useVerificationToken({
+      identifier,
+      token,
+    }: {
+      identifier: string;
+      token: string;
+    }): Promise<VerificationToken | null> {
+      const result = await sql<VerificationToken>`
+        delete from verification_token
+        where identifier = ${identifier} and token = $2
+        RETURNING identifier, expires, token;`;
+      return result.rowCount !== 0 ? result.rows[0] : null
+    },
 
-    const getUser = async (id: string) => {
-      const { rows } = await sql`
-          SELECT *
-          FROM users
-          WHERE id = ${id};
-        `;
-      return {
-        ...rows[0],
-        id: rows[0].id.toString(),
-        emailVerified: rows[0].email_verified,
-        email: rows[0].email,
-      };
-    };
+    async createUser(user: Omit<AdapterUser, "id">): Promise<AdapterUser> {
+      const { name, email, emailVerified, image } = user
+      const emailVerifiedString = emailVerified?.toDateString();
+      const { rows } = await sql<AdapterUser>`
+        INSERT INTO users (name, email, email_verified, image) 
+        VALUES (${name}, ${email}, ${emailVerifiedString}, ${image}) 
+        RETURNING id, name, email, email_verified as "emailVerified", image`;
+      // BRAYFIT: Create user info
+      await sql`INSERT INTO users_info (user_id) VALUES (${rows[0].id})`;
 
-    const getUserByEmail = async (email: string) => {
-      const { rows } = await sql`SELECT * FROM users WHERE email = ${email}`;
-      return rows[0]
-        ? {
-            ...rows[0],
-            id: rows[0].id.toString(),
-            emailVerified: rows[0].email_verified,
-            email: rows[0].email,
-          }
-        : null;
-    };
-
-    const getUserByAccount = async ({
+      return rows[0];
+    },
+    async getUser(id: string) {
+      try {
+        const result = await sql<AdapterUser>`SELECT *, email_verified as "emailVerified" FROM users WHERE id = ${id};
+      `;
+        return result.rowCount === 0 ? null : result.rows[0]
+      } catch (e) {
+        return null
+      }
+    },
+    async getUserByEmail(email: string) {
+      const result = await sql<AdapterUser>`SELECT *, email_verified as "emailVerified" FROM users WHERE email = ${email}`;
+      return result.rowCount !== 0 ? result.rows[0] : null;
+    },
+    async getUserByAccount({
       provider,
       providerAccountId,
     }: {
       provider: string;
       providerAccountId: string;
-    }): Promise<AdapterUser | null> => {
-      const { rows } = await sql`
-      SELECT u.* 
+    }): Promise<AdapterUser | null> {
+      const result = await sql<AdapterUser>`
+      SELECT u.*, email_verified as "emailVerified"
       FROM users u join accounts a on u.id = a.user_id 
       WHERE a.provider_id = ${provider} 
       AND a.provider_account_id = ${providerAccountId}`;
-      const user = rows[0]
-        ? {
-            email: rows[0].email,
-            emailVerified: rows[0].email_verified,
-            id: rows[0].id,
-          }
-        : null;
-      return user;
-    };
-
-    const updateUser = async (
-      user: Partial<AdapterUser> & Pick<AdapterUser, "id">
-    ): Promise<AdapterUser> => {
-      const { rows } = await sql`
-            UPDATE users
-            SET name = ${user.name}, email = ${user.email}, image = ${user.image}
-            WHERE id = ${user.id}
-            RETURNING id, name, email, image;
-            `;
-      const updatedUser: AdapterUser = {
-        ...rows[0],
-        id: rows[0].id.toString(),
-        emailVerified: rows[0].email_verified,
-        email: rows[0].email,
-      };
-      return updatedUser;
-    };
-
-    const deleteUser = async (userId: string) => {
-      await sql`DELETE FROM users WHERE id = ${userId}`;
-      return;
-    };
-
-    const createSession = async ({
-      sessionToken,
-      userId,
-      expires,
-    }: {
-      sessionToken: string;
-      userId: string;
-      expires: Date;
-    }): Promise<AdapterSession> => {
-      const expiresString = expires.toDateString();
-      await sql`
-        INSERT INTO auth_sessions (user_id, expires, session_token) 
-        VALUES (${userId}, ${expiresString}, ${sessionToken})
-      `;
-      const createdSession: AdapterSession = {
-        sessionToken,
-        userId,
-        expires,
-      };
-      return createdSession;
-    };
-
-    const getSessionAndUser = async (
-      sessionToken: string | undefined
-    ): Promise<{ session: AdapterSession; user: AdapterUser } | null> => {
-      const session = await sql`
-        SELECT * 
-        FROM auth_sessions 
-        WHERE session_token = ${sessionToken}`;
-
-      const { rows } = await sql`
-        SELECT * FROM users
-        WHERE id = ${session.rows[0]?.user_id}`;
-      const expiresDate = new Date(session.rows[0].expires);
-      const sessionAndUser: { session: AdapterSession; user: AdapterUser } = {
-        session: {
-          sessionToken: session.rows[0].session_token,
-          userId: session.rows[0].user_id,
-          expires: expiresDate,
-        },
-        user: {
-          id: rows[0].id,
-          emailVerified: rows[0].email_verified,
-          email: rows[0].email,
-          name: rows[0].name,
-          image: rows[0].image,
-        },
-      };
-
-      return sessionAndUser;
-    };
-
-    const updateSession = async (
-      session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">
-    ): Promise<AdapterSession | null | undefined> => {
-      console.log(
-        "Unimplemented function! updateSession in vercelPostgresAdapter. Session:",
-        JSON.stringify(session)
-      );
-      return;
-    };
-
-    const deleteSession = async (sessionToken: string) => {
-      await sql`
-          DELETE FROM auth_sessions
-          WHERE session_token = ${sessionToken};
+      return result.rowCount !== 0 ? result.rows[0] : null
+    },
+    async updateUser(user: Partial<AdapterUser> & Pick<AdapterUser, "id">): Promise<AdapterUser> {
+      const { id, name, email, emailVerified, image } = user
+      const { rows } = await sql<AdapterUser>`
+        UPDATE users SET
+        name = ${name}, email = ${email}, email_verified = ${String(emailVerified)}, image = ${image}
+        WHERE id = ${id}
+        RETURNING id, name, email, email_verified as "emailVerified", image;
         `;
-      return;
-    };
-
-    const linkAccount = async (
+      return rows[0];
+    },
+    async linkAccount(
       account: AdapterAccount
-    ): Promise<AdapterAccount | null | undefined> => {
-      await sql`
+    ): Promise<AdapterAccount | null | undefined> {
+      const result = await sql`
         INSERT INTO accounts (
             user_id, 
             provider_id, 
@@ -197,83 +113,121 @@ export default function vercelPostgresAdapter(): Adapter {
             ${account.providerAccountId}, 
             ${account.refresh_token},
             ${account.access_token}, 
-            to_timestamp(${account.expires_at}),
+            ${account.expires_at},
             ${account.token_type},
             ${account.scope},
             ${account.id_token}
-        )`;
-      return account;
-    };
+        )
+        RETURNING
+          id,
+          user_id as "userId", 
+          provider_id as provider, 
+          provider_type as type, 
+          provider_account_id as "providerAccountId", 
+          access_token,
+          expires_at,
+          refresh_token,
+          id_token,
+          scope,
+          session_state,
+          token_type`;
+        return mapExpiresAt(result.rows[0])
+    },
+    async createSession({
+      sessionToken,
+      userId,
+      expires,
+    }: {
+      sessionToken: string;
+      userId: string | undefined;
+      expires: Date;
+    }): Promise<AdapterSession> {
+      if (userId === undefined) {
+        throw Error(`userId is undef in createSession`)
+      }
+      const expiresString = expires.toDateString();
+      const result = await sql<AdapterSession>`INSERT INTO auth_sessions
+      (user_id, expires, session_token)
+      values (${userId}, ${expiresString}, ${sessionToken})
+      RETURNING id, session_token as "sessionToken", user_id as "userId", expires`
+      return result.rows[0]
+    },
 
-    const unlinkAccount = async ({
+    async getSessionAndUser(sessionToken: string | undefined): Promise<{
+      session: AdapterSession;
+      user: AdapterUser
+    } | null> {
+      if (sessionToken === undefined) {
+        return null
+      }
+      const result1 = await sql<AdapterSession>`
+        SELECT id, expires, session_token as "sessionToken", user_id as "userId"
+        FROM auth_sessions WHERE session_token = ${sessionToken}
+      `;
+      if (result1.rowCount === 0) {
+        return null
+      }
+      let session = result1.rows[0];
+      const expiresDate = new Date(session.expires);
+
+      const result2 = await sql`SELECT * FROM users WHERE id = ${session.userId}`;
+      if (result2.rowCount === 0) {
+        return null
+      }
+      const user = result2.rows[0]
+
+      const sessionAndUser: { session: AdapterSession; user: AdapterUser } = {
+        session: {
+          sessionToken: session.sessionToken,
+          userId: session.userId,
+          expires: expiresDate,
+        },
+        user: {
+          id: user.id,
+          emailVerified: user.email_verified,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        },
+      };
+
+      return sessionAndUser;
+    },
+    async updateSession(
+      session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">
+    ): Promise<AdapterSession | null | undefined> {
+      const { sessionToken, expires } = session;
+      const expiresString = expires?.toDateString();
+
+      const result = await sql<AdapterSession>`
+        UPDATE auth_sessions SET expires = ${expiresString}
+        WHERE session_token = ${sessionToken}
+        RETURNING id, session_token as "sessionToken", user_id as "userId", expires
+      `;
+      return result.rows[0]
+    },
+    async deleteSession(sessionToken: string) {
+      await sql`
+        DELETE FROM auth_sessions
+        WHERE session_token = ${sessionToken};
+      `;
+    },
+    async unlinkAccount({
       providerAccountId,
       provider,
     }: {
       providerAccountId: Account["providerAccountId"];
       provider: Account["provider"];
-    }) => {
+    }) {
       await sql`
-            DELETE FROM accounts 
-            WHERE provider_account_id = ${providerAccountId} AND provider_id = ${provider}}`;
-      return;
-    };
-
-    const createVerificationToken = async ({
-      identifier,
-      expires,
-      token,
-    }: VerificationToken): Promise<VerificationToken | null | undefined> => {
-      const { rows } = await sql`
-        INSERT INTO verification_tokens (identifier, token, expires) 
-        VALUES (${identifier}, ${token}, ${expires.toString()})`;
-      const createdToken: VerificationToken = {
-        identifier: rows[0].identifier,
-        token: rows[0].token,
-        expires: rows[0].expires,
-      };
-      return createdToken;
-    };
-
-    //Return verification token from the database and delete it so it cannot be used again.
-    const useVerificationToken = async ({
-      identifier,
-      token,
-    }: {
-      identifier: string;
-      token: string;
-    }) => {
-      const { rows } = await sql`
-        SELECT * FROM verification_tokens 
-        WHERE identifier = ${identifier} 
-        AND token = ${token} AND expires > NOW()`;
-      await sql`
-        DELETE FROM verification_tokens
-        WHERE identifier = ${identifier}
-        AND token = ${token}`;
-      return {
-        expires: rows[0].expires,
-        identifier: rows[0].identifier,
-        token: rows[0].token,
-      };
-    };
-
-    return {
-      createUser,
-      getUser,
-      updateUser,
-      getUserByEmail,
-      getUserByAccount,
-      deleteUser,
-      getSessionAndUser,
-      createSession,
-      updateSession,
-      deleteSession,
-      createVerificationToken,
-      useVerificationToken,
-      linkAccount,
-      unlinkAccount,
-    };
-  } catch (error) {
-    throw error;
+        DELETE FROM accounts 
+        WHERE provider_account_id = ${providerAccountId} AND provider_id = ${provider}}
+      `;
+    },
+    async deleteUser(userId: string) {
+      await sql`DELETE FROM users WHERE id = ${userId}`;
+      await sql`DELETE FROM auth_sessions WHERE user_id = ${userId}`;
+      await sql`DELETE FROM accounts WHERE user_id = ${userId}`;
+    },
   }
 }
