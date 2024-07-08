@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthFacebook, AuthGithub, AuthGoogle } from '@/app/ui/auth/SocialButtons';
+import { SocialButtons } from '@/app/ui/auth/SocialButtons';
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { LoginModal } from '@/lib/features/app';
 import { PAGES } from '@/lib/routes';
@@ -97,9 +97,7 @@ export default function SignUp({ setModal, globalForm, setGlobalForm }: SignUpPr
         </div>
 
         <div className="flex items-center justify-center gap-8 w-full">
-          <AuthGoogle />
-          <AuthFacebook />
-          <AuthGithub />
+          <SocialButtons />
         </div>
         <div className="flex gap-2 text-center text-sm justify-center">
           I have already an account

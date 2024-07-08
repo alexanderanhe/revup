@@ -20,8 +20,8 @@ export default function LayoutContentTitle({ title, pageMenu, hasMenu, showBackB
     <div className="sticky top-0 full-width bg-base-100 w-full z-30 py-4">
       <div className="grid grid-cols-[auto_1fr_auto] place-items-center w-full">
         {isChild || !hasMenu || showBackButton ? (
-          <BackButton className="btn btn-sm btn-square btn-ghost bg-[#F7F8F8] rounded-lg btn-ghost">
-            <ChevronLeftIcon className="size-2.5 text-[#1D1617]" />
+          <BackButton className="btn btn-square rounded-lg">
+            <ChevronLeftIcon className="size-4" />
           </BackButton>
         ) : <div className="w-8"></div>}
         <h1 className="text-base font-bold text-center [&::first-letter]:capitalize">{ title }</h1>

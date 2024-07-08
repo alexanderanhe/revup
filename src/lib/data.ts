@@ -197,6 +197,24 @@ export async function getWorkout(workoutId: string, locale: string): Promise<Wor
   }
 }
 
+export async function getWorkoutsLiked(): Promise<string[] | null> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      return null;
+    }
+    const { rows } = await sql`
+      SELECT workout_id FROM workouts_liked
+      WHERE user_id=${user.id} AND enabled=true
+    `;
+    return rows.map(({ workout_id }: any) => workout_id);
+  } catch (error) {
+    console.error('Failed to fetch workouts liked:', error);
+    return null;
+  }
+}
+
 export async function getWorkouts(searchParams: FilterSearchParams, locale: string): Promise<Workout[] | GroupsWorkout[] | null> {
   try {
     const tag = String(searchParams?.tags ?? '');
@@ -238,6 +256,29 @@ export async function getWorkouts(searchParams: FilterSearchParams, locale: stri
   }
 }
 
+export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean): Promise<void> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+    if (!workoutId) {
+      throw new Error('WorkoutId is empty.');
+    }
+
+    await sql`
+      INSERT INTO workouts_liked (user_id, workout_id, enabled)
+      VALUES (${user.id}, ${workoutId}, ${enabled})
+      ON CONFLICT (user_id, workout_id) DO UPDATE
+      SET enabled=${enabled};
+    `;
+  } catch (error) {
+    console.error('Failed to set workout liked:', error);
+    throw new Error('Failed to set workout liked.');
+  }
+
+}
 
 export async function saveAssessment(formData: FormData): Promise<{assessment_id: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));

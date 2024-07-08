@@ -1,11 +1,48 @@
 'use client'
 
-import { BookmarkIcon } from "@heroicons/react/24/outline"
+import { useEffect, useState } from "react";
+import { useFormState } from "react-dom";
+import clsx from "clsx";
 
-export default function LikeButton() {
+import { handleSetWorkoutLiked } from "@/lib/actions";
+import { BookmarkIcon } from "@heroicons/react/24/solid"
+import SubmitButton from "@/app/ui/utils/SubmitButton";
+import { Link } from "@/navigation";
+
+type LikeButtonProps = {
+  workoutId: string;
+  enabled: boolean;
+}
+
+export function LikeButton({ workoutId, enabled }: LikeButtonProps) {
+  const [ formState, formAction ] = useFormState(handleSetWorkoutLiked, null);
+  const [ liked, setLiked ] = useState<boolean>(enabled);
+
+  useEffect(() => {
+    if (formState === 'done') {
+      setLiked(!liked);
+    }
+  }, [formState]);
+
   return (
-    <button type="button" className="btn btn-sm btn-square btn-ghost bg-[#F7F8F8] rounded-lg btn-ghost">
-      <BookmarkIcon className="size-3 text-[#1D1617]" />
-    </button>
+    <form action={formAction}>
+      <input type="hidden" name="workoutId" value={ workoutId } />
+      <input type="hidden" name="enabled" value={ !liked ? '1' : '0' } />
+      <SubmitButton className={clsx(
+        "btn btn-square rounded-lg",
+        liked ? "btn-primary" : ""
+      )}>
+        <BookmarkIcon className="size-4" />
+      </SubmitButton>
+    </form>
+  )
+}
+
+
+export function UnauthLikeButton() {
+  return (
+    <Link href="/login" className="btn btn-square rounded-lg">
+      <BookmarkIcon className="size-4" />
+    </Link>
   )
 }

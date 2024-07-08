@@ -6,7 +6,7 @@ import { useFormState } from "react-dom";
 import { authenticateFacebook, authenticateGithub, authenticateGoogle } from "@/lib/actions";
 import { DEFAULT_REDIRECT } from "@/lib/routes";
 
-export function AuthGoogle() {
+function AuthGoogle() {
   const [ formState, formAction ] = useFormState(authenticateGoogle, null);
   useEffect(() => {
     formState === "done" && redirect(DEFAULT_REDIRECT);
@@ -19,7 +19,7 @@ export function AuthGoogle() {
     </form>
   )
 }
-export function AuthFacebook() {
+function AuthFacebook() {
   const [ formState, formAction ] = useFormState(authenticateFacebook, null);
   useEffect(() => {
     formState === "done" && redirect(DEFAULT_REDIRECT);
@@ -32,7 +32,7 @@ export function AuthFacebook() {
     </form>
   )
 }
-export function AuthGithub() {
+function AuthGithub() {
   const [ formState, formAction ] = useFormState(authenticateGithub, null);
   useEffect(() => {
     formState === "done" && redirect(DEFAULT_REDIRECT);
@@ -43,5 +43,15 @@ export function AuthGithub() {
         <Image width={18} height={18} src="/images/github.svg" alt="GitHub" className="size-[18px]" />
       </SubmitButton>
     </form>
+  )
+}
+
+export function SocialButtons() {
+  return (
+    <>
+      <AuthGoogle />
+      {/* <AuthFacebook /> */}
+      <AuthGithub />
+    </>
   )
 }

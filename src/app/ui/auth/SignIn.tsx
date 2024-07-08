@@ -7,7 +7,7 @@ import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 import { authenticate } from '@/lib/actions';
-import { AuthFacebook, AuthGithub, AuthGoogle } from '@/app/ui/auth/SocialButtons';
+import { SocialButtons } from '@/app/ui/auth/SocialButtons';
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { Form, MultipleLoginModal } from '@/app/ui/auth/AuthPanel';
 import Input from '@/app/ui/Input';
@@ -101,9 +101,7 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
         </div>
 
         <div className="flex items-center justify-center gap-8 w-full">
-          <AuthGoogle />
-          <AuthFacebook />
-          <AuthGithub />
+          <SocialButtons />
         </div>
 
         <div className="flex gap-2 text-center text-sm justify-center">

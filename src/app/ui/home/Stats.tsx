@@ -3,6 +3,7 @@
 // import { selectAssessment } from "@/lib/features/app";
 // import { useAppSelector } from "@/lib/hooks";
 import { Link } from "@/navigation";
+import Card from "../Card";
 
 const Stats = () => {
   // const hasAssessment = useAppSelector(selectAssessment);
@@ -15,16 +16,18 @@ const Stats = () => {
 
   return (
     <>
-      <section className="grid grid-cols-[1fr_auto] place-items-center rounded-3xl bg-black p-4">
-        <Link
-          href="/workout"
-          className="w-full text-white"
-        >
-          <strong>Progreso del Ejercicios</strong>
-          <p>12 rutinas restantes</p>
-        </Link>
-        <div className="radial-progress text-white text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
-      </section>
+      <Card>
+        <section className="grid grid-cols-[1fr_auto] place-items-center w-full">
+          <Link
+            href="/workout"
+            className="w-full"
+          >
+            <strong>Progreso del Ejercicios</strong>
+            <p>12 rutinas restantes</p>
+          </Link>
+          <div className="radial-progress text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
+        </section>
+      </Card>
       <section>
         <h2>Weekly stats</h2>
         <div className="grid grid-cols-2 grid-rows-3 w-full gap-2">

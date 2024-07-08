@@ -1,5 +1,7 @@
 import { ArrowLongRightIcon, ArrowPathIcon, BoltIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/24/outline";
 import CalendarDrawerNested from "./CalendarDrawerNested";
+import { RocketLaunchIcon } from "@heroicons/react/24/solid";
+import clsx from "clsx";
 
 export default function WorkoutDay() {
   return (
@@ -9,8 +11,23 @@ export default function WorkoutDay() {
         Recent workouts
       </div>
 
-      <div className="grid place-items-center font-semibold bg-base-200 text-base-300 rounded-lg p-4 flex-1">
-        No workouts
+      <div className="grid place-items-start font-semibold bg-base-200 text-base-200-content text-base-300 rounded-lg p-4 flex-1 w-full">
+        {/* { 'No workouts' } */}
+        <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical">
+          { workouts.map((workout, i, workouts) => (
+            <li key={`warning${i}`}>
+              <div className="timeline-middle">
+                <RocketLaunchIcon className="size-4 text-secondary" />
+              </div>
+              <div className="timeline-end font-medium mb-5">
+                {/* <time className="font-mono italic">1984</time> */}
+                {/* <div className="text-lg font-black">First Macintosh computer</div> */}
+                { workout }
+              </div>
+              <hr className={clsx(workouts.length - 1 === i && 'hidden')} />
+            </li>
+          ))}
+        </ul>
       </div>
 
       <hr className="h-px bg-gray-200 border-0" />
@@ -42,3 +59,8 @@ export default function WorkoutDay() {
     </div>
   )
 }
+
+const workouts = [
+  'Workout 1',
+  'Workout 2',
+]

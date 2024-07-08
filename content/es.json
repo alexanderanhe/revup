@@ -154,7 +154,8 @@
   "Workout": {
     "title": "Ejercicio",
     "instructions": "Instrucciones",
-    "warnings": "Advertencias"
+    "warnings": "Advertencias",
+    "notFound": "No se encontró el ejercicio"
   },
   "auth": {
     "login": "Log in",

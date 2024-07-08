@@ -7,13 +7,13 @@ import { Drawer } from 'vaul'
 export default function Menu() {
   return (
     <div className="flex gap-2">
-      <button type="button" className="btn btn-sm btn-square btn-ghost bg-[#F7F8F8] rounded-lg btn-ghost">
-        <BookmarkIcon className="size-3 text-[#1D1617]" />
+      <button type="button" className="btn btn-square rounded-lg">
+        <BookmarkIcon className="size-4" />
       </button>
       <Drawer.Root shouldScaleBackground>
         <Drawer.Overlay className="fixed inset-0 bg-black/80" />
-        <Drawer.Trigger className="btn btn-sm btn-square btn-ghost bg-[#F7F8F8] rounded-lg btn-ghost">
-          <FunnelIcon className="size-3 text-[#1D1617]" />
+        <Drawer.Trigger className="btn btn-square rounded-lg">
+          <FunnelIcon className="size-4" />
         </Drawer.Trigger>
         <Drawer.Portal>
           <Drawer.Content className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">

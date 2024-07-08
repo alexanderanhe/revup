@@ -71,7 +71,80 @@ const sql = {
       }
     }
   }, 'Created "tags" table'],
+  seedUsers: [{
+    createTable: `CREATE TABLE IF NOT EXISTS users (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      password TEXT NULL,
+      email_verified TIMESTAMPTZ NULL,
+      image TEXT,
+      gender gender NULL,
+      birthdate DATE NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );`,
+    createTable: `CREATE TABLE IF NOT EXISTS users_info (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      theme CHAR(10) NOT NULL DEFAULT 'light',
+      assessment BOOLEAN DEFAULT false,
+      onboarding BOOLEAN DEFAULT false,
+      user_id UUID NULL REFERENCES users(id)
+    );`
+  }, 'Created "users" table'],
   seedWorkouts: [{
+    createTable: `CREATE TABLE IF NOT EXISTS workouts (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      tags UUID[] DEFAULT NULL,
+      image_banner JSONB NULL,
+      images JSONB NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );`,
+    createTableLanguages: `CREATE TABLE IF NOT EXISTS workouts_lang (
+      name VARCHAR(100) NOT NULL,
+      description TEXT DEFAULT NULL,
+      instructions TEXT DEFAULT NULL,
+      warnings TEXT DEFAULT NULL,
+      language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
+      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
+    );`,
+    createUsersLikedTable: `CREATE TABLE IF NOT EXISTS workouts_liked (
+      workout_id UUID NULL REFERENCES workouts(id),
+      user_id UUID NULL REFERENCES users(id),
+      enabled BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (workout_id, user_id)
+    );`,
+  }, 'Created "workouts", "workouts_lang" and "workouts_liked" tables'],
+  seedPlans: [{
+    createTable: `CREATE TABLE IF NOT EXISTS workouts (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      tags UUID[] DEFAULT NULL,
+      image_banner JSONB NULL,
+      images JSONB NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );`,
+    createTableUsers: `CREATE TABLE IF NOT EXISTS workouts_lang (
+      name VARCHAR(100) NOT NULL,
+      description TEXT DEFAULT NULL,
+      instructions TEXT DEFAULT NULL,
+      warnings TEXT DEFAULT NULL,
+      language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
+      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
+    );`,
+    createTableWorkoutsComplex: `CREATE TABLE IF NOT EXISTS workouts_lang (
+      name VARCHAR(100) NOT NULL,
+      description TEXT DEFAULT NULL,
+      instructions TEXT DEFAULT NULL,
+      warnings TEXT DEFAULT NULL,
+      language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
+      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
+    );`
+  }, 'Created "workouts" table'],
+  seedPlansUser: [{
     createTable: `CREATE TABLE IF NOT EXISTS workouts (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
@@ -89,29 +162,6 @@ const sql = {
       workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
     );`
   }, 'Created "workouts" table'],
-  seedUsers: [{
-    createTable: `CREATE TABLE IF NOT EXISTS users (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      password TEXT NULL,
-      email_verified TIMESTAMPTZ NULL,
-      image TEXT,
-      gender gender NULL,
-      birthdate DATE NULL,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    );`
-  }, 'Created "users" table'],
-  seedUsersInfo: [{
-    createTable: `CREATE TABLE IF NOT EXISTS users_info (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      theme CHAR(10) NOT NULL DEFAULT 'light',
-      assessment BOOLEAN DEFAULT false,
-      onboarding BOOLEAN DEFAULT false,
-      user_id UUID NULL REFERENCES users(id)
-    );`
-  }, 'Created "users_info" table'],
   seedAccounts: [{
     createTable: `CREATE TABLE IF NOT EXISTS accounts (
       id SERIAL PRIMARY KEY,

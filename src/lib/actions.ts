@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme, wait } from '@/lib/data';
+import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
  
 // ...
@@ -186,6 +186,19 @@ export async function handleAcceptCookies(
 ): Promise<string> {
   try {
     cookies().set(APPCOOKIES.ACCEPTCOOKIES, '1', { httpOnly: true });
+    return 'done';
+  } catch (error) {
+    return 'error';
+  }
+}
+export async function handleSetWorkoutLiked(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
+    console.log(workoutId, enabled, !!enabled);
+    await setWorkoutsUserLiked(<string>workoutId, !!enabled );
     return 'done';
   } catch (error) {
     return 'error';
