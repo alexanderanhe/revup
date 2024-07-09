@@ -8,7 +8,7 @@ const menuNavLinks: MenuNavLinks[] = [
   { name: 'Ejercicios', href: '/workout', current: ['nav'] },
   { name: 'Explore', href: '/explore', current: ['footer'], Icon: ExploreIcon },
   { name: 'Logs', href: '/logs', current: ['nav', 'footer'], Icon: AnalyticsIcon },
-  { name: 'Ajustes', href: '/profile', current: ['footer'], Icon: ProfileIcon },
+  { name: 'Perfil', href: '/profile', current: ['footer'], Icon: ProfileIcon },
   { name: 'About', href: '/about', current: ['nav'] },
 ];
 export { menuNavLinks };

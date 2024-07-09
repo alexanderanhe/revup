@@ -3,6 +3,7 @@ import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
 import { APPCOOKIES, User } from "@/lib/definitions";
 import { auth } from "@/auth";
+import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 
 type HomeLayoutProps = {
   children: React.ReactNode;
@@ -27,5 +28,9 @@ export default async function HomeLayout({ children }: HomeLayoutProps) {
     user && !userAssessment) {
     redirect(ASSESSMENT);
   }
-  return children;
+  return (
+    <LayoutContent title="" head footer>
+      { children }
+    </LayoutContent>
+  );
 }

@@ -1,14 +1,18 @@
 'use client'
 
-import { Workout, WorkoutImage, WorkoutImageLink } from "@/lib/definitions"
-import Image from "next/image"
 import { useEffect, useState } from "react"
-import Card from "@/app/ui/Card"
-import { Link } from "@/navigation"
 import { useSearchParams } from "next/navigation"
+import Image from "next/image"
+import { BookmarkIcon } from "@heroicons/react/24/solid"
+
+import { Link } from "@/navigation"
+import Card from "@/app/ui/Card"
+import { Workout, WorkoutImage, WorkoutImageLink } from "@/lib/definitions"
+import { PAGES } from "@/lib/routes"
 
 type WorkoutProps = {
-  workout: Workout
+  workout: Workout,
+  liked: boolean
 }
 
 type Image = {
@@ -20,7 +24,7 @@ const DEFAULT_FALLBACK_IMAGE: Image = {
   name: "Default fallback image"
 }
 
-function WorkoutItem({ workout }: WorkoutProps) {
+function WorkoutItem({ workout, liked }: WorkoutProps) {
   const [image, setImage] = useState<Image>(DEFAULT_FALLBACK_IMAGE);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -37,7 +41,7 @@ function WorkoutItem({ workout }: WorkoutProps) {
 }, []);
 
   return (
-    <Link href={`/explore/${workout.id}`} className="w-full">
+    <Link href={`${PAGES.WORKOUT}/${workout.id}`} className="w-full">
       <Card className="relative h-28">
         <div className="grid items-end justify-start w-full h-full z-[1] font-semibold">
           {workout.name}
@@ -53,27 +57,35 @@ function WorkoutItem({ workout }: WorkoutProps) {
             style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
           />
         )}
-        { !params.has('tags') && <div className="absolute top-1 right-1">{
-          workout?.tags?.filter(([_, type]) => type === 'muscle')
+        <div className="absolute top-0 right-0 flex gap-2 items-center p-3">
+          { !params.has('tags')
+            && workout?.tags?.filter(([_, type]) => type === 'muscle')
             ?.map(([tag, type]) => (
-            <div key={`tag${tag}${type}`} className="badge badge-primary font-semibold p-3">
+            <div key={`tag${tag}${type}`} className="badge badge-neutral text-primary font-semibold p-2">
               <span className="[&::first-letter]:capitalize">{ tag }</span>
             </div>
-        ))}</div> }
+          ))}
+          { liked && <BookmarkIcon className="size-4 text-primary" />}
+        </div>
       </Card>
     </Link>
   )
 }
 
 type WorkoutsProps = {
-  workouts: Workout[] | null
+  workouts: Workout[] | null,
+  userWorkoutIdsLiked: string[]
 }
 
-export default function Workouts({ workouts }: WorkoutsProps) {
+export default function Workouts({ workouts, userWorkoutIdsLiked }: WorkoutsProps) {
   return (
     <section className="w-full p-0">
       {workouts?.map((workout) => (
-        <WorkoutItem key={workout.id} workout={workout} />
+        <WorkoutItem
+          key={workout.id}
+          workout={workout}
+          liked={userWorkoutIdsLiked.includes(workout?.id ?? '')}
+        />
       ))}
     </section>
   )

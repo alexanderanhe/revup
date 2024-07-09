@@ -28,7 +28,7 @@ export default async function HomePage() {
   }
 
   return (
-    <LayoutContent title="" head footer>
+    <>
       <Assessment />
       { user && <Stats /> }
       {/* <section className="grid grid-cols-autofit">
@@ -65,6 +65,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section> */}
-    </LayoutContent>
+    </>
   );
 }

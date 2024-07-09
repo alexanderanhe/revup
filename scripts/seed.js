@@ -1,15 +1,20 @@
 const { db } = require('@vercel/postgres');
 
 const sql = {
-  dropAll: [{
+  dropAll: [{ // TODO: Add drop tables for plans
     dropUserInfo: 'DROP TABLE IF EXISTS users_info;',
     dropAssessments: 'DROP TABLE IF EXISTS assessments;',
     dropVerificationToken: 'DROP TABLE IF EXISTS verification_tokens;',
     dropAuthSessions: 'DROP TABLE IF EXISTS auth_sessions;',
     dropTagsLang: 'DROP TABLE IF EXISTS tags_lang;',
-    dropTags: 'DROP TABLE IF EXISTS tags;',
     dropWorkoutsLang: 'DROP TABLE IF EXISTS workouts_lang;',
+    dropPlansUser: 'DROP TABLE IF EXISTS plans_user;',
+    dropPlansLang: 'DROP TABLE IF EXISTS plans_lang;',
+    dropPlans: 'DROP TABLE IF EXISTS plans;',
+    dropWorkoutsComplex: 'DROP TABLE IF EXISTS workouts_complex;',
+    dropWorkoutsLiked: 'DROP TABLE IF EXISTS workouts_liked;',
     dropWorkouts: 'DROP TABLE IF EXISTS workouts;',
+    dropTags: 'DROP TABLE IF EXISTS tags;',
     dropAccounts: 'DROP TABLE IF EXISTS accounts;',
     dropUsers: 'DROP TABLE IF EXISTS users;',
     dropLanguages: 'DROP TABLE IF EXISTS languages;',
@@ -18,7 +23,7 @@ const sql = {
   }, 'Dropped all types and tables'],
   seedTypes: [{
     createGenderType: 'CREATE TYPE gender AS ENUM (\'M\', \'F\', \'O\');',
-    createTagType: 'CREATE TYPE tagType AS ENUM (\'muscle\', \'equipment\', \'difficulty\', \'goal\', \'place\', \'other\');',
+    createTagType: 'CREATE TYPE tagType AS ENUM (\'muscle\', \'equipment\', \'difficulty\', \'goal\', \'place\', \'gender\', \'other\');',
   }, 'Created "types" table'],
   seedLanguages: [{
     createtable: `CREATE TABLE IF NOT EXISTS languages (
@@ -32,13 +37,15 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS tags (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       type tagType NOT NULL,
+      parent_id UUID NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );`,
     createTableLanguages: `CREATE TABLE IF NOT EXISTS tags_lang (
       name VARCHAR(100) NOT NULL,
+      tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
       language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
-      tag_id UUID REFERENCES tags(id) ON DELETE CASCADE
+      PRIMARY KEY (tag_id, language_id)
     );`,
     insertDefault: async function (client) {
       const tags = [
@@ -59,6 +66,23 @@ const sql = {
         ['place', 'home', 'casa'],
         ['place', 'gym', 'gimnasio'],
         ['place', 'outdoor', 'aire libre'],
+        // -- Insert tags goal
+        ['goal', 'general muscle building', 'ganar masa muscular'],
+        ['goal', 'weight loss', 'perder peso'],
+        ['goal', 'keeping fit', 'mantenerse en forma'],
+        // -- Insert tags gender
+        ['gender', 'men', 'hombre'],
+        ['gender', 'woman', 'mujer'],
+        // -- Insert tags difficulty
+        ['difficulty', 'no experience', 'sin experiencia'],
+        ['difficulty', 'beginner', 'principiante'],
+        ['difficulty', 'advanced', 'avanzado'],
+        ['difficulty', 'expert', 'experto'],
+        ['difficulty', 'professional', 'profesional'],
+        // -- Insert tags others
+        ['other', 'upper body', 'parte superior'],
+        ['other', 'legs+shoulders', 'piernas+hombros'],
+        ['other', 'full body', 'cuerpo completo'],
       ]
       for (const tag of tags) {
         const [type, nameEn, nameEs] = tag;
@@ -84,7 +108,7 @@ const sql = {
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );`,
-    createTable: `CREATE TABLE IF NOT EXISTS users_info (
+    createInfoTable: `CREATE TABLE IF NOT EXISTS users_info (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       theme CHAR(10) NOT NULL DEFAULT 'light',
       assessment BOOLEAN DEFAULT false,
@@ -106,7 +130,26 @@ const sql = {
       description TEXT DEFAULT NULL,
       instructions TEXT DEFAULT NULL,
       warnings TEXT DEFAULT NULL,
+      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE,
       language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
+      PRIMARY KEY (workout_id, language_id)
+    );`,
+    createTableWorkoutsComplex: `CREATE TABLE IF NOT EXISTS workouts_complex (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name VARCHAR(100) NOT NULL,
+      body_zone UUID REFERENCES tags(id) DEFAULT NULL,
+      reps SMALLINT DEFAULT NULL,
+      time SMALLINT DEFAULT NULL,
+      time_unit CHAR(3) DEFAULT NULL,
+      rest SMALLINT DEFAULT NULL,
+      rest_between SMALLINT DEFAULT NULL,
+      rest_sets SMALLINT DEFAULT NULL,
+      sets SMALLINT DEFAULT NULL,
+      weight SMALLINT DEFAULT NULL,
+      weight_unit CHAR(2) DEFAULT NULL,
+      total_minutes SMALLINT DEFAULT NULL,
+      comments TEXT DEFAULT NULL,
+      recommendations TEXT DEFAULT NULL,
       workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
     );`,
     createUsersLikedTable: `CREATE TABLE IF NOT EXISTS workouts_liked (
@@ -117,51 +160,29 @@ const sql = {
       updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (workout_id, user_id)
     );`,
-  }, 'Created "workouts", "workouts_lang" and "workouts_liked" tables'],
-  seedPlans: [{
-    createTable: `CREATE TABLE IF NOT EXISTS workouts (
+  }, 'Created "workouts", "workouts_lang", "workouts_complex" and "workouts_liked" tables'],
+  seedPlans: [{ // TODO: Add tables for plans
+    createTable: `CREATE TABLE IF NOT EXISTS plans (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
-      image_banner JSONB NULL,
-      images JSONB NULL,
+      workouts_complex UUID[] DEFAULT NULL,
+      custom_email VARCHAR(255) NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );`,
-    createTableUsers: `CREATE TABLE IF NOT EXISTS workouts_lang (
+    createTableLanguages: `CREATE TABLE IF NOT EXISTS plans_lang (
       name VARCHAR(100) NOT NULL,
-      description TEXT DEFAULT NULL,
-      instructions TEXT DEFAULT NULL,
-      warnings TEXT DEFAULT NULL,
+      comments TEXT DEFAULT NULL,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
       language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
-      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
+      PRIMARY KEY (plan_id, language_id)
     );`,
-    createTableWorkoutsComplex: `CREATE TABLE IF NOT EXISTS workouts_lang (
-      name VARCHAR(100) NOT NULL,
-      description TEXT DEFAULT NULL,
-      instructions TEXT DEFAULT NULL,
-      warnings TEXT DEFAULT NULL,
-      language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
-      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
+    createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      PRIMARY KEY (user_id, plan_id)
     );`
-  }, 'Created "workouts" table'],
-  seedPlansUser: [{
-    createTable: `CREATE TABLE IF NOT EXISTS workouts (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      tags UUID[] DEFAULT NULL,
-      image_banner JSONB NULL,
-      images JSONB NULL,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    );`,
-    createTableLanguages: `CREATE TABLE IF NOT EXISTS workouts_lang (
-      name VARCHAR(100) NOT NULL,
-      description TEXT DEFAULT NULL,
-      instructions TEXT DEFAULT NULL,
-      warnings TEXT DEFAULT NULL,
-      language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
-      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE
-    );`
-  }, 'Created "workouts" table'],
+  }, 'Created "plans" table'],
   seedAccounts: [{
     createTable: `CREATE TABLE IF NOT EXISTS accounts (
       id SERIAL PRIMARY KEY,
@@ -214,6 +235,7 @@ const sql = {
 }
 
 async function seed(client, procedure) {
+  let currentTable = '';
   try {
     if (!sql[procedure]) throw new Error(`Procedure ${procedure} not found`);
     const [queries, successMessage] = sql[procedure];
@@ -222,13 +244,14 @@ async function seed(client, procedure) {
 
     const result = await Promise.all(queriesKeys.map((queryKey) => {
       const query = queries[queryKey];
+      currentTable = queryKey;
       if (typeof query === 'function') return query(client);
       return client.query(`${query}`);
     }));
     console.log(successMessage);
     return result;
   } catch (error) {
-    console.error(`Error seeding ${procedure}:`, error);
+    console.error(`Error seeding ${procedure} on table ${currentTable}:`, error);
     throw error;
   }
 }
@@ -237,7 +260,7 @@ async function main() {
   const client = await db.connect();
   const allSeeds = Object.keys(sql);
 
-  for (const seedName of allSeeds) {
+  for await (const seedName of allSeeds) {
     await seed(client, seedName);
   }
 

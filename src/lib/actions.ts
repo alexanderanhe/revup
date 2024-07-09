@@ -192,14 +192,13 @@ export async function handleAcceptCookies(
   }
 }
 export async function handleSetWorkoutLiked(
-  prevState: string | null,
+  prevState: boolean | null | 'error',
   formData: FormData
 ) {
   try {
     const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
     console.log(workoutId, enabled, !!enabled);
-    await setWorkoutsUserLiked(<string>workoutId, !!enabled );
-    return 'done';
+    return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
   } catch (error) {
     return 'error';
   }

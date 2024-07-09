@@ -1,14 +1,34 @@
 'use client'
 
+import { usePathname, useRouter } from '@/navigation';
 import { BookmarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
-import React from 'react'
+import clsx from 'clsx';
+import { useSearchParams } from 'next/navigation';
+import React, { useState } from 'react'
 import { Drawer } from 'vaul'
 
 export default function Menu() {
+  const [ liked, setLiked ] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const handleLikedClick = () => {
+    const params = new URLSearchParams(searchParams);
+    if (!liked) {
+      params.set('liked', '1');
+    } else {
+      params.delete('liked');
+    }
+
+    setLiked(!liked);
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <div className="flex gap-2">
-      <button type="button" className="btn btn-square rounded-lg">
-        <BookmarkIcon className="size-4" />
+      <button type="button" onClick={handleLikedClick} className="btn btn-square rounded-lg">
+        <BookmarkIcon className={clsx("size-4", liked && "text-primary")} />
       </button>
       <Drawer.Root shouldScaleBackground>
         <Drawer.Overlay className="fixed inset-0 bg-black/80" />

@@ -126,6 +126,7 @@ export const tableWorkoutsProperties: NotionTableProperties = {
   Nombre_en: "name_en",
   "Imagen Banner": "image_banner",
   Imagenes: "images",
+  // Video: "video", // https://video-a-gif.convertir-pdf.com/
   Descripcion_es: "description_es",
   Descripcion_en: "description_en",
   Etiquetas: "tags",
@@ -134,14 +135,31 @@ export const tableWorkoutsProperties: NotionTableProperties = {
   Advertencias_es: "warnings_es",
   Advertencias_en: "warnings_en",
   Estatus: "status",
-  "Last edited by": "last_edited_by",
+  Bot: "bot",
 };
-// https://video-a-gif.convertir-pdf.com/
+export const tableWorkoutsComplexProperties: NotionTableProperties = {
+  Nombre: "name",
+  Categoria: "body_zone",
+  Repeticiones: "reps",
+  Series: "sets",
+  Tiempo: "time",
+  "Tiempo Unidad": "time_unit",
+  Peso: "weight",
+  "Peso Unidad": "weight_unit",
+  "Minutos Totales": "total_minutes",
+  Recomendaciones: "recommendations",
+  Comentarios: "comments",
+  Ejercicio: "workout_id",
+  Estatus: "status",
+  Bot: "bot",
+}
 
 export const tablePlansProperties: NotionTableProperties = {
-  ID: "id",
   Nombre_es: "name_es",
   Nombre_en: "name_en",
+  "Ejercicios Complex": "workouts_complex",
+  Etiquetas: "tags",
+  Personalizado: "custom_email",
   Estatus: "status",
-  "Last edited by": "last_edited_by"
+  Bot: "bot",
 }

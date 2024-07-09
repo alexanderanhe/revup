@@ -9,6 +9,8 @@ import {
   VerificationToken,
 } from "next-auth/adapters";
 
+// Adapter based on https://authjs.dev/getting-started/adapters/pg
+
 export function mapExpiresAt(account: any): any {
   const expires_at: number = parseInt(account.expires_at)
   return {

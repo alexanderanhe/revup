@@ -19,8 +19,8 @@ export function LikeButton({ workoutId, enabled }: LikeButtonProps) {
   const [ liked, setLiked ] = useState<boolean>(enabled);
 
   useEffect(() => {
-    if (formState === 'done') {
-      setLiked(!liked);
+    if (typeof formState === 'boolean') {
+      setLiked(formState);
     }
   }, [formState]);
 
@@ -30,7 +30,7 @@ export function LikeButton({ workoutId, enabled }: LikeButtonProps) {
       <input type="hidden" name="enabled" value={ !liked ? '1' : '0' } />
       <SubmitButton className={clsx(
         "btn btn-square rounded-lg",
-        liked ? "btn-primary" : ""
+        liked ? "text-primary" : ""
       )}>
         <BookmarkIcon className="size-4" />
       </SubmitButton>

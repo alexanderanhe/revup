@@ -25,7 +25,12 @@ export default function LayoutContent({ title, pageMenu, bg, children, className
         "content-grid grid-flow-row auto-rows-max place-items-start space-y-6",
         className
       )}>
-        <LayoutContentTitle title={title} pageMenu={pageMenu} hasMenu={Boolean(head || footer)} showBackButton={Boolean(showBackButton)} />
+        <LayoutContentTitle
+          title={title}
+          pageMenu={pageMenu}
+          hasMenu={Boolean(head || footer)}
+          showBackButton={Boolean(showBackButton)}
+        />
         { children }
       </main>
       { footer && <Footer />}

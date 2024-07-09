@@ -197,24 +197,6 @@ export async function getWorkout(workoutId: string, locale: string): Promise<Wor
   }
 }
 
-export async function getWorkoutsLiked(): Promise<string[] | null> {
-  try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
-      return null;
-    }
-    const { rows } = await sql`
-      SELECT workout_id FROM workouts_liked
-      WHERE user_id=${user.id} AND enabled=true
-    `;
-    return rows.map(({ workout_id }: any) => workout_id);
-  } catch (error) {
-    console.error('Failed to fetch workouts liked:', error);
-    return null;
-  }
-}
-
 export async function getWorkouts(searchParams: FilterSearchParams, locale: string): Promise<Workout[] | GroupsWorkout[] | null> {
   try {
     const tag = String(searchParams?.tags ?? '');
@@ -256,7 +238,25 @@ export async function getWorkouts(searchParams: FilterSearchParams, locale: stri
   }
 }
 
-export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean): Promise<void> {
+export async function getWorkoutsLiked(): Promise<string[] | null> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      return null;
+    }
+    const { rows } = await sql`
+      SELECT workout_id FROM workouts_liked
+      WHERE user_id=${user.id} AND enabled=true
+    `;
+    return rows.map(({ workout_id }: any) => workout_id);
+  } catch (error) {
+    console.error('Failed to fetch workouts liked:', error);
+    return null;
+  }
+}
+
+export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean): Promise<boolean> {
   try {
     const session = await auth();
     const user = session?.user;
@@ -273,6 +273,7 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
       ON CONFLICT (user_id, workout_id) DO UPDATE
       SET enabled=${enabled};
     `;
+    return enabled;
   } catch (error) {
     console.error('Failed to set workout liked:', error);
     throw new Error('Failed to set workout liked.');
