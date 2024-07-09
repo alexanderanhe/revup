@@ -7,22 +7,29 @@ const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 })
 
-export async function getNotionUserList() {
-  try {
-    const listUsersResponse = await notion.users.list({})
-    console.log(listUsersResponse)
-    return listUsersResponse;
-  } catch (error: any) {
-    if (error.code === APIErrorCode.ObjectNotFound) {
-      //
-      // For example: handle by asking the user to select a different database
-      //
-      console.log("Object not found")
-    } else {
-      // Other error handling code
-      console.error(error)
+async function consoleLog(messages: string[], type: string = "info", title?: string) {
+  const database_id = process.env.NOTION_BOT_DATABASE_ID;
+  if (!database_id) return;
+
+  await notion.pages.create({
+    parent: {
+      database_id
+    },
+    properties: {
+      Title: {
+        type: "title",
+        title: [{ text: { content: title ?? type } }]
+      },
+      Type: {
+        type: "select",
+        select: { name: type }
+      },
+      Message: {
+        type: "rich_text",
+        rich_text: messages.map((message) => ({ text: { content: message } }))
+      }
     }
-  }
+  })
 }
 
 async function updatePage(page_id: string, properties: Record<string, any>) {
@@ -34,12 +41,13 @@ async function updatePage(page_id: string, properties: Record<string, any>) {
 
 async function getDatabase(database_id: string, filter: any = {}) {
   try {
-    console.log("Fetching data from Notion database", database_id);
+    consoleLog([`Fetching data from Notion database ${database_id}`]);
     return await notion.databases.query({
       database_id,
       filter
     });
   } catch {
+    consoleLog([`Error fetching data from Notion database ${database_id}`], "error");
     throw "Error fetching data from Notion database" + database_id;
   }
 }
@@ -71,8 +79,7 @@ function refactorProperties(
         case "email": case "number": case "url": case "files": case "last_edited_time": case "date":
           return content;
         default:
-          console.log("Unknown property type", property.type)
-          console.log("Content", property)
+          consoleLog([`Unknown property type ${property.type}`], "error", "Unknown property type")
           return content;
       }
     })();
@@ -189,7 +196,7 @@ export async function getWorkoutsPage() {
           created_time, last_edited_time, created_by, last_edited_by
         };
       } catch (error: any) {
-        console.error("Error processing row", error.message);
+        consoleLog(error.message, "error", "Error processing row");
         // Update the id and status of the page
         await updatePage(notion_id, {
           Bot: {
@@ -212,10 +219,10 @@ export async function getWorkoutsPage() {
       //
       // For example: handle by asking the user to select a different database
       //
-      console.log("Object not found")
+      consoleLog(["Object not found"], "error", "Main Catch")
     } else {
       // Other error handling code
-      console.error(error)
+      consoleLog([error.message], "error", "Main Catch")
     }
   }
 }
@@ -320,7 +327,7 @@ export async function getWorkoutsComplexPage() {
             created_time, last_edited_time, created_by, last_edited_by
           };
         } catch (error: any) {
-          console.error("Error processing row", error.message);
+          consoleLog(error.message, "error", "Error processing row");
           // Update the id and status of the page
           await updatePage(notion_id, {
             Bot: {
@@ -343,10 +350,10 @@ export async function getWorkoutsComplexPage() {
         //
         // For example: handle by asking the user to select a different database
         //
-        console.log("Object not found")
+        consoleLog(["Object not found"], "error", "Main Catch");
       } else {
         // Other error handling code
-        console.error(error)
+        consoleLog([error.message], "error", "Main Catch")
       }
     }
 }
@@ -437,6 +444,24 @@ export async function getPlansPage() {
               `;
             }
           });
+
+          if (rest.custom_email) {
+            const result = await client.query(`
+              SELECT id FROM users WHERE email=$1
+            `, [ rest.custom_email.trim() ]);
+            const userId = result.rowCount === 0 ? null : result.rows[0].id;
+            if (!userId) {
+              console.error("User not found", rest.custom_email);
+            } else {
+              await client.query(`
+                INSERT INTO plans_user (user_id, plan_id)
+                VALUES ($1::uuid, $2::uuid)
+                ON CONFLICT (user_id, plan_id) DO UPDATE
+                SET updated_at=NOW();
+              `, [ userId, notion_id ]);
+              consoleLog(["User added to the plan", `user:${userId} notionId:${notion_id}`]);
+            }
+          }
           
           // Update the status of the page
           await updatePage(notion_id, {
@@ -452,7 +477,7 @@ export async function getPlansPage() {
             created_time, last_edited_time, created_by, last_edited_by
           };
         } catch (error: any) {
-          console.error("Error processing row", error.message);
+          consoleLog(error.message, "error", "Error processing row");
           // Update the id and status of the page
           await updatePage(notion_id, {
             Bot: {
@@ -475,10 +500,10 @@ export async function getPlansPage() {
       //
       // For example: handle by asking the user to select a different database
       //
-      console.log("Object not found")
+      consoleLog(["Object not found"], "error", "Main Catch");
     } else {
       // Other error handling code
-      console.error(error)
+      consoleLog([error.message], "error", "Main Catch")
     }
   }
 }

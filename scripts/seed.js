@@ -180,6 +180,8 @@ const sql = {
     createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (user_id, plan_id)
     );`
   }, 'Created "plans" table'],
