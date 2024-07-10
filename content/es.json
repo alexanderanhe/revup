@@ -155,7 +155,10 @@
     "title": "Ejercicio",
     "instructions": "Instrucciones",
     "warnings": "Advertencias",
-    "notFound": "No se encontró el ejercicio"
+    "notFound": "No se encontró el ejercicio",
+    "empty": "El contenido no esta disponible en este momento",
+    "nextTraining": "Siguiente Entrenamiento",
+    "planDetails": "{days} días de entrenamiento ({sets} sesiones por semana)"
   },
   "auth": {
     "login": "Log in",

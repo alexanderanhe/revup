@@ -417,7 +417,7 @@ export async function getPlansPage() {
           const tags = rows.map(({ id }: { id: string }) => id);
 
           await client.query(`
-            INSERT INTO plans (id, tags, workouts_complex, custom_email)
+            INSERT INTO plans (id, tags, workouts_complex, days, sets_per_week, custom_email)
             VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], $4, $5, $6::text)
             ON CONFLICT (id) DO UPDATE
             SET tags = Array[$2::uuid[]],

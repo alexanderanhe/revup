@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -279,6 +279,49 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
     throw new Error('Failed to set workout liked.');
   }
 
+}
+
+export async function getUserPlans(user: User, locale: string): Promise<any> {
+  try {
+    if (!user) {
+      return null;
+    }
+    const { rows } = await sql`
+      SELECT p.*, pl.name, pl.comments, pu.is_default,
+      (
+        SELECT string_agg(DISTINCT tl.name, ',')
+        FROM workouts_complex wc
+        JOIN tags t ON t.id = wc.body_zone
+        JOIN tags_lang tl ON tl.tag_id = t.id AND tl.language_id=${locale}
+        WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
+      ) as body_zones,
+      (
+        SELECT string_agg(wl.name, '::'  order by workouts_complex.name)
+        FROM workouts_complex
+        JOIN workouts w ON workouts_complex.workout_id = w.id
+        JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
+        WHERE workouts_complex.id = ANY((Array[p.workouts_complex])::uuid[])
+      ) as workouts_complex,
+      (
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id=${locale}
+      ) as tags
+      FROM plans_user pu
+      JOIN plans p ON pu.plan_id = p.id
+      JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
+      WHERE pu.user_id=${user.id};
+    `;
+    return rows.map((plan: any) => ({
+      ...plan,
+      body_zones: plan.body_zones?.split(','),
+      workouts_complex: plan.workouts_complex?.split('::'),
+      tags: plan.tags?.split(',').map((tag: string) => tag.split(':'))
+    })) as Plan[];
+  } catch (error) {
+    console.error('Failed to fetch user plans:', error);
+    return null;
+  }
 }
 
 export async function saveAssessment(formData: FormData): Promise<{assessment_id: string, user_id: string | undefined}>{

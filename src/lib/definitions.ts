@@ -95,6 +95,33 @@ export type Workout = {
   instructions: string;
   warnings: string;
 }
+
+export type WorkoutComplex = {
+  name: string;
+  body_zone: string;
+  reps: number;
+  sets: number;
+  time: number;
+  time_unit: string;
+  weight: number;
+  weight_unit: string;
+  total_minutes: number;
+  recommendations: string;
+  comments: string;
+  workout_id: string;
+}
+
+export type Plan = {
+  id: UUID;
+  name: string;
+  workouts_complex: string[] | WorkoutComplex[];
+  body_zones: string[];
+  tags: string[][];
+  days: number;
+  sets_per_week: number;
+  custom_email?: string;
+}
+
 export type GroupsWorkout = {
   id: UUID;
   name: string;

@@ -154,7 +154,10 @@
     "title": "Workout",
     "instructions": "Instructions",
     "warnings": "Warnings",
-    "notFound": "Workout not found"
+    "notFound": "Workout not found",
+    "empty": "Content is not available at this time",
+    "nextTraining": "Next training",
+    "planDetails": "{days} working days ({sets} sessions per week)"
   },
   "auth": {
     "login": "Log in",

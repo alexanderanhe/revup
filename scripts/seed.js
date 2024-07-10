@@ -37,6 +37,7 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS tags (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       type tagType NOT NULL,
+      value VARCHAR(100) DEFAULT NULL,
       parent_id UUID NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
@@ -74,19 +75,19 @@ const sql = {
         ['gender', 'men', 'hombre'],
         ['gender', 'woman', 'mujer'],
         // -- Insert tags difficulty
-        ['difficulty', 'no experience', 'sin experiencia'],
-        ['difficulty', 'beginner', 'principiante'],
-        ['difficulty', 'advanced', 'avanzado'],
-        ['difficulty', 'expert', 'experto'],
-        ['difficulty', 'professional', 'profesional'],
+        ['difficulty', 'no experience', 'sin experiencia', '0'],
+        ['difficulty', 'beginner', 'principiante', '1'],
+        ['difficulty', 'advanced', 'avanzado', '2'],
+        ['difficulty', 'expert', 'experto', '3'],
+        ['difficulty', 'professional', 'profesional', '4'],
         // -- Insert tags others
         ['other', 'upper body', 'parte superior'],
         ['other', 'legs+shoulders', 'piernas+hombros'],
         ['other', 'full body', 'cuerpo completo'],
       ]
       for (const tag of tags) {
-        const [type, nameEn, nameEs] = tag;
-        const { rows } = await client.sql`INSERT INTO tags (type) VALUES (${ type }) RETURNING id`;
+        const [type, nameEn, nameEs, value] = tag;
+        const { rows } = await client.sql`INSERT INTO tags (type, value) VALUES (${ type }, ${ value ?? null }) RETURNING id`;
         if (!rows.length) return;
   
         const { id: tagId } = rows[0];
@@ -161,7 +162,7 @@ const sql = {
       PRIMARY KEY (workout_id, user_id)
     );`,
   }, 'Created "workouts", "workouts_lang", "workouts_complex" and "workouts_liked" tables'],
-  seedPlans: [{ // TODO: Add tables for plans
+  seedPlans: [{
     createTable: `CREATE TABLE IF NOT EXISTS plans (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
@@ -182,6 +183,7 @@ const sql = {
     createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      is_default BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (user_id, plan_id)
