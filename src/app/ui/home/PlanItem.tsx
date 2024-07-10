@@ -21,11 +21,11 @@ export default async function PlanItem({ plan, index, t }: PlanItemProps) {
     <div className="collapse collapse-arrow join-item">
       <input type="radio" name="my-accordion-4" defaultChecked={!index} />
       <Card className="collapse-title">
-        <section className="grid grid-cols-[1fr_auto] place-items-center w-full pr-4">
+        <section className="grid grid-cols-[1fr_auto] max-sm:grid-cols-1 place-items-center w-full pr-4">
           <div className="grid grid-rows-auto gap-1 place-items-start w-full">
             <strong>{ plan.name }</strong>
-            <div className="flex gap-2 text-xs uppercase">
-              <HomeModernIcon className="size-4 text-primary" />
+            <div className="flex gap-2 text-xs max-sm:gap-1 max-sm:text-[0.6rem] uppercase">
+              <HomeModernIcon className="size-3 text-primary" />
               <span>{ place }</span>
               <RatingStar
                 name={plan.id}
@@ -33,14 +33,15 @@ export default async function PlanItem({ plan, index, t }: PlanItemProps) {
                 size="xs"
                 // disabled
               />
-              <span>{ difficulty
-               }</span>
+              <span>{ difficulty}</span>
             </div>
             <span className="text-xs">
               { t("planDetails", { days: plan.days, sets: plan.sets_per_week }) }
             </span>
           </div>
-          <ProgressCircle progress={Math.round(Math.random() * 100)} />
+          <div className="max-sm:hidden">
+            <ProgressCircle progress={Math.round(Math.random() * 100)} />
+          </div>
         </section>
       </Card>
       <div className="collapse-content max-h-44 space-y-2 py-2">
