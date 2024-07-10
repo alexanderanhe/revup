@@ -166,6 +166,8 @@ const sql = {
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
       workouts_complex UUID[] DEFAULT NULL,
+      days SMALLINT DEFAULT NULL,
+      sets_per_week SMALLINT DEFAULT NULL,
       custom_email VARCHAR(255) NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()

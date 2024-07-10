@@ -422,8 +422,10 @@ export async function getPlansPage() {
             ON CONFLICT (id) DO UPDATE
             SET tags = Array[$2::uuid[]],
                 workouts_complex=Array[$3::uuid[]],
-                custom_email=$4::text;
-          `, [ notion_id, tags, rest.workouts_complex, rest.custom_email ]);
+                days=$4,
+                sets_per_week=$5,
+                custom_email=$6::text;
+          `, [ notion_id, tags, rest.workouts_complex, rest.days, rest.sets_per_week, rest.custom_email ]);
     
           ['es', 'en'].forEach(async (lang) => {
             const { rowCount } = await client.sql`SELECT * FROM plans_lang WHERE plan_id=${notion_id} AND language_id=${lang}`;

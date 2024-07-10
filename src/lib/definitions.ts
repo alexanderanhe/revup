@@ -159,6 +159,8 @@ export const tablePlansProperties: NotionTableProperties = {
   Nombre_en: "name_en",
   "Ejercicios Complex": "workouts_complex",
   Etiquetas: "tags",
+  Dias: "days",
+  "Sesiones por semana": "sets_per_week",
   Personalizado: "custom_email",
   Estatus: "status",
   Bot: "bot",
