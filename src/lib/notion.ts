@@ -418,7 +418,7 @@ export async function getPlansPage() {
 
           await client.query(`
             INSERT INTO plans (id, tags, workouts_complex, custom_email)
-            VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], $4::text)
+            VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], $4, $5, $6::text)
             ON CONFLICT (id) DO UPDATE
             SET tags = Array[$2::uuid[]],
                 workouts_complex=Array[$3::uuid[]],
