@@ -24,7 +24,7 @@ export async function generateMetadata() {
 export async function generateViewport() {
   const theme = await checkTheme();
   return {
-    themeColor: theme === 'dark' ? '#1d232a' :'#FFFFFF',
+    themeColor: theme === 'dark' ? '#000000' :'#FFFFFF',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
