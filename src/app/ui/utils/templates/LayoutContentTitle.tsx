@@ -5,7 +5,8 @@ import BackButton from '@/app/ui/utils/BackButton';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 type LayoutContentTitleProps = {
-  title?: string;
+  title?: React.ReactNode | string;
+  titleFixed?: boolean;
   LeftPageMenu?: React.ReactNode;
   pageMenu?: React.ReactNode;
   hasMenu?: boolean;
@@ -14,6 +15,7 @@ type LayoutContentTitleProps = {
 
 export default function LayoutContentTitle({
   title,
+  titleFixed,
   LeftPageMenu,
   pageMenu,
   hasMenu,
@@ -24,7 +26,7 @@ export default function LayoutContentTitle({
   const isChild = paths.length > 1;
 
   return title && (
-    <div className="sticky top-0 full-width bg-base-100 w-full z-30 py-4">
+    <div className={`${ titleFixed ? 'fixed' : 'sticky' } top-0 full-width bg-base-100 w-full z-30 py-4 backdrop-blur bg-base-100/75`}>
       <div className="grid grid-cols-[104px_1fr_104px] place-items-center w-full">
         <div className="flex gap-2 w-full">
           {(isChild || !hasMenu || showBackButton) && (

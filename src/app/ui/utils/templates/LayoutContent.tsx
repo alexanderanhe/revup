@@ -6,7 +6,8 @@ import Footer from "@/app/ui/utils/menus/Footer";
 import LayoutContentTitle from './LayoutContentTitle';
 
 type Props = {
-  title?: string;
+  title?: React.ReactNode | string;
+  titleFixed?: boolean;
   pageMenu?: ReactNode;
   children?: ReactNode;
   bg?: string;
@@ -16,7 +17,7 @@ type Props = {
   showBackButton?: boolean | string;
 }
 
-export default function LayoutContent({ title, pageMenu, bg, children, className, head, footer, showBackButton }: Props) {
+export default function LayoutContent({ title, titleFixed, pageMenu, bg, children, className, head, footer, showBackButton }: Props) {
   return (
     <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
@@ -27,6 +28,7 @@ export default function LayoutContent({ title, pageMenu, bg, children, className
       )}>
         <LayoutContentTitle
           title={title}
+          titleFixed={Boolean(titleFixed)}
           pageMenu={pageMenu}
           hasMenu={Boolean(head || footer)}
           showBackButton={Boolean(showBackButton)}

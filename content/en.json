@@ -161,6 +161,11 @@
     "planDetailsDay": "{day}. Working day",
     "planDetailsSets": "{sets} sessions per week"
   },
+  "Exercise": {
+    "title": "Exercises",
+    "nextBtn": "Next",
+    "finishBtn": "Finish"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Sign up"

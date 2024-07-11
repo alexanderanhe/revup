@@ -162,6 +162,11 @@
     "planDetailsDay": "{day}. Día de entrenamiento",
     "planDetailsSets": "{sets} sesiones por semana"
   },
+  "Exercises": {
+    "title": "Ejercicios",
+    "nextBtn": "Siguiente",
+    "finishBtn": "Finalizar"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Registro"

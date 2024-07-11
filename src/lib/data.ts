@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -228,7 +228,7 @@ export async function getWorkouts(searchParams: FilterSearchParams, locale: stri
     if (rowCount === 0) {
       return null
     }
-    return rows.map(({ tags, ...workout}: Omit<Workout, 'tags'> & { tags: string}) => ({
+    return rows.map(({ tags, ...workout}: WorkoutMod) => ({
       ...workout,
       tags: tags?.split(',').map((tag) => tag.split(':'))
     })) as Workout[];
@@ -281,6 +281,45 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
 
 }
 
+export async function getUserCurrentPlanWorkouts(locale: string): Promise<Exercise[] | null> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      return null;
+    }
+    type ExerciseMod = Omit<Exercise, 'tags'> & { tags: string}
+    const { rows, rowCount } = await sql<ExerciseMod>`
+      SELECT w.id as workout_id, wc.id, w.image_banner, w.images, wl.name, wl.description,
+        (
+          SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
+          FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+          WHERE tags.id = ANY((Array[w.tags])::uuid[]) AND tags_lang.language_id=${locale}
+        ) as tags,
+        wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments
+      FROM workouts_complex wc
+      JOIN workouts w ON wc.workout_id = w.id
+      JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
+      WHERE wc.id = ANY((Array[
+        (SELECT plans.workouts_complex
+        FROM plans_user
+        JOIN plans ON plans_user.plan_id = plans.id
+        WHERE plans_user.user_id=${user.id} AND plans_user.is_current=true)
+      ])::uuid[]);
+    `;
+    if (rowCount === 0) {
+      return null;
+    }
+    return rows.map(({ tags, ...exercise}: ExerciseMod) => ({
+      ...exercise,
+      tags: tags?.split(',').map((tag) => tag.split(':'))
+    })) as Exercise[];
+  } catch (error) {
+    console.error('Failed to fetch user plans:', error);
+    return null;
+  }
+}
+
 export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
   try {
     const session = await auth();
@@ -298,13 +337,6 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
         WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
       ) as body_zones,
       (
-        SELECT string_agg(wl.name, '::'  order by workouts_complex.name)
-        FROM workouts_complex
-        JOIN workouts w ON workouts_complex.workout_id = w.id
-        JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
-        WHERE workouts_complex.id = ANY((Array[p.workouts_complex])::uuid[])
-      ) as workouts_complex,
-      (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
         WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id=${locale}
@@ -320,7 +352,6 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
     const plan = {
       ...rows[0],
       body_zones: rows[0].body_zones?.split(','),
-      workouts_complex: rows[0].workouts_complex?.split('::'),
       tags: rows[0].tags?.split(',').map((tag: string) => tag.split(':'))
     } as Plan;
     const workingDays = await getUserPlanDays(plan as Plan, locale) ?? [];

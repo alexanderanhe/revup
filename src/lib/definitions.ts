@@ -134,6 +134,16 @@ export type Plan = {
   current_day?: number;
 }
 
+export type Exercise = {
+  id: UUID;
+  workout_id: UUID;
+  name: string;
+  tags: string[][];
+  description: string;
+  image_banner?: WorkoutImage[] | null;
+  images?: WorkoutImage[] | null;
+}
+
 export type GroupsWorkout = {
   id: UUID;
   name: string;

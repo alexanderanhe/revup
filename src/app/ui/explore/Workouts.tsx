@@ -38,7 +38,7 @@ function WorkoutItem({ workout, liked }: WorkoutProps) {
           ?? (firstImage as { file: WorkoutImageLink }).file?.url
       })
     }
-}, []);
+  }, []);
 
   return (
     <Link href={`${PAGES.WORKOUT}/${workout.id}`} className="w-full">

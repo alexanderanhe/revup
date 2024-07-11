@@ -25,7 +25,6 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
 
-  console.log(plan.workingDays)
   return (
     <>
       <Card className="collapse-title">
@@ -62,7 +61,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
             <Card key={`day${day}`} className="w-full">
               { typeof completed !== 'undefined' ? (
                 <Link
-                  href={`/workout${!current_day ? '?previusDay=' + day : ''}`}
+                  href={`/exercises${!current_day ? '/' + day : ''}`}
                   className="flex gap-3 w-full"
                 >
                   <Day
