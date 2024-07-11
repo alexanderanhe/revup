@@ -1,9 +1,7 @@
 import { LikeButton, UnauthLikeButton } from "@/app/ui/explore/LikeButton";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
-import { auth } from "@/auth";
 import { getWorkout, getWorkoutIDs, getWorkoutsLiked } from "@/lib/data";
 import { WorkoutImage, WorkoutImageLink } from "@/lib/definitions";
-import { Link } from "@/navigation";
 import { ExclamationCircleIcon, ExclamationTriangleIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { getTranslations } from "next-intl/server";

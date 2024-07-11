@@ -29,7 +29,7 @@ export default async function ExercisesPage({
               <RocketLaunchIcon className="size-5" />
             </div>
             <Card className="relative h-24 timeline-end mb-3">
-              <Link href={`/workout/run#${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
+              <Link href={`/exercises/run#${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
                 { name }
               </Link>
               <ImageWorkout
