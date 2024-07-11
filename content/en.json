@@ -157,7 +157,9 @@
     "notFound": "Workout not found",
     "empty": "Content is not available at this time",
     "nextTraining": "Next training",
-    "planDetails": "{days} working days ({sets} sessions per week)"
+    "planDetails": "{days} working days",
+    "planDetailsDay": "{day}. Working day",
+    "planDetailsSets": "{sets} sessions per week"
   },
   "auth": {
     "login": "Log in",
