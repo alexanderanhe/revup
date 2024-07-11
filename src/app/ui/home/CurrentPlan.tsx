@@ -17,15 +17,15 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
     return null;
   }
   const t = await getTranslations("Workout");
-  const plan = await getUserCurrentPlan(user, locale) as Plan;
+  const plan = await getUserCurrentPlan(locale) as Plan;
 
   if (!plan) {
     return <div>NO HAY NADA</div>;
   }
-  const days = await getUserPlanDays(user, plan, locale);
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
 
+  console.log(plan.workingDays)
   return (
     <>
       <Card className="collapse-title">
@@ -58,11 +58,11 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
       <div className="w-full h-[50svh] overflow-y-auto space-y-1 py-2">
         <div className="font-semibold">{ t("nextTraining") }</div>
         <ul className="grid grid-cols-1 gap-2 w-full">
-          { days?.map(({ day, ...workingDay}, index) => (
+          { plan.workingDays?.map(({ day, completed, current_day}, index) => (
             <Card key={`day${day}`} className="w-full">
-              { typeof workingDay.completed !== 'undefined' ? (
+              { typeof completed !== 'undefined' ? (
                 <Link
-                  href={`/workout`}
+                  href={`/workout${!current_day ? '?previusDay=' + day : ''}`}
                   className="flex gap-3 w-full"
                 >
                   <Day

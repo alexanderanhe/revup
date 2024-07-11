@@ -281,8 +281,10 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
 
 }
 
-export async function getUserCurrentPlan(user: User, locale: string): Promise<Plan | null> {
+export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
   try {
+    const session = await auth();
+    const user = session?.user;
     if (!user) {
       return null;
     }
@@ -315,40 +317,54 @@ export async function getUserCurrentPlan(user: User, locale: string): Promise<Pl
     if (rowCount === 0) {
       return null;
     }
-    return rows.map((plan: any) => ({
+    const plan = {
+      ...rows[0],
+      body_zones: rows[0].body_zones?.split(','),
+      workouts_complex: rows[0].workouts_complex?.split('::'),
+      tags: rows[0].tags?.split(',').map((tag: string) => tag.split(':'))
+    } as Plan;
+    const workingDays = await getUserPlanDays(plan as Plan, locale) ?? [];
+
+    return {
       ...plan,
-      body_zones: plan.body_zones?.split(','),
-      workouts_complex: plan.workouts_complex?.split('::'),
-      tags: plan.tags?.split(',').map((tag: string) => tag.split(':'))
-    }))[0] as Plan;
+      workingDays
+    };
   } catch (error) {
     console.error('Failed to fetch user plans:', error);
     return null;
   }
 }
 
-export async function getUserPlanDays(user: User, plan: Plan, locale: string): Promise<PlanDay[] | null> {
+export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanDay[] | null> {
   try {
+    const session = await auth();
+    const user = session?.user;
     if (!user) {
       return null;
     }
     const { rows, rowCount } = await sql`
-      SELECT pud.*, pl.name, pl.comments
+      SELECT pud.*, pl.name, pl.comments,
+      CASE
+        WHEN pud.day = pu.current_day THEN true
+        ELSE false
+      END as current_day
       FROM plans_user_day pud
+      JOIN plans_user pu ON pud.plan_id = pu.plan_id AND pud.user_id = pu.user_id
       JOIN plans p ON pud.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
-      WHERE pud.user_id=${user.id} AND pud.plan_id=${plan.id};
+      WHERE pud.user_id=${user.id} AND pud.plan_id=${plan.id}
+      ORDER BY pud.day ASC;
     `;
     if (rowCount === 0) {
       return null;
     }
-    return Array.from({ length: plan.days }, (_, d) => {
-      const day = rows.find((row: any) => row.day === d + 1);
-      return {
-        day: d + 1,
-        ...day
-      };
-    }) as PlanDay[];
+    const rest = plan.days - rowCount;
+    const maxLength = (plan.body_zones.length - 1) || 1;
+    const length = Math.min(rest, maxLength);
+    return [
+      ...rows,
+      ...Array.from({ length }, (_, d) => ({day: d + rowCount + 1}))
+    ] as PlanDay[];
   } catch (error) {
     console.error('Failed to fetch user plans days:', error);
     return null;

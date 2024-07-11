@@ -110,18 +110,6 @@ export type WorkoutComplex = {
   comments: string;
   workout_id: string;
 }
-
-export type Plan = {
-  id: UUID;
-  name: string;
-  workouts_complex: string[] | WorkoutComplex[];
-  body_zones: string[];
-  tags: string[][];
-  days: number;
-  sets_per_week: number;
-  custom_email?: string;
-}
-
 export type PlanDay = {
   day: number;
   plan_id: UUID;
@@ -130,6 +118,20 @@ export type PlanDay = {
   percentage: number;
   completed: boolean;
   completed_at?: string;
+  current_day?: boolean;
+}
+
+export type Plan = {
+  id: UUID;
+  name: string;
+  workouts_complex: string[] | WorkoutComplex[];
+  body_zones: string[];
+  tags: string[][];
+  days: number;
+  workingDays?: PlanDay[];
+  sets_per_week: number;
+  custom_email?: string;
+  current_day?: number;
 }
 
 export type GroupsWorkout = {
