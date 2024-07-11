@@ -44,7 +44,7 @@ export default async function ExercisesRunPage({
 
   return (
     <LayoutContent title={<Title titles={titles} />} titleFixed>
-      <div className="full-width carousel w-full h-svh">
+      <div className="full-width carousel w-full h-svh m-0">
         { slides.map((slide, index) => (
           <div
             key={`Slide${slide.id}`}
