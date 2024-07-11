@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -281,13 +281,13 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
 
 }
 
-export async function getUserPlans(user: User, locale: string): Promise<any> {
+export async function getUserCurrentPlan(user: User, locale: string): Promise<Plan | null> {
   try {
     if (!user) {
       return null;
     }
-    const { rows } = await sql`
-      SELECT p.*, pl.name, pl.comments, pu.is_default,
+    const { rows, rowCount } = await sql`
+      SELECT p.*, pl.name, pl.comments, pu.current_day,
       (
         SELECT string_agg(DISTINCT tl.name, ',')
         FROM workouts_complex wc
@@ -310,16 +310,47 @@ export async function getUserPlans(user: User, locale: string): Promise<any> {
       FROM plans_user pu
       JOIN plans p ON pu.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
-      WHERE pu.user_id=${user.id};
+      WHERE pu.user_id=${user.id} AND pu.is_current=true LIMIT 1;
     `;
+    if (rowCount === 0) {
+      return null;
+    }
     return rows.map((plan: any) => ({
       ...plan,
       body_zones: plan.body_zones?.split(','),
       workouts_complex: plan.workouts_complex?.split('::'),
       tags: plan.tags?.split(',').map((tag: string) => tag.split(':'))
-    })) as Plan[];
+    }))[0] as Plan;
   } catch (error) {
     console.error('Failed to fetch user plans:', error);
+    return null;
+  }
+}
+
+export async function getUserPlanDays(user: User, plan: Plan, locale: string): Promise<PlanDay[] | null> {
+  try {
+    if (!user) {
+      return null;
+    }
+    const { rows, rowCount } = await sql`
+      SELECT pud.*, pl.name, pl.comments
+      FROM plans_user_day pud
+      JOIN plans p ON pud.plan_id = p.id
+      JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
+      WHERE pud.user_id=${user.id} AND pud.plan_id=${plan.id};
+    `;
+    if (rowCount === 0) {
+      return null;
+    }
+    return Array.from({ length: plan.days }, (_, d) => {
+      const day = rows.find((row: any) => row.day === d + 1);
+      return {
+        day: d + 1,
+        ...day
+      };
+    }) as PlanDay[];
+  } catch (error) {
+    console.error('Failed to fetch user plans days:', error);
     return null;
   }
 }

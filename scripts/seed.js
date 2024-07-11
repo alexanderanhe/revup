@@ -180,10 +180,42 @@ const sql = {
       language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
       PRIMARY KEY (plan_id, language_id)
     );`,
+    createTableUsersDay: `CREATE TABLE IF NOT EXISTS plans_user_day (
+      day SMALLINT DEFAULT 1 UNIQUE,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      name VARCHAR(100) NULL,
+      percentage SMALLINT DEFAULT 0,
+      completed BOOLEAN DEFAULT FALSE,
+      completed_at TIMESTAMP DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (user_id, plan_id, day)
+    );`,
+    createTableUserWorkoutsComplex: `
+    CREATE TABLE IF NOT EXISTS plans_user_workouts_complex (
+      id UUID DEFAULT uuid_generate_v4(),
+      day SMALLINT REFERENCES plans_user_day(day),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      reps SMALLINT DEFAULT NULL,
+      time SMALLINT DEFAULT NULL,
+      time_unit CHAR(3) DEFAULT NULL,
+      rest SMALLINT DEFAULT NULL,
+      rest_between SMALLINT DEFAULT NULL,
+      rest_sets SMALLINT DEFAULT NULL,
+      sets SMALLINT DEFAULT NULL,
+      weight SMALLINT DEFAULT NULL,
+      weight_unit CHAR(2) DEFAULT NULL,
+      workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE,
+      workout_complex_id UUID REFERENCES workouts_complex(id) DEFAULT NULL,
+      PRIMARY KEY (user_id, plan_id, day, id)
+    );`,
     createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
-      is_default BOOLEAN DEFAULT FALSE,
+      is_current BOOLEAN DEFAULT FALSE,
+      current_day SMALLINT REFERENCES plans_user_day(day) DEFAULT NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (user_id, plan_id)

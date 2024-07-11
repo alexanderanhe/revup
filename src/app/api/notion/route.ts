@@ -1,14 +1,11 @@
-import { getWorkoutsPage, getWorkoutsComplexPage, getPlansPage, } from "@/lib/notion";
-import { NextResponse } from "next/server";
+import { NotionSync } from "@/lib/notion";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const notionPages = await Promise.all([
-      getWorkoutsPage(),
-      getWorkoutsComplexPage(),
-      getPlansPage()
-    ]);
-    return NextResponse.json({ ok: true, notionPages });
+    const notionPages = new NotionSync(req.url);
+    const sync = await notionPages.sync();
+    return NextResponse.json({ ok: true, sync });
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || '' }, { status: 500 });
   }

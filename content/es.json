@@ -160,7 +160,7 @@
     "nextTraining": "Siguiente Entrenamiento",
     "planDetailsDays": "{days} días de entrenamiento",
     "planDetailsDay": "{day}. Día de entrenamiento",
-    "planDetailsSets": "{sets} sesiones por sem"
+    "planDetailsSets": "{sets} sesiones por semana"
   },
   "auth": {
     "login": "Log in",

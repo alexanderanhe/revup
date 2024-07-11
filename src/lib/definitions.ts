@@ -122,6 +122,16 @@ export type Plan = {
   custom_email?: string;
 }
 
+export type PlanDay = {
+  day: number;
+  plan_id: UUID;
+  user_id: UUID;
+  name?: string;
+  percentage: number;
+  completed: boolean;
+  completed_at?: string;
+}
+
 export type GroupsWorkout = {
   id: UUID;
   name: string;

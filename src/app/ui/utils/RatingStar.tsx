@@ -12,7 +12,7 @@ export default function RatingStar({ stars, name, size, lenght, ...props }: Rati
       { Array.from({ length: (lenght ?? 5) + 1 }).map((_, index) => (
         <input {...props}
           key={`ratingstart${name}${index}`}
-          type="radio" className={index ? "mask mask-star-2 bg-primary" : "rating-hidden"}
+          type="radio" className={index ? "mask mask-star-2 bg-primary" : "rating-hidden hidden"}
           defaultChecked={index === stars}
         />
       ))}

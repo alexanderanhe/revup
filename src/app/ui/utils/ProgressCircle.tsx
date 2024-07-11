@@ -15,15 +15,19 @@ export default function ProgressCircle({ progress, type, icon }: ProgressCircleP
   } as React.CSSProperties;
   return (
     <div className={clsx(
-      "radial-progress bg-success/10 text-sm font-semibold",
-      (!type || type === 'success') && "bg-success/10 before:text-success",
-      type === 'success' && "bg-success/10 before:text-success",
-      type === 'error' && "bg-error/10 before:text-error",
-      type === 'warning' && "bg-warning/10 before:text-warning",
-      type === 'info' && "bg-info/10 before:text-info",
+      "radial-progress text-sm font-semibold",
+      typeClasses[type ?? 'neutral'],
       !progress && 'before:hidden after:hidden',
     )} style={workoutProgressStyles} role="progressbar">
       { icon ?? `${progress}%` }
     </div>
   )
+}
+
+const typeClasses = {
+  neutral: 'bg-neutral/10 before:text-neutral',
+  success: 'bg-success/10 before:text-success',
+  error: 'bg-error/10 before:text-error',
+  warning: 'bg-warning/10 before:text-warning',
+  info: 'bg-info/10 before:text-info',
 }

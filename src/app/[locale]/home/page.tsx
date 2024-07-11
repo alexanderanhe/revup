@@ -4,10 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
-import Stats from "@/app/ui/home/Stats";
+// import Stats from "@/app/ui/home/Stats";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
 import { APPCOOKIES, User } from "@/lib/definitions";
-import Plans from "@/app/ui/home/Plans";
+import CurrentPlan from "@/app/ui/home/CurrentPlan";
 
 export default async function HomePage({
   params: { locale }
@@ -38,7 +38,7 @@ export default async function HomePage({
     <>
       <Assessment />
       {/* { user && <Stats /> } */}
-      <Plans user={user} locale={locale} />
+      <CurrentPlan user={user} locale={locale} />
       {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>
