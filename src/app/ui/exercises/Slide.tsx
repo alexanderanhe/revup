@@ -5,7 +5,7 @@ import React, { Fragment, use, useEffect } from 'react'
 import { useFormState, useFormStatus } from 'react-dom';
 import { handleOnboarding } from "@/lib/actions";
 import SubmitButton from '@/app/ui/utils/SubmitButton';
-import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ArrowTopRightOnSquareIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Drawer } from 'vaul';
 
 type SlideProps = {
@@ -22,6 +22,7 @@ type SlideProps = {
   index: number;
   buttonClass?: string;
   buttonText?: string;
+  buttonNextText?: string;
   submit?: boolean;
   slideIds?: string[];
 };
@@ -108,7 +109,7 @@ export default function Slide({ carouselId, submit, slideIds, ...slide }: SlideP
           <Drawer.Overlay className="fixed inset-0 bg-black/80" />
           <Drawer.Trigger className={ slide.buttonClass }>
             { slide.buttonText }
-            <ChevronRightIcon className="size-5" />
+            <ArrowTopRightOnSquareIcon className="size-5" />
           </Drawer.Trigger>
           <Drawer.Portal>
             <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">
