@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type TitleProps = {
   titles: Record<string, string>;
@@ -8,21 +8,35 @@ type TitleProps = {
 }
 
 export default function Title({ titles, defaultTitle }: TitleProps) {
-  const [ id, setId ] = useState<string>("")
+  const [ title, setTitle ] = useState<string>("")
+  const [ countingTitle, setCountingTitle ] = useState<string>("")
   const ids = Object.keys(titles);
-  const findIndex = ids.indexOf(id) + 1;
   const total = ids.length;
+  
+  const handleUrlChange = useCallback(() => {
+    const hash = window.location.hash.replace(/^#slide/i, "");
+    console.log(hash);
+    const findIndex = ids.indexOf(hash) + 1;
+    const nTitle = titles?.[hash] || defaultTitle || titles?.[ids[0]];
+    document.title = nTitle;
+    setCountingTitle(`${findIndex || 1}/${total}`);
+    setTitle(nTitle);
+  }, [window.location.hash]);
 
   useEffect(() => {
-    setId(`${window.location.hash.substring(1)}`);
-    document.title = titles?.[id] || defaultTitle || titles?.[ids[0]];
-  }, [titles, defaultTitle, ids]);
+    handleUrlChange();
+    
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, [ids, total, useCallback]);
 
   return (
     <>
-    { `${findIndex || 1}/${total}`}
+    { countingTitle }
     { " " }
-    <span className="[&::first-letter]:uppercase">{ titles?.[id] || defaultTitle || titles?.[ids[0]] }</span>
+    <span className="[&::first-letter]:uppercase ml-1">{ title }</span>
     </>
   )
 }

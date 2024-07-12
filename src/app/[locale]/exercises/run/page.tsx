@@ -1,7 +1,7 @@
 import { getUserCurrentPlanWorkouts } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
 
-import { Exercise, WorkoutImageLink } from "@/lib/definitions";
+import { WorkoutImageLink } from "@/lib/definitions";
 import Slide from "@/app/ui/exercises/Slide";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import Title from "@/app/ui/exercises/Title";
@@ -44,21 +44,16 @@ export default async function ExercisesRunPage({
 
   return (
     <LayoutContent title={<Title titles={titles} />} titleFixed>
-      <div className="full-width carousel w-full h-svh m-0">
+      <div id="exercise-run" className="carousel space-x-4 w-full h-svh" style={{margin: '0'}}>
         { slides.map((slide, index) => (
-          <div
-            key={`Slide${slide.id}`}
-            id={`slide${slide.id}`}
-            className="carousel-item content-grid grid-rows-1 w-full h-full"
-            style={{ gridColumn: 'full-width'}}
-          >
             <Slide
               {...slide}
+              carouselId="exercise-run"
+              key={`Slide${slide.id}`}
               index={index}
               submit={index === slides.length - 1}
               slideIds={slides.map(({ id }) => id)}
             />
-          </div>
         ))}
       </div>
     </LayoutContent>
