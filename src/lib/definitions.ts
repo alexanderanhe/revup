@@ -99,6 +99,10 @@ export type Workout = {
 export type WorkoutComplex = {
   name: string;
   body_zone: string;
+  workout_id: string;
+} & WorkoutComplexParameters;
+
+export type WorkoutComplexParameters = {
   reps: number;
   sets: number;
   time: number;
@@ -108,7 +112,6 @@ export type WorkoutComplex = {
   total_minutes: number;
   recommendations: string;
   comments: string;
-  workout_id: string;
 }
 export type PlanDay = {
   day: number;
@@ -142,7 +145,7 @@ export type Exercise = {
   description: string;
   image_banner?: WorkoutImage[] | null;
   images?: WorkoutImage[] | null;
-}
+} & WorkoutComplexParameters
 
 export type GroupsWorkout = {
   id: UUID;

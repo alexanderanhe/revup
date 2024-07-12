@@ -1,12 +1,16 @@
 'use client'
 
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import React, { Fragment, use, useEffect } from 'react'
-import { useFormState, useFormStatus } from 'react-dom';
-import { handleOnboarding } from "@/lib/actions";
-import SubmitButton from '@/app/ui/utils/SubmitButton';
-import { ArrowTopRightOnSquareIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Drawer } from 'vaul';
+import { useFormState, useFormStatus } from 'react-dom';
+import { ArrowTopRightOnSquareIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+
+import { handleOnboarding } from "@/lib/actions";
+
+import SubmitButton from '@/app/ui/utils/SubmitButton';
+import Card from '@/app/ui/Card';
+import { WorkoutComplexParameters } from '@/lib/definitions';
 
 type SlideProps = {
   carouselId: string;
@@ -19,6 +23,7 @@ type SlideProps = {
     className?: string;
     style?: React.CSSProperties;
   };
+  workout_complex: WorkoutComplexParameters;
   index: number;
   buttonClass?: string;
   buttonText?: string;
@@ -27,7 +32,8 @@ type SlideProps = {
   slideIds?: string[];
 };
 
-export default function Slide({ carouselId, submit, slideIds, ...slide }: SlideProps) {
+export default function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: SlideProps) {
+  const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formState, formAction ] = useFormState(handleOnboarding, null);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -91,7 +97,31 @@ export default function Slide({ carouselId, submit, slideIds, ...slide }: SlideP
         </div>
         <div className='content-grid'>
           <h2 className="text-center py-4">{ slide.title }</h2>
-          <p>{ slide.description }</p>
+          <section className="grid grid-cols-3 justify-between gap-4">
+            <Card className="[&>strong]:font-medium size-24">
+              <div className="flex gap-1 justify-center w-full">
+                { workout_complex.reps ? (
+                  <><strong>{ workout_complex.reps }</strong>reps</>
+                ) : "NO" }
+              </div>
+            </Card>
+            <Card className="[&>strong]:font-medium size-24">
+              <div className="flex gap-1 justify-center w-full">
+                <strong>-</strong>
+                { workout_complex.time_unit }
+              </div>
+            </Card>
+            <Card className="[&>strong]:font-medium size-24">
+              <div className="flex flex-col items-center gap-1 w-full">
+                { workout_complex.sets ? (
+                  <><strong>0 / { workout_complex.sets }</strong>sets</>
+                ) : (
+                  <><strong>0 / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
+                )}
+              </div>
+            </Card>
+          </section>
+          {/* <p>{ slide.description }</p> */}
         </div>
       </section>
       <footer className="grid grid-cols-1 gap-2 pb-10">
@@ -105,7 +135,12 @@ export default function Slide({ carouselId, submit, slideIds, ...slide }: SlideP
           ))}
         </div>
         
-        <Drawer.Root shouldScaleBackground>
+        <Drawer.Root
+          snapPoints={["148px", "355px", 1]}
+          activeSnapPoint={snap}
+          setActiveSnapPoint={setSnap}
+          shouldScaleBackground
+        >
           <Drawer.Overlay className="fixed inset-0 bg-black/80" />
           <Drawer.Trigger className={ slide.buttonClass }>
             { slide.buttonText }

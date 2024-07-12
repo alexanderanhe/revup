@@ -25,11 +25,12 @@ export default async function ExercisesRunPage({
     return acc;
   }, {});
 
-  const slides = exercises.map(({ id, workout_id, name, description, images }, i) => ({
+  const slides = exercises.map(({ id, workout_id, name, description, images, tags, image_banner, ...workout_complex }, i) => ({
     id,
     workout_id,
     title: name,
     description: description ?? 'No description',
+    workout_complex,
     image: {
       src: ((images?.[0] as { external: WorkoutImageLink }).external?.url
       ?? (images?.[0] as { file: WorkoutImageLink }).file?.url),
