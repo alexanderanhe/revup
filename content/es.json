@@ -164,6 +164,7 @@
   },
   "Exercises": {
     "title": "Ejercicios",
+    "setParametersBtn": "Establecer parámetros",
     "nextBtn": "Siguiente",
     "finishBtn": "Finalizar"
   },

@@ -161,8 +161,9 @@
     "planDetailsDay": "{day}. Working day",
     "planDetailsSets": "{sets} sessions per week"
   },
-  "Exercise": {
+  "Exercises": {
     "title": "Exercises",
+    "setParametersBtn": "Set parameters",
     "nextBtn": "Next",
     "finishBtn": "Finish"
   },

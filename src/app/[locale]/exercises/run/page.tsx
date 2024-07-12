@@ -39,7 +39,8 @@ export default async function ExercisesRunPage({
       className: "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
     },
     buttonClass: `btn ${i === exercises.length - 1 ? 'btn-primary' : ''} w-full`,
-    buttonText: i === exercises.length - 1 ? t("finishBtn") : t("nextBtn"),
+    buttonText: t("setParametersBtn"),
+    buttonNextText: i === exercises.length - 1 ? t("finishBtn") : t("nextBtn"),
   }));
 
   return (
