@@ -305,7 +305,7 @@ export async function getUserCurrentPlanWorkouts(locale: string): Promise<Exerci
         FROM plans_user
         JOIN plans ON plans_user.plan_id = plans.id
         WHERE plans_user.user_id=${user.id} AND plans_user.is_current=true)
-      ])::uuid[]);
+      ])::uuid[]) ORDER BY wc.name ASC;
     `;
     if (rowCount === 0) {
       return null;
