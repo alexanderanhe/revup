@@ -157,9 +157,11 @@
     "notFound": "Workout not found",
     "empty": "Content is not available at this time",
     "nextTraining": "Next training",
+    "forPlace": "For {place}",
     "planDetails": "{days} working days",
     "planDetailsDay": "{day}. Working day",
-    "planDetailsSets": "{sets} sessions per week"
+    "planDetailsSets": "{sets} sessions per week",
+    "workoutsDone": "{workouts_done} workouts done."
   },
   "Exercises": {
     "title": "Exercises",

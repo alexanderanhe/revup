@@ -158,9 +158,11 @@
     "notFound": "No se encontró el ejercicio",
     "empty": "El contenido no esta disponible en este momento",
     "nextTraining": "Siguiente Entrenamiento",
+    "forPlace": "Para {place}",
     "planDetailsDays": "{days} días de entrenamiento",
     "planDetailsDay": "{day}. Día de entrenamiento",
-    "planDetailsSets": "{sets} sesiones por semana"
+    "planDetailsSets": "{sets} sesiones por semana",
+    "workoutsDone": "{workouts_done} entrenamientos completados."
   },
   "Exercises": {
     "title": "Ejercicios",
