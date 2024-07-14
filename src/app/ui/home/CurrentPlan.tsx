@@ -57,7 +57,11 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
             </span>
             <span className="text-xs">{ t("workoutsDone", { workouts_done: 0 }) }</span>
           </div>
-          <ProgressCircle type="success" progress={Math.round(Math.random() * 100)} />
+          <ProgressCircle
+            type="success"
+            progress={Math.round(Math.random() * 100)}
+            icon={`0/${plan.days}`}
+          />
         </section>
         <ImageWorkout
           image={{
@@ -80,7 +84,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
             <Card key={`day${day}`} className={clsx(
               "indicator w-full",
               typeof completed !== 'undefined' && 'border-2 border-primary/50',
-              typeof completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-90',
+              typeof completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-95',
             )}>
               { typeof completed !== 'undefined' ? (
                 <Link

@@ -30,7 +30,7 @@ export default async function ExercisesPage({
 
   return (
     <LayoutContent title="Exercises">
-      <Card className="indicator w-full">
+      <Card className="indicator w-full m-0">
         <div className="flex gap-3">
           <ProgressCircle type={0 > 80 ? 'success' : 'error'} progress={0} />
           <div className="flex flex-col justify-center font-medium w-full">
@@ -47,7 +47,7 @@ export default async function ExercisesPage({
             <div className="timeline-middle text-primary">
               <ArrowRightCircleIcon className="size-5" />
             </div>
-            <Card className="relative h-24 timeline-end mb-3">
+            <Card className="relative min-h-24 timeline-end mb-3">
               <Link href={`/exercises/run#${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
                 { name }
                 <span className="text-xs text-primary font-medium">
@@ -60,7 +60,7 @@ export default async function ExercisesPage({
                 width={100}
                 height={100}
                 className="absolute inset-0 w-full h-full object-cover object-right rounded-lg"
-                style={{ maskImage: "linear-gradient(to right, black -100%, transparent)"}}
+                style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
               />
             </Card>
             <hr className={clsx(excercises.length - 1 === i && 'hidden')} />
