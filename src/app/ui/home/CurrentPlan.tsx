@@ -30,12 +30,13 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   return (
     <>
       <Card className="collapse-title text-neutral-content">
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary z-[1] opacity-40"></div>
         <section className="grid grid-cols-[1fr_auto] place-items-center w-full z-[1]">
-          <div className="grid grid-rows-auto gap-1 place-items-start w-full">
+          <div className="grid grid-rows-auto gap-1 place-items-start w-full [&>strong]:uppercase">
             <strong>{ plan.name }</strong>
             <div className="flex flex-wrap gap-4 text-xs max-sm:gap-1 uppercase">
               <div className="flex gap-2">
-                <HomeModernIcon className="size-3 text-secondary" />
+                <HomeModernIcon className="size-3 text-primary" />
                 <span>{ t("forPlace", { place: place?.toUpperCase() }) }</span>
               </div>
               <div className="flex gap-2">
@@ -43,18 +44,18 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
                   name={plan.id}
                   stars={~~difficultyValue}
                   size="xs"
-                  color="secondary"
+                  color="primary"
                   // disabled
                 />
                 <span>{ difficulty}</span>
               </div>
             </div>
-            <span className="text-secondary font-medium text-xs">
+            <span className="text-primary font-medium text-xs">
               { t("planDetailsDays", { days: plan.days }) }
               { " " }
               ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
             </span>
-            <span className="text-xs">({ t("workoutsDone", { workouts_done: 0 }) })</span>
+            <span className="text-xs">{ t("workoutsDone", { workouts_done: 0 }) }</span>
           </div>
           <ProgressCircle type="success" progress={Math.round(Math.random() * 100)} />
         </section>
@@ -76,7 +77,11 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
         <div className="font-semibold">{ t("nextTraining") }</div>
         <ul className="grid grid-cols-1 gap-2 w-full">
           { plan.workingDays?.map(({ day, completed, current_day}, index) => (
-            <Card key={`day${day}`} className="indicator w-full">
+            <Card key={`day${day}`} className={clsx(
+              "indicator w-full",
+              typeof completed !== 'undefined' && 'border-2 border-primary/50',
+              typeof completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-90',
+            )}>
               { typeof completed !== 'undefined' ? (
                 <Link
                   href={`/exercises${!current_day ? '/' + day : ''}`}
@@ -88,19 +93,20 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
                   <Day
                     title={t("planDetailsDay", { day })}
                     body_zone={plan.body_zones?.[index % plan.body_zones.length]}
+                    type={ 0 > 80 ? 'success' : 'error' }
                     progress={0}
                   />
-                  { current_day && <span className="indicator-item indicator-middle badge badge-secondary badge-xs right-4"></span>}
+                  { current_day && <span className="indicator-item indicator-middle badge badge-primary badge-xs right-4"></span>}
                 </Link>
               ) : (
-                <div className="flex gap-3 opacity-40 cursor-not-allowed">
-                   <Day
-                    title={t("planDetailsDay", { day })}
-                    type={'error'}
-                    body_zone={plan.body_zones?.[index % plan.body_zones.length]}
-                    progress={0}
-                    icon={<LockClosedIcon className="size-5" />}
-                  />
+                <div className="flex gap-3">
+                  <Day
+                  title={t("planDetailsDay", { day })}
+                  type={'error'}
+                  body_zone={plan.body_zones?.[index % plan.body_zones.length]}
+                  progress={0}
+                  icon={<LockClosedIcon className="size-5" />}
+                />
                 </div>
               )}
             </Card>

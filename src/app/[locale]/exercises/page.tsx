@@ -27,7 +27,6 @@ export default async function ExercisesPage({
   if (!excercises) {
     return null;
   }
-  console.log('-----',plan.current_day)
 
   return (
     <LayoutContent title="Exercises">
@@ -45,13 +44,13 @@ export default async function ExercisesPage({
       <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical">
         { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit }, i, excercises) => (
           <li key={`exercise${id}`}>
-            <div className="timeline-middle text-secondary">
+            <div className="timeline-middle text-primary">
               <ArrowRightCircleIcon className="size-5" />
             </div>
             <Card className="relative h-24 timeline-end mb-3">
               <Link href={`/exercises/run#${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
                 { name }
-                <span className="text-xs text-secondary">
+                <span className="text-xs text-primary font-medium">
                   { sets && reps && `${ sets }x${ reps }x${ weight } ${ weight_unit }`}
                   { time && time_unit && `${ time } ${ time_unit }`}
                 </span>

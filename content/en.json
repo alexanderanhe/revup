@@ -158,7 +158,7 @@
     "empty": "Content is not available at this time",
     "nextTraining": "Next training",
     "forPlace": "For {place}",
-    "planDetails": "{days} working days",
+    "planDetailsDays": "{days} working days",
     "planDetailsDay": "{day}. Working day",
     "planDetailsSets": "{sets} sessions per week",
     "workoutsDone": "{workouts_done} workouts done."
