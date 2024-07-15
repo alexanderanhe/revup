@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type TitleProps = {
@@ -10,16 +11,16 @@ type TitleProps = {
 export default function Title({ titles, defaultTitle }: TitleProps) {
   const [ title, setTitle ] = useState<string>("")
   const [ countingTitle, setCountingTitle ] = useState<string>("")
+  const pathname = usePathname();
   const ids = Object.keys(titles);
   const total = ids.length;
   
   const handleUrlChange = useCallback(() => {
     const hash = window.location.hash.replace(/^#slide/i, "");
-    console.log(hash);
     const findIndex = ids.indexOf(hash) + 1;
     const nTitle = titles?.[hash] || defaultTitle || titles?.[ids[0]];
     document.title = nTitle;
-    setCountingTitle(titles?.[hash] ? `${findIndex || 1}/${total}` : '');
+    setCountingTitle(hash && titles?.[hash] ? `${findIndex || 1}/${total}` : '');
     setTitle(nTitle);
   }, [window.location.hash]);
 
@@ -30,7 +31,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
     return () => {
       window.removeEventListener('hashchange', handleUrlChange);
     };
-  }, [ids, total, useCallback]);
+  }, [ids, total, useCallback, pathname]);
 
   return (
     <>
