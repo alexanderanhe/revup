@@ -32,7 +32,7 @@ type SlideProps = {
   slideIds?: string[];
 };
 
-export default function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: SlideProps) {
+function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: SlideProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formState, formAction ] = useFormState(handleOnboarding, null);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -170,3 +170,41 @@ export default function Slide({ carouselId, submit, slideIds, workout_complex, .
     </div>
   )
 }
+
+type SlidesProps = {
+  slides: any[];
+};
+
+export default function Slides({ slides }: SlidesProps) {
+  const carouselId = 'exercise-run';
+
+  useEffect(() => {
+    if (window.location.hash) {
+      goToOtherImage(window.location.hash, carouselId);
+    }
+  }, []);
+
+  return (
+    <div id={carouselId} className="carousel space-x-4 w-full h-svh" style={{margin: '0'}}>
+      { slides.map((slide, index) => (
+          <Slide
+            {...slide}
+            carouselId={carouselId}
+            key={`Slide${slide.id}`}
+            index={index}
+            submit={index === slides.length - 1}
+            slideIds={slides.map(({ id }) => id)}
+          />
+      ))}
+    </div>
+  )
+}
+
+const goToOtherImage = (href: string, carouselId: string) => {
+  const carousel = document.getElementById(carouselId);
+  if (carousel) {
+    const target = document.querySelector<HTMLDivElement>(href)!;
+    const left = target.offsetLeft;
+    carousel.scrollTo({ left: left, behavior: 'instant' });
+  }
+};

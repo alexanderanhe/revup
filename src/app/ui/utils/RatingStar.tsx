@@ -13,7 +13,7 @@ export default function RatingStar({ stars, name, size, lenght, color, ...props 
       { Array.from({ length: (lenght ?? 5) + 1 }).map((_, index) => (
         <input {...props}
           key={`ratingstart${name}${index}`}
-          type="radio" className={index ? colors[color as keyof typeof colors ?? 'primary'] : "rating-hidden hidden"}
+          type="radio" className={index ? colors[color as keyof typeof colors ?? 'default'] : "rating-hidden hidden"}
           defaultChecked={index === stars}
         />
       ))}
@@ -30,7 +30,10 @@ const sizes = {
 }
 
 const colors = {
+  default: "mask mask-star-2",
   primary: "mask mask-star-2 bg-primary",
+  "base-100": "mask mask-star-2 bg-base-100",
+  "neutral-content": "mask mask-star-2 bg-neutral-content",
   secondary: "mask mask-star-2 bg-secondary",
   success: "mask mask-star-2 bg-success",
   danger: "mask mask-star-2 bg-danger",

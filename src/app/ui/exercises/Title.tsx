@@ -19,7 +19,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
     const findIndex = ids.indexOf(hash) + 1;
     const nTitle = titles?.[hash] || defaultTitle || titles?.[ids[0]];
     document.title = nTitle;
-    setCountingTitle(`${findIndex || 1}/${total}`);
+    setCountingTitle(titles?.[hash] ? `${findIndex || 1}/${total}` : '');
     setTitle(nTitle);
   }, [window.location.hash]);
 

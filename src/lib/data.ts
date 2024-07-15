@@ -340,7 +340,11 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
         WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id=${locale}
-      ) as tags
+      ) as tags,
+      (
+        SELECT COUNT(DISTINCT day)
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user.id} AND completed
+      ) as workouts_done
       FROM plans_user pu
       JOIN plans p ON pu.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
@@ -351,6 +355,7 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
     }
     const plan = {
       ...rows[0],
+      progress: Math.round((rows[0].workouts_done / rows[0].days) * 100),
       body_zones: rows[0].body_zones?.split(','),
       tags: rows[0].tags?.split(',').map((tag: string) => tag.split(':'))
     } as Plan;

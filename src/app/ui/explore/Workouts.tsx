@@ -42,7 +42,7 @@ function WorkoutItem({ workout, liked }: WorkoutProps) {
 
   return (
     <Link href={`${PAGES.WORKOUT}/${workout.id}`} className="w-full">
-      <Card className="relative h-28">
+      <Card className="relative h-28 overflow-hidden">
         <div className="grid items-end justify-start w-full h-full z-[1] font-semibold">
           {workout.name}
         </div>

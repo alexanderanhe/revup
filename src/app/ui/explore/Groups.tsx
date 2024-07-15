@@ -38,7 +38,7 @@ function GroupItem({ group }: {
   }
 
   return (
-    <Card className="btn btn-ghost relative h-28 w-full" onClick={handleClick}>
+    <Card className="btn btn-ghost relative h-28 w-full overflow-hidden" onClick={handleClick}>
       <div className="grid grid-cols-[1fr_auto] w-full">
         <div className="grid items-end justify-start w-full h-full z-[1] font-semibold">
           <span className="[&::first-letter]:capitalize">{group.name}</span>

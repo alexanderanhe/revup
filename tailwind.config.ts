@@ -58,7 +58,12 @@ const config: Config = {
         },
       },
       'cupcake',
-      'pastel',
+      {
+        pastel: {
+          ...require("daisyui/src/theming/themes")["pastel"],
+          "neutral": "#000000",
+        },
+      },
       'cmyk'
     ],
   },

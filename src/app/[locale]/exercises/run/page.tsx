@@ -2,9 +2,7 @@ import { getUserCurrentPlanWorkouts } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
 
 import { WorkoutImageLink } from "@/lib/definitions";
-import Slide from "@/app/ui/exercises/Slide";
-import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
-import Title from "@/app/ui/exercises/Title";
+import Slides from "@/app/ui/exercises/Slide";
 
 export default async function ExercisesRunPage({
   params: { locale }
@@ -18,12 +16,6 @@ export default async function ExercisesRunPage({
   if (!exercises) {
     return null;
   }
-  type Titles = { [key: string]: string }
-  const titles: Titles = exercises.reduce((acc: Titles, { id, name, tags }) => {
-    const [title] = tags?.find(([_, type]) => type === 'muscle') ?? [''];
-    acc[id] = title || name;
-    return acc;
-  }, {});
 
   const slides = exercises.map(({ id, workout_id, name, description, images, tags, image_banner, ...workout_complex }, i) => ({
     id,
@@ -45,19 +37,6 @@ export default async function ExercisesRunPage({
   }));
 
   return (
-    <LayoutContent title={<Title titles={titles} />} titleFixed>
-      <div id="exercise-run" className="carousel space-x-4 w-full h-svh" style={{margin: '0'}}>
-        { slides.map((slide, index) => (
-            <Slide
-              {...slide}
-              carouselId="exercise-run"
-              key={`Slide${slide.id}`}
-              index={index}
-              submit={index === slides.length - 1}
-              slideIds={slides.map(({ id }) => id)}
-            />
-        ))}
-      </div>
-    </LayoutContent>
+      <Slides slides={slides} />
   )
 }

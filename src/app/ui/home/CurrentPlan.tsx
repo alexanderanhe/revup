@@ -10,7 +10,7 @@ import RatingStar from "../utils/RatingStar";
 import { User } from "next-auth";
 import { Plan, WorkoutImage } from "@/lib/definitions";
 import clsx from "clsx";
-import ImageWorkout from "../utils/ImageWorkout";
+import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 
 const START_DAY = 0;
 
@@ -26,25 +26,27 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   }
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
+  const progress = plan?.progress ?? 0;
+  const workouts_done = plan?.workouts_done ?? 0;
 
   return (
     <>
-      <Card className="collapse-title text-neutral-content">
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary z-[1] opacity-40"></div>
+      <Card className="collapse-title text-neutral-content bg-black overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary z-[1] opacity-40"></div>
         <section className="grid grid-cols-[1fr_auto] place-items-center w-full z-[1]">
           <div className="grid grid-rows-auto gap-1 place-items-start w-full [&>strong]:uppercase">
             <strong>{ plan.name }</strong>
             <div className="flex flex-wrap gap-4 text-xs max-sm:gap-1 uppercase">
               <div className="flex gap-2">
-                <HomeModernIcon className="size-3 text-primary" />
-                <span>{ t("forPlace", { place: place?.toUpperCase() }) }</span>
+                <HomeModernIcon className="size-3" />
+                <span>{ t("forPlace", { place }) }</span>
               </div>
               <div className="flex gap-2">
                 <RatingStar
                   name={plan.id}
                   stars={~~difficultyValue}
                   size="xs"
-                  color="primary"
+                  color="neutral-content"
                   // disabled
                 />
                 <span>{ difficulty}</span>
@@ -55,12 +57,12 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
               { " " }
               ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
             </span>
-            <span className="text-xs">{ t("workoutsDone", { workouts_done: 0 }) }</span>
+            <span className="text-xs">{ t("workoutsDone", { workouts_done }) }</span>
           </div>
           <ProgressCircle
             type="success"
-            progress={Math.round(Math.random() * 100)}
-            icon={`0/${plan.days}`}
+            progress={progress}
+            icon={`${workouts_done}/${plan.days}`}
           />
         </section>
         <ImageWorkout
@@ -100,7 +102,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
                     type={ 0 > 80 ? 'success' : 'error' }
                     progress={0}
                   />
-                  { current_day && <span className="indicator-item indicator-middle badge badge-primary badge-xs right-4"></span>}
+                  { current_day && <span className="indicator-item indicator-middle badge badge-primary opacity-40 badge-xs right-4"></span>}
                 </Link>
               ) : (
                 <div className="flex gap-3">

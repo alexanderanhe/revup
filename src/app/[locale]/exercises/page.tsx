@@ -1,7 +1,6 @@
 import Card from "@/app/ui/Card";
 import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 import ProgressCircle from "@/app/ui/utils/ProgressCircle";
-import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
 import { Plan, WorkoutImage } from "@/lib/definitions";
 import { Link } from "@/navigation";
@@ -29,8 +28,8 @@ export default async function ExercisesPage({
   }
 
   return (
-    <LayoutContent title="Exercises">
-      <Card className="indicator w-full m-0">
+    <>
+      <Card className="indicator w-full" style={{marginTop: '5rem'}}>
         <div className="flex gap-3">
           <ProgressCircle type={0 > 80 ? 'success' : 'error'} progress={0} />
           <div className="flex flex-col justify-center font-medium w-full">
@@ -47,8 +46,8 @@ export default async function ExercisesPage({
             <div className="timeline-middle text-primary">
               <ArrowRightCircleIcon className="size-5" />
             </div>
-            <Card className="relative min-h-24 timeline-end mb-3">
-              <Link href={`/exercises/run#${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
+            <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
+              <Link href={`/exercises/run#slide${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
                 { name }
                 <span className="text-xs text-primary font-medium">
                   { sets && reps && `${ sets }x${ reps }x${ weight } ${ weight_unit }`}
@@ -59,7 +58,7 @@ export default async function ExercisesPage({
                 image={image_banner?.[0] as WorkoutImage}
                 width={100}
                 height={100}
-                className="absolute inset-0 w-full h-full object-cover object-right rounded-lg"
+                className="absolute inset-0 w-full h-full object-cover object-right"
                 style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
               />
             </Card>
@@ -71,6 +70,6 @@ export default async function ExercisesPage({
         href={`/exercises/run`}
         className="btn btn-primary w-full"
       >Start</Link>
-    </LayoutContent>
+    </>
   )
 }

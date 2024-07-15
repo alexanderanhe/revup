@@ -135,6 +135,8 @@ export type Plan = {
   sets_per_week: number;
   custom_email?: string;
   current_day?: number;
+  progress?: number;
+  workouts_done?: number;
 }
 
 export type Exercise = {
