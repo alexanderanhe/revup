@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState, useFormStatus } from 'react-dom';
+import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleOnboarding } from "@/lib/actions";
@@ -11,9 +12,12 @@ import { handleOnboarding } from "@/lib/actions";
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import Card from '@/app/ui/Card';
 import { WorkoutComplexParameters } from '@/lib/definitions';
+import { Link, useRouter } from '@/navigation';
+import { PAGES } from '@/lib/routes';
 
 type SlideProps = {
   carouselId: string;
+  scrolled?: number;
   id: string;
   title?: string;
   description?: string;
@@ -24,6 +28,7 @@ type SlideProps = {
     style?: React.CSSProperties;
   };
   workout_complex: WorkoutComplexParameters;
+  workout_id: string;
   index: number;
   buttonClass?: string;
   buttonText?: string;
@@ -33,10 +38,11 @@ type SlideProps = {
   slideIds?: string[];
 };
 
-function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: SlideProps) {
+function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, ...slide }: SlideProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formState, formAction ] = useFormState(handleOnboarding, null);
   const ref = React.useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -56,24 +62,6 @@ function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: Slid
     );
   }
 
-  useEffect(() => {
-    const carousel = document.getElementById(carouselId) as HTMLElement;
-    if (carousel) {
-      const handleScroll = () => {
-        if (ref.current && isInViewport(ref.current)) {
-          const hash = `#${ref.current.id}`;
-          const path = `${window.location.origin}${window.location.pathname}`;
-          window.location.replace(`${path}${hash}`);
-        }
-      }
-
-      carousel.addEventListener('scroll', handleScroll);
-      return () => {
-        carousel.removeEventListener('scroll', handleScroll);
-      }
-    }
-  }, []);
-
   const NextButton = () => submit ? (
     <form action={formAction}>
       <SubmitButton className={ slide.buttonNextClass }>
@@ -88,10 +76,23 @@ function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: Slid
   )
 
   useEffect(() => {
+    if (ref.current && isInViewport(ref.current)) {
+      const hash = `#${ref.current.id}`;
+      const path = `${window.location.origin}${window.location.pathname}`;
+      window.location.replace(`${path}${hash}`);
+    }
+  }, [scrolled]);
+
+
+  useEffect(() => {
     if (formState === 'done') {
       window.location.replace('/home');
     }
   }, [formState]);
+
+  useEffect(() => {
+    router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
+  }, []);
 
   return (
     <div id={`slide${slide.id}`}
@@ -100,7 +101,7 @@ function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: Slid
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='flex justify-center'>
+        <div className='flex justify-center relative'>
           {slide.image && (
             <Image
               {...slide.image}
@@ -108,12 +109,16 @@ function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: Slid
               height={400}
             />
           )}
+          <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-xs btn-ghost btn-outline btn-square absolute top-2 right-2">
+            <InformationCircleIcon className="size-5" />
+          </Link>
         </div>
         <div className='content-grid space-y-4'>
-          <h2 className="text-center py-4">{ slide.title }</h2>
+          <h3 className="text-center">{ slide.title }</h3>
           <section><p>
+            { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
-            { workout_complex.recommendations }
+            { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
           </p></section>
           <section className="grid grid-cols-3 justify-between gap-4">
             <Card className="[&>strong]:font-medium size-24">
@@ -139,33 +144,31 @@ function Slide({ carouselId, submit, slideIds, workout_complex, ...slide }: Slid
               </div>
             </Card>
           </section>
-          {/* <p>{ slide.description }</p> */}
-          <form action="" className="grid grid-cols-1 gap-2 w-full">
-            { workout_complex.reps && (
-              <>
-                <div className="join">
-                  <input className="input input-bordered join-item grow" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" />
+          <section>
+            <form action="" className="grid grid-cols-1 gap-2 w-full">
+              { workout_complex.reps && (
+                <>
+                  <div className="join w-full">
+                    <div className="join-item grow grid grid-cols-2">
+                      <input className="input input-bordered rounded-r-none" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" required />
+                      <input className="input input-bordered rounded-none" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
+                    </div>
+                    <button className="btn join-item rounded-r-full">
+                      <PlusIcon className="size-4" />
+                    </button>
+                  </div>
+                </>
+              )}
+              { workout_complex.time && (
+                <div className="join w-full">
+                  <input className="input input-bordered join-item grow" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
                   <button className="btn join-item rounded-r-full">
                     <PlusIcon className="size-4" />
                   </button>
                 </div>
-                <div className="join">
-                  <input className="input input-bordered join-item grow" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" />
-                  <button className="btn join-item rounded-r-full">
-                    <PlusIcon className="size-4" />
-                  </button>
-                </div>
-              </>
-            )}
-            { workout_complex.time && (
-              <div className="join">
-                <input className="input input-bordered join-item grow" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" />
-                <button className="btn join-item rounded-r-full">
-                  <PlusIcon className="size-4" />
-                </button>
-              </div>
-            )}
-          </form>
+              )}
+            </form>
+          </section>
         </div>
       </section>
       <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
@@ -212,9 +215,21 @@ type SlidesProps = {
 };
 
 export default function Slides({ slides }: SlidesProps) {
+  const [ scrolled, setScrolled ] = useState<number>(0);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
+    const carousel = document.getElementById(carouselId) as HTMLElement;
+    if (carousel) {
+      const handleScroll = (event: Event) => {
+        setScrolled((event.target as HTMLElement).scrollLeft);
+      }
+
+      carousel.addEventListener('scroll', handleScroll);
+      return () => {
+        carousel.removeEventListener('scroll', handleScroll);
+      }
+    }
     if (window.location.hash) {
       goToOtherImage(window.location.hash, carouselId);
     }
@@ -230,6 +245,7 @@ export default function Slides({ slides }: SlidesProps) {
             index={index}
             submit={index === slides.length - 1}
             slideIds={slides.map(({ id }) => id)}
+            scrolled={scrolled}
           />
       ))}
     </div>

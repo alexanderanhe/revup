@@ -28,7 +28,7 @@ export default async function ExercisesRunPage({
       ?? (images?.[0] as { file: WorkoutImageLink }).file?.url),
       alt: name,
       // className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain",
-      style: { maskImage: "linear-gradient(black 60%, transparent)"},
+      style: { maskImage: "linear-gradient(to right, black 60%, transparent)"},
       className: "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
     },
     buttonClass: `btn w-full`,
