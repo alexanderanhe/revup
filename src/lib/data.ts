@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -297,13 +297,14 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
     
     type ExerciseMod = Omit<Exercise, 'tags'> & { tags: string}
     const { rows, rowCount } = await sql<ExerciseMod>`
-      SELECT w.id as workout_id, wc.id, w.image_banner, w.images, wl.name, wl.description,
+      SELECT w.id as workout_id, p.id as plan_id, ${workingDay.day} as day, wc.id, w.image_banner, w.images, wl.name, wl.description,
         (
           SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
           FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
           WHERE tags.id = ANY((Array[w.tags])::uuid[]) AND tags_lang.language_id=${locale}
         ) as tags, puwc.created_at as completed_at,
-        wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments
+        wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments,
+        COUNT(puwc.sets) as sets_done, SUM(puwc.time) as time_done
       FROM workouts_complex wc
       JOIN workouts w ON wc.workout_id = w.id
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
@@ -313,8 +314,10 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
         AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
       WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
         AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
+      GROUP BY w.id, p.id, wc.id, wl.name, wl.description, puwc.created_at
       ORDER BY wc.name ASC;
     `;
+    // TO DO: Change this to a better way to handle this
     if (rowCount === 0) {
       return null;
     }
@@ -323,7 +326,7 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
       tags: tags?.split(',').map((tag) => tag.split(':'))
     })) as Exercise[];
   } catch (error) {
-    console.error('Failed to fetch user plans:', error);
+    console.error('Failed to fetch current user plan:', error);
     return null;
   }
 }
@@ -410,6 +413,91 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
   } catch (error) {
     console.error('Failed to fetch user plans days:', error);
     return null;
+  }
+}
+
+export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): Promise<string> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+
+    const { rows: workoutComplexRows, rowCount: workoutComplexRowsCount } = await sql<WorkoutComplex>`SELECT * FROM workouts_complex WHERE id=${<string>form.workout_complex_id}`;
+    if (workoutComplexRowsCount === 0) {
+      throw new Error('Workout complex not found.');
+    }
+    const workoutComplex = workoutComplexRows[0];
+
+    const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
+      SELECT p.* FROM plans p
+      JOIN plans_user pu ON pu.plan_id=p.id
+      WHERE p.id=${<string>form.plan_id}
+    `;
+    if (planRowsCount === 0) {
+      throw new Error('Workout complex not found.');
+    }
+    const plan = planRows[0];
+    if (plan.days < parseInt(<string>form.day)) {
+      throw new Error('Day out of range.');
+    }
+
+    // TO DO: rest, rest_between, rest_sets I DON'T KNOW HOW TO HANDLE THIS YET
+    await sql`INSERT INTO plans_user_workouts_complex
+      (day, plan_id, reps, time, time_unit,
+        sets, weight, weight_unit, workout_id, workout_complex_id, user_id)
+      VALUES (
+        ${<string>form.day},
+        ${<string>plan.id},
+        ${<string>form.reps ?? null},
+        ${<string>form.time ?? null},
+        ${workoutComplex.time_unit},
+        ${<string>form.sets ?? null},
+        ${<string>form.weight ?? null},
+        ${workoutComplex.weight_unit},
+        ${workoutComplex.workout_id},
+        ${workoutComplex.id},
+        ${user?.id}
+      )`;
+    return 'saved';
+  } catch (error) {
+    return 'error';
+  }
+}
+
+export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;}): Promise<string> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+
+    const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
+      SELECT p.* FROM plans p
+      JOIN plans_user pu ON pu.plan_id=p.id
+      WHERE p.id=${<string>form.plan_id}
+    `;
+    if (planRowsCount === 0) {
+      throw new Error('Workout complex not found.');
+    }
+    const plan = planRows[0];
+
+    // TO DO: CALCULATE PERCENTAGE
+    await sql`UPDATE plans_user_day
+      SET completed=true,
+          completed_at=NOW(),
+          percentage=100,
+          updated_at=NOW()
+      WHERE day=${<string>form.day} AND plan_id=${plan.id} AND user_id=${user.id}
+    `;
+    await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at)
+      VALUES (${parseInt(<string>form.day) + 1}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW())
+    ;`
+    return 'saved';
+  } catch (error) {
+    return 'error';
   }
 }
 

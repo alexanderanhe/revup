@@ -17,9 +17,11 @@ export default async function ExercisesRunPage({
     return null;
   }
 
-  const slides = exercises.map(({ id, workout_id, name, description, images, tags, image_banner, ...workout_complex }, i) => ({
+  const slides = exercises.map(({ id, workout_id, plan_id, day, name, description, images, tags, image_banner, ...workout_complex }, i) => ({
     id,
     workout_id,
+    plan_id,
+    day,
     title: name,
     description: description ?? 'No description',
     workout_complex,

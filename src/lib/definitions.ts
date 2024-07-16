@@ -97,6 +97,7 @@ export type Workout = {
 }
 
 export type WorkoutComplex = {
+  id?: string;
   name: string;
   body_zone: string;
   workout_id: string;
@@ -110,6 +111,10 @@ export type WorkoutComplexParameters = {
   weight: number;
   weight_unit: string;
   total_minutes: number;
+  reps_done?: number;
+  sets_done?: number;
+  time_done?: number;
+  weight_done?: number;
   recommendations: string;
   comments: string;
 }
@@ -141,7 +146,9 @@ export type Plan = {
 
 export type Exercise = {
   id: UUID;
+  day: number;
   workout_id: UUID;
+  plan_id: UUID;
   name: string;
   tags: string[][];
   description: string;

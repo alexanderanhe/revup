@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
-import { handleOnboarding } from "@/lib/actions";
+import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
 
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import Card from '@/app/ui/Card';
@@ -29,6 +29,8 @@ type SlideProps = {
   };
   workout_complex: WorkoutComplexParameters;
   workout_id: string;
+  plan_id: string;
+  day: number;
   index: number;
   buttonClass?: string;
   buttonText?: string;
@@ -38,9 +40,11 @@ type SlideProps = {
   slideIds?: string[];
 };
 
-function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, ...slide }: SlideProps) {
+function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, ...slide }: SlideProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [snap, setSnap] = useState<number | string | null>("355px");
-  const [ formState, formAction ] = useFormState(handleOnboarding, null);
+  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
+  const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -63,7 +67,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   }
 
   const NextButton = () => submit ? (
-    <form action={formAction}>
+    <form action={formActionWorkoutCloseDay}>
       <SubmitButton className={ slide.buttonNextClass }>
         { slide.buttonNextText }
       </SubmitButton>
@@ -85,10 +89,16 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
 
   useEffect(() => {
-    if (formState === 'done') {
+    if (formStateWorkoutItem === 'saved') {
+      formRef.current?.reset();
+    }
+  }, [formStateWorkoutItem]);
+
+  useEffect(() => {
+    if (formStateWorkoutCloseDay === 'done') {
       window.location.replace('/home');
     }
-  }, [formState]);
+  }, [formStateWorkoutCloseDay]);
 
   useEffect(() => {
     router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
@@ -137,36 +147,35 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             <Card className="[&>strong]:font-medium size-24">
               <div className="flex flex-col items-center gap-1 w-full">
                 { workout_complex.sets ? (
-                  <><strong>0 / { workout_complex.sets }</strong>sets</>
+                  <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
                 ) : (
-                  <><strong>0 / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
+                  <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
                 )}
               </div>
             </Card>
           </section>
           <section>
-            <form action="" className="grid grid-cols-1 gap-2 w-full">
-              { workout_complex.reps && (
-                <>
-                  <div className="join w-full">
-                    <div className="join-item grow grid grid-cols-2">
-                      <input className="input input-bordered rounded-r-none" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" required />
-                      <input className="input input-bordered rounded-none" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
-                    </div>
-                    <button className="btn join-item rounded-r-full">
-                      <PlusIcon className="size-4" />
-                    </button>
+            <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
+              <input type="hidden" name="day" value={ day } />
+              <input type="hidden" name="workout_id" value={ workout_id } />
+              <input type="hidden" name="workout_complex_id" value={ slide.id } />
+              <input type="hidden" name="plan_id" value={ plan_id } />
+              <div className="join w-full">
+                { workout_complex.reps && (
+                  <div className="join-item grow grid grid-cols-2">
+                    <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" required />
+                    <input className="input input-bordered rounded-none" name="weight" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
                   </div>
-                </>
-              )}
-              { workout_complex.time && (
-                <div className="join w-full">
-                  <input className="input input-bordered join-item grow" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
-                  <button className="btn join-item rounded-r-full">
-                    <PlusIcon className="size-4" />
-                  </button>
-                </div>
-              )}
+                )}
+                { workout_complex.time && (
+                  <div className="join-item grow grid grid-cols-1">
+                    <input className="input input-bordered rounded-r-none" name="time" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
+                  </div>
+                )}
+                <SubmitButton className="btn join-item rounded-r-full">
+                  <PlusIcon className="size-4" />
+                </SubmitButton>
+              </div>
             </form>
           </section>
         </div>

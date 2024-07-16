@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait } from '@/lib/data';
+import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
  
 // ...
@@ -152,6 +152,40 @@ export async function authenticateGithub(
   }
 }
 
+export async function handleSetWorkoutItem(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    const form = Object.fromEntries(Array.from(formData.entries()));
+    return await setWorkoutItem(form);
+  } catch (error) {
+    return 'error';
+  }
+}
+export async function handleSetWorkoutLiked(
+  prevState: boolean | null | 'error',
+  formData: FormData
+) {
+  try {
+    const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
+    return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
+  } catch (error) {
+    return 'error';
+  }
+}
+export async function handleSetWorkoutCloseDay(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    const form = Object.fromEntries(Array.from(formData.entries()));
+    return await setWorkoutCloseDay(form);
+  } catch (error) {
+    return 'error';
+  }
+}
+
 export async function handleHidePWABanner(
   prevState: string | null,
   formData: FormData
@@ -187,18 +221,6 @@ export async function handleAcceptCookies(
   try {
     cookies().set(APPCOOKIES.ACCEPTCOOKIES, '1', { httpOnly: true });
     return 'done';
-  } catch (error) {
-    return 'error';
-  }
-}
-export async function handleSetWorkoutLiked(
-  prevState: boolean | null | 'error',
-  formData: FormData
-) {
-  try {
-    const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
-    console.log(workoutId, enabled, !!enabled);
-    return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
   } catch (error) {
     return 'error';
   }
