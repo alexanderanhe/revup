@@ -166,10 +166,12 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS plans (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       tags UUID[] DEFAULT NULL,
+      body_zones UUID[] DEFAULT NULL,
       workouts_complex UUID[] DEFAULT NULL,
       days SMALLINT DEFAULT NULL,
       sets_per_week SMALLINT DEFAULT NULL,
       custom_email VARCHAR(255) NULL,
+      type CHAR(10) DEFAULT 'public',
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );`,
@@ -209,6 +211,8 @@ const sql = {
       weight_unit CHAR(2) DEFAULT NULL,
       workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE,
       workout_complex_id UUID REFERENCES workouts_complex(id) DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (user_id, plan_id, day, id)
     );`,
     createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (

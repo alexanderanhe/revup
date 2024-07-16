@@ -167,6 +167,7 @@
   "Exercises": {
     "title": "Ejercicios",
     "setParametersBtn": "Establecer parámetros",
+    "historyBtn": "Historial",
     "nextBtn": "Siguiente",
     "finishBtn": "Finalizar"
   },

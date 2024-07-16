@@ -1,12 +1,14 @@
-import Card from "@/app/ui/Card";
-import ImageWorkout from "@/app/ui/utils/ImageWorkout";
-import ProgressCircle from "@/app/ui/utils/ProgressCircle";
-import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
-import { Plan, WorkoutImage } from "@/lib/definitions";
 import { Link } from "@/navigation";
-import { ArrowRightCircleIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { getTranslations } from "next-intl/server";
+import { RocketLaunchIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
+
+import Card from "@/app/ui/Card";
+import NextWorkout from "@/app/ui/exercises/NextWorkout";
+import ImageWorkout from "@/app/ui/utils/ImageWorkout";
+
+import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 
 export default async function ExercisesPage({
   params: { locale }
@@ -17,11 +19,15 @@ export default async function ExercisesPage({
 }) {
   const t = await getTranslations("Workout");
   const plan = await getUserCurrentPlan(locale) as Plan;
-  const excercises = await getUserCurrentPlanWorkouts(locale);
 
   if (!plan) {
     return <div>NO HAY NADA</div>;
   }
+
+  const workingDayData= plan.workingDays?.find(({ current_day }) => current_day) as PlanDay;
+  const workingDaySelected = plan.current_day ?? 1;
+
+  const excercises = await getUserCurrentPlanWorkouts(locale, workingDaySelected);
   
   if (!excercises) {
     return null;
@@ -29,22 +35,19 @@ export default async function ExercisesPage({
 
   return (
     <>
-      <Card className="indicator w-full" style={{marginTop: '5rem'}}>
-        <div className="flex gap-3">
-          <ProgressCircle type={0 > 80 ? 'success' : 'error'} progress={0} />
-          <div className="flex flex-col justify-center font-medium w-full">
-            <span className="text-xs">{ t("planDetailsDay", { day: plan.current_day }) }</span>
-            <span className="font-semibold [&::first-letter]:uppercase">
-              { plan.body_zones?.[((plan.current_day ?? 1) - 1) % plan.body_zones.length] ?? '-'}
-            </span>
-          </div>
-        </div>
-      </Card>
-      <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical">
-        { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit }, i, excercises) => (
+      <NextWorkout
+        body_zones={plan.body_zones}
+        workingDay={workingDayData}
+        t={t}
+        className="w-full"
+        style={{marginTop: '5rem'}}
+        noLink
+      />
+      <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical w-full">
+        { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit, completed_at }, i, excercises) => (
           <li key={`exercise${id}`}>
-            <div className="timeline-middle text-primary">
-              <ArrowRightCircleIcon className="size-5" />
+            <div className="timeline-middle">
+              {completed_at ? <CheckCircleIcon className="size-5 text-success" /> : <RocketLaunchIcon className="size-5 text-neutral" />}
             </div>
             <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
               <Link href={`/exercises/run#slide${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">

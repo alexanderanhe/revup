@@ -31,8 +31,9 @@ export default async function ExercisesRunPage({
       style: { maskImage: "linear-gradient(black 60%, transparent)"},
       className: "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
     },
-    buttonClass: `btn ${i === exercises.length - 1 ? 'btn-primary' : ''} w-full`,
-    buttonText: t("setParametersBtn"),
+    buttonClass: `btn w-full`,
+    buttonText: t("historyBtn"),
+    buttonNextClass: `btn ${i === exercises.length - 1 ? 'btn-primary' : 'btn-ghost'} w-full`,
     buttonNextText: i === exercises.length - 1 ? t("finishBtn") : t("nextBtn"),
   }));
 

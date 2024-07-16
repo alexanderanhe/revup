@@ -14,6 +14,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
   const pathname = usePathname();
   const ids = Object.keys(titles);
   const total = ids.length;
+  const hash = window?.location.hash ?? "";
   
   const handleUrlChange = useCallback(() => {
     const hash = window.location.hash.replace(/^#slide/i, "");
@@ -22,7 +23,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
     document.title = nTitle;
     setCountingTitle(hash && titles?.[hash] ? `${findIndex || 1}/${total}` : '');
     setTitle(nTitle);
-  }, [window.location.hash]);
+  }, [hash]);
 
   useEffect(() => {
     handleUrlChange();

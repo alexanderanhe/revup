@@ -281,13 +281,20 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
 
 }
 
-export async function getUserCurrentPlanWorkouts(locale: string): Promise<Exercise[] | null> {
+export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelected?: number): Promise<Exercise[] | null> {
   try {
     const session = await auth();
     const user = session?.user;
     if (!user) {
       return null;
     }
+    const plan = await getUserCurrentPlan(locale);
+    if (!plan) {
+      return null;
+    }
+    const workingDay = plan.workingDays?.find(({ day, current_day }) => workingDaySelected ? day === workingDaySelected : current_day) as PlanDay;
+    const [_, body_zone_id] = plan?.body_zones?.[(workingDay.day - 1) % plan.body_zones.length];
+    
     type ExerciseMod = Omit<Exercise, 'tags'> & { tags: string}
     const { rows, rowCount } = await sql<ExerciseMod>`
       SELECT w.id as workout_id, wc.id, w.image_banner, w.images, wl.name, wl.description,
@@ -295,17 +302,18 @@ export async function getUserCurrentPlanWorkouts(locale: string): Promise<Exerci
           SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
           FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
           WHERE tags.id = ANY((Array[w.tags])::uuid[]) AND tags_lang.language_id=${locale}
-        ) as tags,
+        ) as tags, puwc.created_at as completed_at,
         wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments
       FROM workouts_complex wc
       JOIN workouts w ON wc.workout_id = w.id
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
-      WHERE wc.id = ANY((Array[
-        (SELECT plans.workouts_complex
-        FROM plans_user
-        JOIN plans ON plans_user.plan_id = plans.id
-        WHERE plans_user.user_id=${user.id} AND plans_user.is_current=true)
-      ])::uuid[]) ORDER BY wc.name ASC;
+      JOIN plans_user pu ON pu.user_id=${user.id} AND pu.is_current=true
+      JOIN plans p ON pu.plan_id = p.id
+      LEFT JOIN plans_user_workouts_complex puwc ON puwc.plan_id = p.id AND puwc.workout_complex_id = wc.id
+        AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
+      WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
+        AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
+      ORDER BY wc.name ASC;
     `;
     if (rowCount === 0) {
       return null;
@@ -330,11 +338,9 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
     const { rows, rowCount } = await sql`
       SELECT p.*, pl.name, pl.comments, pu.current_day,
       (
-        SELECT string_agg(DISTINCT tl.name, ',')
-        FROM workouts_complex wc
-        JOIN tags t ON t.id = ANY((Array[wc.body_zones])::uuid[])
-        JOIN tags_lang tl ON tl.tag_id = t.id AND tl.language_id=${locale}
-        WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.id), ',')
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id = ANY((Array[p.body_zones])::uuid[]) AND tags_lang.language_id=${locale}
       ) as body_zones,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
@@ -356,7 +362,7 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
     const plan = {
       ...rows[0],
       progress: Math.round((rows[0].workouts_done / rows[0].days) * 100),
-      body_zones: rows[0].body_zones?.split(','),
+      body_zones: rows[0].body_zones?.split(',').map((tag: string) => tag.split(':')),
       tags: rows[0].tags?.split(',').map((tag: string) => tag.split(':'))
     } as Plan;
     const workingDays = await getUserPlanDays(plan as Plan, locale) ?? [];

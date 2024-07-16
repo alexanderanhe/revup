@@ -1,7 +1,6 @@
-import { getUserCurrentPlan, getUserPlanDays } from "@/lib/data";
+import { getUserCurrentPlan } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
-import { HomeModernIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { Link } from "@/navigation";
+import { HomeModernIcon } from "@heroicons/react/24/outline";
 
 import Card from "@/app/ui/Card";
 import ProgressCircle from "@/app/ui/utils/ProgressCircle";
@@ -9,10 +8,9 @@ import RatingStar from "../utils/RatingStar";
 
 import { User } from "next-auth";
 import { Plan, WorkoutImage } from "@/lib/definitions";
-import clsx from "clsx";
 import ImageWorkout from "@/app/ui/utils/ImageWorkout";
-
-const START_DAY = 0;
+import NextWorkout from "../exercises/NextWorkout";
+import clsx from "clsx";
 
 export default async function CurrentPlan({ user, locale }: { user?: User, locale: string}) {
   if (!user) {
@@ -24,6 +22,11 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   if (!plan) {
     return <div>NO HAY NADA</div>;
   }
+
+  if (plan.body_zones?.length === 0) {
+    return <div>LOS WORKOUTS NO ESTAN CATEGORIZADOS</div>;
+  }
+
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
   const progress = plan?.progress ?? 0;
@@ -82,64 +85,20 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
       <div className="w-full h-[50svh] overflow-y-auto space-y-1 py-2">
         <div className="font-semibold">{ t("nextTraining") }</div>
         <ul className="grid grid-cols-1 gap-2 w-full">
-          { plan.workingDays?.map(({ day, completed, current_day}, index) => (
-            <Card key={`day${day}`} className={clsx(
-              "indicator w-full",
-              typeof completed !== 'undefined' && 'border-2 border-primary/50',
-              typeof completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-95',
-            )}>
-              { typeof completed !== 'undefined' ? (
-                <Link
-                  href={`/exercises${!current_day ? '/' + day : ''}`}
-                  className={clsx(
-                    "flex gap-3 w-full",
-                    !current_day && 'opacity-40'
-                  )}
-                >
-                  <Day
-                    title={t("planDetailsDay", { day })}
-                    body_zone={plan.body_zones?.[index % plan.body_zones.length]}
-                    type={ 0 > 80 ? 'success' : 'error' }
-                    progress={0}
-                  />
-                  { current_day && <span className="indicator-item indicator-middle badge badge-primary opacity-40 badge-xs right-4"></span>}
-                </Link>
-              ) : (
-                <div className="flex gap-3">
-                  <Day
-                  title={t("planDetailsDay", { day })}
-                  type={'error'}
-                  body_zone={plan.body_zones?.[index % plan.body_zones.length]}
-                  progress={0}
-                  icon={<LockClosedIcon className="size-5" />}
-                />
-                </div>
+          { plan.workingDays?.map((workingDay) => (
+            <NextWorkout
+              key={`day${workingDay.day}`}
+              body_zones={plan.body_zones}
+              workingDay={workingDay}
+              t={t}
+              className={clsx(
+                "indicator w-full",
+                typeof workingDay.completed !== 'undefined' && 'border-2 border-primary/50',
+                typeof workingDay.completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-95',
               )}
-            </Card>
+            />
           ))}
         </ul>
-      </div>
-    </>
-  )
-}
-
-type DayProps = {
-  title: string;
-  body_zone?: string;
-  progress: number;
-  type?: 'success' | 'error' | 'warning' | 'info';
-  icon?: React.ReactNode;
-}
-const Day = ({ title, body_zone, ...rest}: DayProps) => {
-
-  return (
-    <>
-      <ProgressCircle {...rest} />
-      <div className="flex flex-col justify-center font-medium w-full">
-        <span className="text-xs">{ title }</span>
-        <span className="font-semibold [&::first-letter]:uppercase">
-          { body_zone ?? '-'}
-        </span>
       </div>
     </>
   )

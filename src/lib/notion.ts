@@ -375,7 +375,7 @@ export class NotionSync {
 
       try {
         const refactoredProperties = this.refactorProperties(properties, tablePlansProperties, propertiesKeys) as any;
-        const { tags: tagsWords, ...rest } = refactoredProperties;
+        const { tags: tagsWords, body_zones: bodyZonesWords, ...rest } = refactoredProperties;
   
         // Update the id and status of the page
         await this.updatePage(notion_id, {
@@ -391,25 +391,55 @@ export class NotionSync {
 
         const allTagsWords = tagsWords as string[];
         const allTagsWordsQueryNums = allTagsWords?.map((_, i) => `$${i + 1}`).join(", ") ?? [];
-        const { rows } = await client.query(`
+        const { rows: rowsTags } = await client.query(`
           SELECT DISTINCT id FROM tags t
           JOIN tags_lang tl ON t.id = tl.tag_id
           WHERE TRIM(LOWER(tl.name)) IN (${allTagsWordsQueryNums})
         `, [ ...allTagsWords ]);
+        const tags = rowsTags.map(({ id }: { id: string }) => id);
+
+        // BODY ZONES TAGS
+        const body_zones: string[] = [];
+        if (bodyZonesWords) {
+          let setBodyZonesWords = new Set<string>(
+            bodyZonesWords.split(";").map((bz: string) => bz.trim().toLowerCase() )
+          );
+          const allBodyZonesWords = Array.from(setBodyZonesWords).filter((bz: string) => bz);
+          const allBodyZonesWordsQueryNums = allBodyZonesWords?.map((_, i) => `$${i + 1}`).join(", ") ?? [];
+          const { rows: bodyZonesRows } = await client.query(`
+            SELECT DISTINCT id, TRIM(LOWER(tl.name)) as name FROM tags t
+            JOIN tags_lang tl ON t.id = tl.tag_id
+            WHERE TRIM(LOWER(tl.name)) IN (${allBodyZonesWordsQueryNums})
+          `, [ ...allBodyZonesWords ]);
+          body_zones.push(
+            ...allBodyZonesWords.map((bz: string) => {
+              return bodyZonesRows.find(({ name }: { name: string }) => name === bz)?.id;
+            }).filter((bz: string) => bz)
+          );
+        } else {
+          const allBodyZonesWordsQueryNums = (rest.workouts_complex as string[])?.map((_, i) => `$${i + 1}`).join(", ") ?? [];
+          const { rows: bodyZonesRows } = await client.query(`
+            SELECT DISTINCT t.id
+            FROM workouts_complex wc
+            JOIN tags t ON t.id = ANY((Array[wc.body_zones])::uuid[])
+            WHERE wc.id IN (${allBodyZonesWordsQueryNums})
+          `, [ ...rest.workouts_complex ]);
+          body_zones.push(...bodyZonesRows.map(({ id }: { id: string }) => id));
+        }
         
         // Update the workout in the database
-        const tags = rows.map(({ id }: { id: string }) => id);
-
         await client.query(`
-          INSERT INTO plans (id, tags, workouts_complex, days, sets_per_week, custom_email)
-          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], $4, $5, $6::text)
+          INSERT INTO plans (id, tags, workouts_complex, body_zones, days, sets_per_week, custom_email, type)
+          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], Array[$4::uuid[]], $5, $6, $7::text, $8::text)
           ON CONFLICT (id) DO UPDATE
           SET tags = Array[$2::uuid[]],
               workouts_complex=Array[$3::uuid[]],
-              days=$4,
-              sets_per_week=$5,
-              custom_email=$6::text;
-        `, [ notion_id, tags, rest.workouts_complex, rest.days, rest.sets_per_week, rest.custom_email ]);
+              body_zones=Array[$4::uuid[]],
+              days=$5,
+              sets_per_week=$6,
+              custom_email=$7::text,
+              type=$8::text;
+        `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, rest.custom_email, rest.type?.toLowerCase() ]);
   
         ['es', 'en'].forEach(async (lang) => {
           const { rowCount } = await client.sql`SELECT * FROM plans_lang WHERE plan_id=${notion_id} AND language_id=${lang}`;

@@ -1,4 +1,4 @@
-type UUID = string;
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type User = {
   id?: string | null;
@@ -128,7 +128,7 @@ export type Plan = {
   id: UUID;
   name: string;
   workouts_complex: string[] | WorkoutComplex[];
-  body_zones: string[];
+  body_zones: string[][];
   tags: string[][];
   days: number;
   workingDays?: PlanDay[];
@@ -147,6 +147,7 @@ export type Exercise = {
   description: string;
   image_banner?: WorkoutImage[] | null;
   images?: WorkoutImage[] | null;
+  completed_at?: string;
 } & WorkoutComplexParameters
 
 export type GroupsWorkout = {
@@ -212,10 +213,12 @@ export const tablePlansProperties: NotionTableProperties = {
   Nombre_es: "name_es",
   Nombre_en: "name_en",
   "Ejercicios Complex": "workouts_complex",
-  Etiquetas: "tags",
+  "Orden Rutina": "body_zones",
   Dias: "days",
   "Sesiones por semana": "sets_per_week",
+  Etiquetas: "tags",
   Personalizado: "custom_email",
+  Tipo: "type",
   Estatus: "status",
   Bot: "bot",
 }
