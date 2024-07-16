@@ -1,3 +1,4 @@
+import ExerciseTimer from "@/app/ui/exercises/ExerciseTimer";
 import Title from "@/app/ui/exercises/Title";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getUserCurrentPlanWorkouts } from "@/lib/data";
@@ -20,7 +21,7 @@ export default async function ExercisesLayout({ params: { locale }, children }: 
   }, {}) : {};
 
   return (
-    <LayoutContent title={<Title titles={titles} defaultTitle={ t("title") } />} titleFixed>
+    <LayoutContent title={<Title titles={titles} defaultTitle={ t("title") } />} pageMenu={<ExerciseTimer />} titleFixed>
       { children }
     </LayoutContent>
   )
