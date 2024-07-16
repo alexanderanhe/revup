@@ -332,7 +332,7 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
       (
         SELECT string_agg(DISTINCT tl.name, ',')
         FROM workouts_complex wc
-        JOIN tags t ON t.id = wc.body_zone
+        JOIN tags t ON t.id = ANY((Array[wc.body_zones])::uuid[])
         JOIN tags_lang tl ON tl.tag_id = t.id AND tl.language_id=${locale}
         WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
       ) as body_zones,

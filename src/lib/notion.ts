@@ -38,7 +38,7 @@ export class NotionSync {
           case "formula":
             const contentInsite = content[content.type];
             return contentInsite;
-          case "email": case "number": case "url": case "files": case "last_edited_time": case "date":
+          case "email": case "number": case "url": case "files": case "last_edited_time": case "date": case "rollup":
             return content;
           default:
             this.consoleLog([`Unknown property type ${property.type}`], "error", "Unknown property type")
@@ -255,7 +255,7 @@ export class NotionSync {
 
       try {
         const refactoredProperties = this.refactorProperties(properties, tableWorkoutsComplexProperties, propertiesKeys) as any;
-        const { body_zone: bodyTag, ...rest } = refactoredProperties;
+        const { body_zone: bodyTags, ...rest } = refactoredProperties;
         const workout_id = rest.workout_id?.[0] ?? null;
   
         // Update the id and status of the page
@@ -270,21 +270,25 @@ export class NotionSync {
           },
         });
 
-        const { rows: bodyTagRow } = await client.query(`
+        const allTagsWords = bodyTags as string[];
+        const allTagsWordsQueryNums = allTagsWords?.map((_, i) => `$${i + 1}`).join(", ") ?? [];
+        const { rows } = await client.query(`
           SELECT DISTINCT id FROM tags t
           JOIN tags_lang tl ON t.id = tl.tag_id
-          WHERE TRIM(LOWER(tl.name)) IN ($1)
-        `, [ bodyTag ]);
-        const body_zone = bodyTagRow?.[0]?.id ?? null;
+          WHERE TRIM(LOWER(tl.name)) IN (${allTagsWordsQueryNums})
+        `, [ ...allTagsWords ]);
+        
+        // Update the workout in the database
+        const body_zones = rows.map(({ id }: { id: string }) => id);
 
         await client.query(`
-          INSERT INTO workouts_complex (id, name, body_zone, reps, time, time_unit,
+          INSERT INTO workouts_complex (id, name, body_zones, reps, time, time_unit,
             rest, rest_between, rest_sets, sets, weight, weight_unit, total_minutes,
             comments, recommendations, workout_id)
-          VALUES ($1::uuid, $2::text, $3::uuid, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16::uuid)
+          VALUES ($1::uuid, $2::text, Array[$3::uuid[]], $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16::uuid)
           ON CONFLICT (id) DO UPDATE
           SET name = $2,
-              body_zone = $3::uuid,
+              body_zones = Array[$3::uuid[]],
               reps = $4,
               time = $5,
               time_unit = $6,
@@ -300,7 +304,7 @@ export class NotionSync {
               workout_id = $16::uuid
           RETURNING *;
         `, [ notion_id,
-          rest.name, body_zone, rest.reps, rest.time, rest.time_unit,
+          rest.name, body_zones, rest.reps, rest.time, rest.time_unit,
           rest?.rest ?? null, rest?.rest_between ?? null, rest?.rest_sets ?? null,
           rest.sets, rest.weight, rest.weight_unit, rest.total_minutes,
           rest.comments, rest.recommendations, workout_id 
@@ -488,9 +492,9 @@ export class NotionSync {
     try {
       const client = await db.connect();
       const notionPages = await Promise.all([
-        this.getWorkoutsPage(client),
-        this.getWorkoutsComplexPage(client),
-        this.getPlansPage(client)
+        await this.getWorkoutsPage(client),
+        await this.getWorkoutsComplexPage(client),
+        await this.getPlansPage(client)
       ]);
       // client.end();
       return notionPages;

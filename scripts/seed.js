@@ -138,7 +138,7 @@ const sql = {
     createTableWorkoutsComplex: `CREATE TABLE IF NOT EXISTS workouts_complex (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       name VARCHAR(100) NOT NULL,
-      body_zone UUID REFERENCES tags(id) DEFAULT NULL,
+      body_zones UUID[] DEFAULT NULL,
       reps SMALLINT DEFAULT NULL,
       time SMALLINT DEFAULT NULL,
       time_unit CHAR(3) DEFAULT NULL,
