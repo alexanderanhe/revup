@@ -114,7 +114,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
           </Link>
         </div>
         <div className='content-grid space-y-4'>
-          <h3 className="text-center">{ slide.title }</h3>
+          <h3 className="text-center pt-4">{ slide.title }</h3>
           <section><p>
             { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
@@ -184,7 +184,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
         
         <div className="grid grid-cols-2 gap-1">
           <Drawer.Root
-            snapPoints={["148px", "355px", 1]}
+            snapPoints={["355px", 1]}
             activeSnapPoint={snap}
             setActiveSnapPoint={setSnap}
             shouldScaleBackground

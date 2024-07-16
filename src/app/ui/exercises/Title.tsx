@@ -14,7 +14,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
   const pathname = usePathname();
   const ids = Object.keys(titles);
   const total = ids.length;
-  const hash = window?.location.hash ?? "";
+  const hash = typeof window !== "undefined" ? window?.location.hash : "";
   
   const handleUrlChange = useCallback(() => {
     const hash = window.location.hash.replace(/^#slide/i, "");

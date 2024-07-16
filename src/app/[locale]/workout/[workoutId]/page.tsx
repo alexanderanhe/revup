@@ -12,6 +12,8 @@ export async function generateStaticParams() {
   return workoutIDs.map((workoutId) => ({ workoutId }))
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function WorkoutItemPage({
   params: { locale, workoutId }
 }: {
