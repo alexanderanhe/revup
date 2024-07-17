@@ -1,7 +1,7 @@
 import { Link } from "@/navigation";
 import clsx from "clsx";
 import { getTranslations } from "next-intl/server";
-import { RocketLaunchIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import { RocketLaunchIcon, CheckCircleIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
 
 import Card from "@/app/ui/Card";
@@ -44,10 +44,15 @@ export default async function ExercisesPage({
         noLink
       />
       <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical w-full">
-        { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit, completed_at }, i, excercises) => (
-          <li key={`exercise${id}`}>
+        { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit, completed, completed_at }, i, excercises) => (
+          <li key={`exercise${id}`} style={{'--timeline-row-start': 'calc(50% - 1.25rem / 2)'} as React.CSSProperties }>
+            <hr className={clsx(!i && 'hidden')} />
             <div className="timeline-middle">
-              {completed_at ? <CheckCircleIcon className="size-5 text-success" /> : <RocketLaunchIcon className="size-5 text-neutral" />}
+              {completed ? (
+                <div className="tooltip tooltip-right" data-tip={completed_at}>
+                  <CheckCircleIcon className="size-5 text-success" />
+                </div>
+              ) : <RocketLaunchIcon className="size-5 text-neutral" />}
             </div>
             <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
               <Link href={`/exercises/run#slide${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
@@ -64,6 +69,11 @@ export default async function ExercisesPage({
                 className="absolute inset-0 w-full h-full object-cover object-right"
                 style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
               />
+              { completed && (
+                <div className="grid items-center justify-end absolute inset-0 w-full h-full bg-success/60 p-4">
+                  <CheckIcon className="size-10" />
+                </div>
+              )}
             </Card>
             <hr className={clsx(excercises.length - 1 === i && 'hidden')} />
           </li>

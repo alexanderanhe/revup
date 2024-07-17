@@ -302,9 +302,9 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
           SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
           FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
           WHERE tags.id = ANY((Array[w.tags])::uuid[]) AND tags_lang.language_id=${locale}
-        ) as tags, puwc.created_at as completed_at,
-        wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments,
-        COUNT(puwc.sets) as sets_done, SUM(puwc.time) as time_done
+        ) as tags, wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments,
+        CASE WHEN wc.sets IS NOT NULL THEN wc.sets <= COUNT(puwc.reps) WHEN wc.time IS NOT NULL THEN wc.time <= SUM(puwc.time) ELSE false END AS completed,
+        MAX(puwc.created_at) as completed_at, COUNT(puwc.reps) as sets_done, SUM(puwc.time) as time_done
       FROM workouts_complex wc
       JOIN workouts w ON wc.workout_id = w.id
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
@@ -314,7 +314,7 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
         AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
       WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
         AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
-      GROUP BY w.id, p.id, wc.id, wl.name, wl.description, puwc.created_at
+      GROUP BY w.id, p.id, wc.id, wl.name, wl.description
       ORDER BY wc.name ASC;
     `;
     // TO DO: Change this to a better way to handle this
@@ -498,6 +498,67 @@ export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;
     return 'saved';
   } catch (error) {
     return 'error';
+  }
+}
+
+function convertUTCToLocal(date: Date): Date {
+  return (new Date(Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds()
+  )));
+}
+
+export async function getUserPlanStartedAt(): Promise<string | null> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+
+    const { rows, rowCount } = await sql`
+      SELECT pud.started_at FROM plans_user pu
+      JOIN plans p ON pu.plan_id=p.id
+      JOIN plans_user_day pud ON pu.plan_id=pud.plan_id
+        AND pud.user_id = ${user.id}
+        AND pud.day = pu.current_day
+      WHERE pu.user_id = ${user.id} AND pu.is_current
+    `;
+    return rowCount === 0 ? null : convertUTCToLocal(rows[0]?.started_at).toString();
+  } catch (error) {
+    return 'error';
+  }
+}
+
+export async function setUserPlanStartedAt(): Promise<string | null> {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) {
+      throw new Error('User session not found.');
+    }
+
+    const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
+      SELECT p.id, pu.current_day FROM plans_user pu
+      JOIN plans p ON pu.plan_id=p.id
+      WHERE pu.user_id = ${user.id} AND pu.is_current
+    `;
+    if (planRowsCount === 0) {
+      throw new Error('Workout complex not found.');
+    }
+    const plan = planRows[0];
+    const { rows, rowCount } =  await sql`UPDATE plans_user_day
+      SET started_at=NOW()
+      WHERE day=${plan.current_day} AND plan_id=${plan.id} AND user_id=${user.id}
+      RETURNING started_at;
+    `;
+    return rowCount === 0 ? null : convertUTCToLocal(rows[0]?.started_at).toString()
+  } catch (error) {
+    return "error";
   }
 }
 

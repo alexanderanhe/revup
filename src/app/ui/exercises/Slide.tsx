@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
-import { InformationCircleIcon } from '@heroicons/react/24/solid';
+import { CheckIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
@@ -29,6 +29,8 @@ type SlideProps = {
   };
   workout_complex: WorkoutComplexParameters;
   workout_id: string;
+  completed: boolean;
+  completed_at: string;
   plan_id: string;
   day: number;
   index: number;
@@ -40,13 +42,15 @@ type SlideProps = {
   slideIds?: string[];
 };
 
-function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, ...slide }: SlideProps) {
+function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  console.log({workout_complex})
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -104,6 +108,12 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
   }, []);
 
+  const CompletedBackground = () => completed && (
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/40 p-4">
+      <CheckIcon className="size-10" />
+    </div>
+  )
+
   return (
     <div id={`slide${slide.id}`}
       ref={ref}
@@ -119,6 +129,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
               height={400}
             />
           )}
+          <CompletedBackground />
           <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-xs btn-ghost btn-outline btn-square absolute top-2 right-2">
             <InformationCircleIcon className="size-5" />
           </Link>
@@ -131,20 +142,22 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
           </p></section>
           <section className="grid grid-cols-3 justify-between gap-4">
-            <Card className="[&>strong]:font-medium size-24">
+            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
               <div className="flex gap-1 justify-center w-full">
                 { workout_complex.reps ? (
                   <><strong>{ workout_complex.reps }</strong>reps</>
                 ) : "NO" }
               </div>
+              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24">
+            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
               <div className="flex gap-1 justify-center w-full">
                 <strong>-</strong>
                 { workout_complex.time_unit }
               </div>
+              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24">
+            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
               <div className="flex flex-col items-center gap-1 w-full">
                 { workout_complex.sets ? (
                   <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
@@ -152,6 +165,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                   <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
                 )}
               </div>
+              <CompletedBackground />
             </Card>
           </section>
           <section>
@@ -163,16 +177,16 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
               <div className="join w-full">
                 { workout_complex.reps && (
                   <div className="join-item grow grid grid-cols-2">
-                    <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" required />
-                    <input className="input input-bordered rounded-none" name="weight" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
+                    <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
+                    <input className="input input-bordered rounded-none" name="weight" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
                   </div>
                 )}
                 { workout_complex.time && (
                   <div className="join-item grow grid grid-cols-1">
-                    <input className="input input-bordered rounded-r-none" name="time" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" required />
+                    <input className="input input-bordered rounded-r-none" name="time" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
                   </div>
                 )}
-                <SubmitButton className="btn join-item rounded-r-full">
+                <SubmitButton disabled={completed} className="btn join-item rounded-r-full">
                   <PlusIcon className="size-4" />
                 </SubmitButton>
               </div>

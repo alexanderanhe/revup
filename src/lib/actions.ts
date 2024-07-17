@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay } from '@/lib/data';
+import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
  
@@ -184,6 +184,33 @@ export async function handleSetWorkoutCloseDay(
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
     return await setWorkoutCloseDay(form);
+  } catch (error) {
+    return 'error';
+  }
+}
+export async function handleStartWorkoutDay(
+  prevState: { status: 'done', date?: string} | { status: 'error' | ''} | null,
+  formData: FormData
+): Promise<{ status: 'done', date?: string} | { status: 'error' | ''}> {
+  try {
+    const d = await setUserPlanStartedAt();
+    if (d === null || d === "error") {
+      return { status: "error" }
+    }
+    return {
+      status: "done",
+      date: d
+    }
+  } catch (error) {
+    return { status: 'error' };
+  }
+}
+export async function handleFinishWorkoutDay(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    return "saved";
   } catch (error) {
     return 'error';
   }

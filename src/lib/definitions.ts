@@ -124,6 +124,7 @@ export type PlanDay = {
   user_id: UUID;
   name?: string;
   percentage: number;
+  started_at?: string;
   completed: boolean;
   completed_at?: string;
   current_day?: boolean;
@@ -154,6 +155,7 @@ export type Exercise = {
   description: string;
   image_banner?: WorkoutImage[] | null;
   images?: WorkoutImage[] | null;
+  completed?: boolean;
   completed_at?: string;
 } & WorkoutComplexParameters
 
