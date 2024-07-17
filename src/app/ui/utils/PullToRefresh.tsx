@@ -94,7 +94,7 @@ export default function PullToRefresh() {
     >
       <div className="refresh-icon p-2 rounded-full">
         <ArrowPathIcon
-          style={{ transform: `rotate(${pullChange}deg)` }}
+          style={{ transform: `rotate(${pullChange * 2}deg)` }}
           className={clsx("size-6", loading && "animate-spin")}
         />
       </div>
