@@ -12,7 +12,7 @@ export default function Footer() {
 
   return (
     <>
-      <div className="fixed bottom-0 content-grid backdrop-blur transition-colors duration-500 border-t border-slate-900/10 bg-base-100 w-full z-50">
+      <div className="fixed bottom-0 content-grid backdrop-blur transition-colors duration-500 border-t border-slate-900/10 bg-base-100 w-full pb-4 z-50">
         <div className={clsx(
             "grid place-items-center gap-4 mx-auto font-medium flex-none p-3",
             gridCols > 1 && colStartClasses[gridCols - 1],

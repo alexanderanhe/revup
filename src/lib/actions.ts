@@ -7,6 +7,7 @@ import { Resend } from 'resend';
 import { auth, signIn, signOut } from '@/auth';
 import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay } from '@/lib/data';
 import { APPCOOKIES, User } from '@/lib/definitions';
+import { revalidatePath } from 'next/cache';
  
 // ...
  
@@ -158,6 +159,7 @@ export async function handleSetWorkoutItem(
 ) {
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
+    revalidatePath('/exercises/run')
     return await setWorkoutItem(form);
   } catch (error) {
     return 'error';
@@ -169,6 +171,7 @@ export async function handleSetWorkoutLiked(
 ) {
   try {
     const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
+    revalidatePath(`/workout/${workoutId}`)
     return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
   } catch (error) {
     return 'error';
