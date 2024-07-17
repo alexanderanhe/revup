@@ -106,9 +106,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
   }, []);
 
-  const CompletedBackground = () => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/40 p-4">
-      <CheckIcon className="size-10" />
+  const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/80 uppercase font-semibold text-xl p-4">
+      <div className="flex items-center gap-2"><CheckIcon className="size-10" /> { children }</div>
     </div>
   )
 
@@ -139,23 +139,21 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
           </p></section>
-          <section className="grid grid-cols-3 justify-between gap-4">
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+          <section className="grid grid-cols-3 justify-between gap-4 rounded-2xl overflow-hidden relative">
+            <Card className="[&>strong]:font-medium size-24">
               <div className="flex gap-1 justify-center w-full">
                 { workout_complex.reps ? (
                   <><strong>{ workout_complex.reps }</strong>reps</>
                 ) : "NO" }
               </div>
-              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+            <Card className="[&>strong]:font-medium size-24">
               <div className="flex gap-1 justify-center w-full">
                 <strong>-</strong>
                 { workout_complex.time_unit }
               </div>
-              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+            <Card className="[&>strong]:font-medium size-24">
               <div className="flex flex-col items-center gap-1 w-full">
                 { workout_complex.sets ? (
                   <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
@@ -163,8 +161,8 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                   <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
                 )}
               </div>
-              <CompletedBackground />
             </Card>
+            <CompletedBackground>Completed</CompletedBackground>
           </section>
           <section>
             <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
