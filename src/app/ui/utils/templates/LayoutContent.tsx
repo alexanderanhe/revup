@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import Header from "@/app/ui/utils/menus/Header";
 import Footer from "@/app/ui/utils/menus/Footer";
-import LayoutContentTitle from './LayoutContentTitle';
+import LayoutContentTitle from '@/app/ui/utils/templates/LayoutContentTitle';
 
 type Props = {
   title?: React.ReactNode | string;
@@ -15,9 +15,10 @@ type Props = {
   head?: boolean | string;
   footer?: boolean | string;
   showBackButton?: boolean | string;
+  pullToRefresh?:boolean | string;
 }
 
-export default function LayoutContent({ title, titleFixed, pageMenu, bg, children, className, head, footer, showBackButton }: Props) {
+export default function LayoutContent({ title, titleFixed, pageMenu, bg, children, className, head, footer, showBackButton, pullToRefresh }: Props) {
   return (
     <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
@@ -32,6 +33,7 @@ export default function LayoutContent({ title, titleFixed, pageMenu, bg, childre
           pageMenu={pageMenu}
           hasMenu={Boolean(head || footer)}
           showBackButton={Boolean(showBackButton)}
+          pullToRefresh={pullToRefresh}
         />
         { children }
       </main>

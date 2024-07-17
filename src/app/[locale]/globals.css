@@ -95,3 +95,7 @@ section {
 input {
   background-color: #F7F8F8;
 }
+
+* {
+  overscroll-behavior-y: contain;
+}
