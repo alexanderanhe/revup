@@ -1,7 +1,7 @@
 import { Link } from "@/navigation";
 import clsx from "clsx";
 import { getTranslations } from "next-intl/server";
-import { RocketLaunchIcon, CheckCircleIcon, CheckIcon } from "@heroicons/react/24/solid";
+import { RocketLaunchIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
 
 import Card from "@/app/ui/Card";
@@ -9,6 +9,7 @@ import NextWorkout from "@/app/ui/exercises/NextWorkout";
 import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 
 import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
+import CheckIcon from "@/components/utils/icons/CheckIcon";
 
 export default async function ExercisesPage({
   params: { locale }
@@ -52,7 +53,7 @@ export default async function ExercisesPage({
             )} />
             <div className="timeline-middle">
               {completed ? (
-                <div className="tooltip tooltip-right" data-tip={completed_at}>
+                <div className="tooltip tooltip-right z-[2]" data-tip={completed_at}>
                   <CheckCircleIcon className="size-5 text-success" />
                 </div>
               ) : <RocketLaunchIcon className="size-5 text-neutral" />}
@@ -73,7 +74,7 @@ export default async function ExercisesPage({
                 style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
               />
               { completed && (
-                <div className="grid items-center justify-end absolute inset-0 w-full h-full bg-success/60 p-4">
+                <div className="grid items-center justify-end absolute inset-0 w-full h-full bg-success/60 z-[1] p-4">
                   <CheckIcon className="size-10" />
                 </div>
               )}

@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
-import { CheckIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
+import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
@@ -14,6 +15,7 @@ import Card from '@/app/ui/Card';
 import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
+import CheckIcon from '@/components/utils/icons/CheckIcon';
 
 type SlideProps = {
   carouselId: string;
@@ -107,8 +109,8 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   }, []);
 
   const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/80 uppercase font-semibold text-xl p-4">
-      <div className="flex items-center gap-2"><CheckIcon className="size-10" /> { children }</div>
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/20 uppercase font-semibold text-xl p-4">
+      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
     </div>
   )
 
@@ -139,8 +141,11 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
           </p></section>
-          <section className="grid grid-cols-3 justify-between gap-4 rounded-2xl overflow-hidden relative">
-            <Card className="[&>strong]:font-medium size-24">
+          <section className="grid grid-cols-3 justify-between gap-4">
+            <Card className={clsx(
+              "[&>strong]:font-medium size-24",
+              !workout_complex.reps && "shadow-inner bg-base-200/60"
+              )}>
               <div className="flex gap-1 justify-center w-full">
                 { workout_complex.reps ? (
                   <><strong>{ workout_complex.reps }</strong>reps</>
@@ -153,7 +158,10 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                 { workout_complex.time_unit }
               </div>
             </Card>
-            <Card className="[&>strong]:font-medium size-24">
+            <Card className={clsx(
+              "[&>strong]:font-medium size-24",
+              completed && 'shadow-inner border-2 border-success bg-success/20 text-success'
+              )}>
               <div className="flex flex-col items-center gap-1 w-full">
                 { workout_complex.sets ? (
                   <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
@@ -162,7 +170,6 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                 )}
               </div>
             </Card>
-            <CompletedBackground>Completed</CompletedBackground>
           </section>
           <section>
             <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
@@ -241,7 +248,8 @@ export default function Slides({ slides }: SlidesProps) {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
       const handleScroll = (event: Event) => {
-        setScrolled((event.target as HTMLElement).scrollLeft);
+        // console.log(event)wip()
+        // setScrolled((event.target as HTMLElement).scrollLeft);
       }
 
       carousel.addEventListener('scroll', handleScroll);
@@ -249,13 +257,31 @@ export default function Slides({ slides }: SlidesProps) {
         carousel.removeEventListener('scroll', handleScroll);
       }
     }
+  }, []);
+  
+  useEffect(() => {
+    const carousel = document.getElementById(carouselId) as HTMLElement;
+    if (carousel) {
+      const handleScroll = (event: Event) => {
+        console.log(event)
+        // setScrolled((event.target as HTMLElement).scrollLeft);
+      }
+
+      carousel.addEventListener('scroll', handleScroll);
+      return () => {
+        carousel.removeEventListener('scroll', handleScroll);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (window.location.hash) {
       goToOtherImage(window.location.hash, carouselId);
     }
   }, []);
 
   return (
-    <div id={carouselId} className="carousel space-x-4 w-full h-svh" style={{margin: '0'}}>
+    <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
       { slides.map((slide, index) => (
           <Slide
             {...slide}
