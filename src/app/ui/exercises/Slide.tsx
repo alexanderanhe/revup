@@ -50,8 +50,6 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  console.log({workout_complex})
-
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     
