@@ -44,9 +44,12 @@ export default async function ExercisesPage({
         noLink
       />
       <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical w-full">
-        { excercises?.map(({ id, name, image_banner, sets, reps, weight, weight_unit, time, time_unit, completed, completed_at }, i, excercises) => (
+        { excercises?.map(({ id, name, image_banner, tags, sets, reps, weight, weight_unit, time, time_unit, completed, completed_at }, i, excercises) => (
           <li key={`exercise${id}`} style={{'--timeline-row-start': 'calc(50% - 1.25rem / 2)'} as React.CSSProperties }>
-            <hr className={clsx(!i && 'hidden')} />
+            <hr className={clsx(
+              excercises?.[i - 1] && tags.some(([name, type]) => name === 'stretching' && type === 'muscle') && 'bg-primary',
+              (!i || excercises?.[i - 1] && !tags.some(([name, type]) => name === 'stretching' && type === 'muscle')) && 'hidden',
+            )} />
             <div className="timeline-middle">
               {completed ? (
                 <div className="tooltip tooltip-right" data-tip={completed_at}>
@@ -75,7 +78,10 @@ export default async function ExercisesPage({
                 </div>
               )}
             </Card>
-            <hr className={clsx(excercises.length - 1 === i && 'hidden')} />
+            <hr className={clsx(
+              excercises?.[i + 1] && tags.some(([name, type]) => name === 'stretching' && type === 'muscle') && 'bg-primary',
+              (excercises.length - 1 === i || excercises?.[i + 1] && !tags.some(([name, type]) => name === 'stretching' && type === 'muscle')) && 'hidden'
+            )} />
           </li>
         ))}
       </ul>
