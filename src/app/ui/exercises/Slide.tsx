@@ -16,6 +16,8 @@ import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
+import { createReadStream } from 'fs';
+import { clear } from 'console';
 
 type SlideProps = {
   carouselId: string;
@@ -84,7 +86,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   )
 
   useEffect(() => {
-    if (ref.current && isInViewport(ref.current)) {
+    if (scrolled && ref.current && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
       const path = `${window.location.origin}${window.location.pathname}`;
       window.location.replace(`${path}${hash}`);
@@ -247,36 +249,21 @@ export default function Slides({ slides }: SlidesProps) {
   useEffect(() => {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
+      let isScrolling: NodeJS.Timeout;
       const handleScroll = (event: Event) => {
-        // console.log(event)wip()
-        // setScrolled((event.target as HTMLElement).scrollLeft);
+        clearTimeout(isScrolling);
+        isScrolling = setTimeout(() => {
+          setScrolled((event.target as HTMLElement).scrollLeft);
+        }, 150);
       }
 
       carousel.addEventListener('scroll', handleScroll);
+      if (window.location.hash) {
+        goToOtherImage(window.location.hash, carouselId);
+      }
       return () => {
         carousel.removeEventListener('scroll', handleScroll);
       }
-    }
-  }, []);
-  
-  useEffect(() => {
-    const carousel = document.getElementById(carouselId) as HTMLElement;
-    if (carousel) {
-      const handleScroll = (event: Event) => {
-        console.log(event)
-        // setScrolled((event.target as HTMLElement).scrollLeft);
-      }
-
-      carousel.addEventListener('scroll', handleScroll);
-      return () => {
-        carousel.removeEventListener('scroll', handleScroll);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (window.location.hash) {
-      goToOtherImage(window.location.hash, carouselId);
     }
   }, []);
 

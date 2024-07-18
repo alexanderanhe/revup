@@ -29,7 +29,7 @@ export default async function HomeLayout({ children }: HomeLayoutProps) {
     redirect(ASSESSMENT);
   }
   return (
-    <LayoutContent title="" head footer>
+    <LayoutContent title="" head footer pullToRefresh>
       { children }
     </LayoutContent>
   );
