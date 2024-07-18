@@ -265,38 +265,20 @@ export default function Slides({ slides }: SlidesProps) {
   useEffect(() => {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
-      let listenerFunc: (this: HTMLElement, ev: Event) => any;
-      const onScrollStop = (callback: (scrollLeft: number) => void) => {
-        let isScrolling: NodeJS.Timeout;
-        if (listenerFunc) {
-          carousel.removeEventListener('scroll', listenerFunc);
-        }
-        listenerFunc = (event) => {
-          clearTimeout(isScrolling);
-          const scrollLeft = (event.target as HTMLElement).scrollLeft;
-          isScrolling = setTimeout(() => {
-            callback(scrollLeft);
-          }, 150);
-        };
-        
-        carousel.addEventListener('scroll', listenerFunc);
-      }
-      const endPull = () => {
-        onScrollStop((scrollLeft) => {
-          setScrolled(scrollLeft);
-        });
+      const handleScroll = (event: Event) => {
+        setScrolled((event.target as HTMLElement).scrollLeft);
       }
 
-      if (window.location.hash) {
-        goToOtherImage(window.location.hash, carouselId);
-      }
-      carousel.addEventListener("touchend", endPull);
-
+      carousel.addEventListener('scroll', handleScroll);
       return () => {
-        carousel.removeEventListener("touchend", endPull);
+        carousel.removeEventListener('scroll', handleScroll);
       }
     }
+    if (window.location.hash) {
+      goToOtherImage(window.location.hash, carouselId);
+    }
   }, []);
+
 
   return (
     <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
@@ -338,7 +320,7 @@ const Table = () => (
       <tbody>
         <tr>
           <th>1</th>
-          <td>Cy Ganderton</td>
+          <td>Alexander</td>
           <td>Quality Control Specialist</td>
           <td>Littel, Schaden and Vandervort</td>
         </tr>
