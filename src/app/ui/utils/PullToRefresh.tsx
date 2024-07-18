@@ -103,7 +103,7 @@ export default function PullToRefresh() {
         ) : (
           <div
             className="grid place-items-center font-medium"
-            style={{ marginTop: -1 * pullChange / 3.118 || "", opacity: Math.min(1, pullChange / PULL_LENGTH_TO_REFRESH) }}
+            style={{ opacity: Math.min(1, pullChange / PULL_LENGTH_TO_REFRESH) }}
           >
             <span className="text-xs text-neutral">Pull to refresh</span>
             <ChevronDoubleDownIcon className="size-4" />
