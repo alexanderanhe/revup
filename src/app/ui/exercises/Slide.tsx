@@ -136,7 +136,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             <InformationCircleIcon className="size-5" />
           </Link>
         </div>
-        <div className='content-grid space-y-4'>
+        <div className='content-grid space-y-4 pb-10'>
           <h3 className="text-center pt-4">{ slide.title }</h3>
           <section><p>
             { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
