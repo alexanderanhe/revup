@@ -1,4 +1,4 @@
-import ExerciseStopwatch from "@/app/ui/exercises/ExerciseStopwatch";
+// import ExerciseStopwatch from "@/app/ui/exercises/ExerciseStopwatch";
 import Title from "@/app/ui/exercises/Title";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getUserCurrentPlan, getUserCurrentPlanWorkouts, getUserPlanStartedAt } from "@/lib/data";
