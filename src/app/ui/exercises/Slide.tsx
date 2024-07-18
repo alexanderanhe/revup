@@ -4,14 +4,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
-// import clsx from 'clsx';
+import clsx from 'clsx';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
 
 import SubmitButton from '@/app/ui/utils/SubmitButton';
-// import Card from '@/app/ui/Card';
+import Card from '@/app/ui/Card';
 import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
@@ -155,7 +155,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
             <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
           </p></section>
-          {/* <section className="grid grid-cols-3 justify-between gap-4">
+          <section className="grid grid-cols-3 justify-between gap-4">
             <Card className={clsx(
               "[&>strong]:font-medium size-24",
               !workout_complex.reps && "shadow-inner bg-base-200/60"
@@ -184,7 +184,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                 )}
               </div>
             </Card>
-          </section> */}
+          </section>
           <section>
             <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
               <input type="hidden" name="day" value={ day } />
