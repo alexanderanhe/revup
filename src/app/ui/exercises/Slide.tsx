@@ -4,16 +4,16 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
-import { CheckIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
-import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
 
 import SubmitButton from '@/app/ui/utils/SubmitButton';
-import Card from '@/app/ui/Card';
 import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
+import CheckIcon from '@/components/utils/icons/CheckIcon';
 
 type SlideProps = {
   carouselId: string;
@@ -50,24 +50,12 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  console.log({workout_complex})
-
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
     const path = `${window.location.origin}${window.location.pathname}`;
     window.location.replace(`${path}${hash}`)
-  }
-
-  function isInViewport(element: HTMLElement) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
   }
 
   const NextButton = () => submit ? (
@@ -83,14 +71,23 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     </a>
   )
 
+  function isInViewport(element: HTMLElement) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
   useEffect(() => {
-    if (ref.current && isInViewport(ref.current)) {
+    if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
-      const path = `${window.location.origin}${window.location.pathname}`;
-      window.location.replace(`${path}${hash}`);
+      // window.location.hash = hash;
+      window.location.replace(`${hash}`);
     }
   }, [scrolled]);
-
 
   useEffect(() => {
     if (formStateWorkoutItem === 'saved') {
@@ -108,9 +105,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
   }, []);
 
-  const CompletedBackground = () => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/40 p-4">
-      <CheckIcon className="size-10" />
+  const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/20 uppercase font-semibold text-xl p-4">
+      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
     </div>
   )
 
@@ -121,7 +118,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='flex justify-center relative'>
+        <div className='grid grid-cols-1 justify-center relative'>
           {slide.image && (
             <Image
               {...slide.image}
@@ -130,34 +127,53 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             />
           )}
           <CompletedBackground />
-          <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-xs btn-ghost btn-outline btn-square absolute top-2 right-2">
-            <InformationCircleIcon className="size-5" />
-          </Link>
+          <div className="absolute top-0 left-[50%] -translate-x-1/2 flex items-start justify-end w-full h-[40svh] aspect-square p-5">
+            <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square">
+              <InformationCircleIcon className="size-5" />
+            </Link>
+          </div>
+          <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+            { slideIds?.[slide.index - 1] ? (
+                <a href={`#slide${slideIds?.[slide.index - 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                  <ChevronLeftIcon className="size-5" />
+                </a>
+            ) : <div className="w-5" /> }
+            { slideIds?.[slide.index + 1] && (
+                <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                  <ChevronRightIcon className="size-5" />
+                </a>
+            )}
+          </div>
         </div>
-        <div className='content-grid space-y-4'>
+        <div className='content-grid space-y-4 pb-10'>
           <h3 className="text-center pt-4">{ slide.title }</h3>
           <section><p>
             { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
+            <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
           </p></section>
           <section className="grid grid-cols-3 justify-between gap-4">
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+            {/* <Card className={clsx(
+              "[&>strong]:font-medium size-24",
+              !workout_complex.reps && "shadow-inner bg-base-200/60"
+              )}>
               <div className="flex gap-1 justify-center w-full">
                 { workout_complex.reps ? (
                   <><strong>{ workout_complex.reps }</strong>reps</>
                 ) : "NO" }
               </div>
-              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+            <Card className="[&>strong]:font-medium size-24">
               <div className="flex gap-1 justify-center w-full">
                 <strong>-</strong>
                 { workout_complex.time_unit }
               </div>
-              <CompletedBackground />
             </Card>
-            <Card className="[&>strong]:font-medium size-24 overflow-hidden relative">
+            <Card className={clsx(
+              "[&>strong]:font-medium size-24",
+              completed && 'shadow-inner border-2 border-success bg-success/20 text-success'
+              )}>
               <div className="flex flex-col items-center gap-1 w-full">
                 { workout_complex.sets ? (
                   <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
@@ -165,8 +181,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
                   <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
                 )}
               </div>
-              <CompletedBackground />
-            </Card>
+            </Card> */}
           </section>
           <section>
             <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
@@ -238,28 +253,47 @@ type SlidesProps = {
 };
 
 export default function Slides({ slides }: SlidesProps) {
-  const [ scrolled, setScrolled ] = useState<number>(0);
+  const [ scrolled, setScrolled ] = useState<number | null>(null);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
-      const handleScroll = (event: Event) => {
-        setScrolled((event.target as HTMLElement).scrollLeft);
+      let listenerFunc: (this: HTMLElement, ev: Event) => any;
+      const onScrollStop = (callback: (scrollLeft: number) => void) => {
+        let isScrolling: NodeJS.Timeout;
+        if (listenerFunc) {
+          carousel.removeEventListener('scroll', listenerFunc);
+        }
+        listenerFunc = (event) => {
+          clearTimeout(isScrolling);
+          const scrollLeft = (event.target as HTMLElement).scrollLeft;
+          isScrolling = setTimeout(() => {
+            callback(scrollLeft);
+          }, 150);
+        };
+        
+        carousel.addEventListener('scroll', listenerFunc);
+      }
+      const endPull = () => {
+        onScrollStop((scrollLeft) => {
+          setScrolled(scrollLeft);
+        });
       }
 
-      carousel.addEventListener('scroll', handleScroll);
-      return () => {
-        carousel.removeEventListener('scroll', handleScroll);
+      if (window.location.hash) {
+        goToOtherImage(window.location.hash, carouselId);
       }
-    }
-    if (window.location.hash) {
-      goToOtherImage(window.location.hash, carouselId);
+      carousel.addEventListener("touchend", endPull);
+
+      return () => {
+        carousel.removeEventListener("touchend", endPull);
+      }
     }
   }, []);
 
   return (
-    <div id={carouselId} className="carousel space-x-4 w-full h-svh" style={{margin: '0'}}>
+    <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
       { slides.map((slide, index) => (
           <Slide
             {...slide}
@@ -298,7 +332,7 @@ const Table = () => (
       <tbody>
         <tr>
           <th>1</th>
-          <td>Cy Pio</td>
+          <td>Cy Ganderton</td>
           <td>Quality Control Specialist</td>
           <td>Littel, Schaden and Vandervort</td>
         </tr>
