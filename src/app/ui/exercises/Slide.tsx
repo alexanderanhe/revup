@@ -159,6 +159,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
             { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
+            <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
           </p></section>
           <section className="grid grid-cols-3 justify-between gap-4">
             <Card className={clsx(

@@ -159,8 +159,9 @@ export async function handleSetWorkoutItem(
 ) {
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
-    revalidatePath('/exercises/run')
-    return await setWorkoutItem(form);
+    const status = await setWorkoutItem(form);
+    revalidatePath('/exercises/run');
+    return status;
   } catch (error) {
     return 'error';
   }

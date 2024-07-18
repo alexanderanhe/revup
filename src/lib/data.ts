@@ -446,14 +446,13 @@ export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): 
     // TO DO: rest, rest_between, rest_sets I DON'T KNOW HOW TO HANDLE THIS YET
     await sql`INSERT INTO plans_user_workouts_complex
       (day, plan_id, reps, time, time_unit,
-        sets, weight, weight_unit, workout_id, workout_complex_id, user_id)
+        weight, weight_unit, workout_id, workout_complex_id, user_id)
       VALUES (
         ${<string>form.day},
         ${<string>plan.id},
         ${<string>form.reps ?? null},
         ${<string>form.time ?? null},
         ${workoutComplex.time_unit},
-        ${<string>form.sets ?? null},
         ${<string>form.weight ?? null},
         ${workoutComplex.weight_unit},
         ${workoutComplex.workout_id},
@@ -462,6 +461,7 @@ export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): 
       )`;
     return 'saved';
   } catch (error) {
+    console.log(error);
     return 'error';
   }
 }
