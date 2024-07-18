@@ -22,7 +22,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
   const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? 0 : secondsStarted);
 
   // state to check stopwatch running or not
-  const [isRunning, setIsRunning] = useState<boolean>(!!secondsStarted);
+  const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : !!secondsStarted);
 
   useEffect(() => {
     let intervalId: string | number | NodeJS.Timeout | undefined;
@@ -30,7 +30,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
       intervalId = setInterval(() => setTime(diffSeconds(sDate)), 1000);
       // Reset timer back to 0 if it is more than max time
-      secondsStarted > MAX_SEC_TIME && setTime(0)
+      diffSeconds(sDate) > MAX_SEC_TIME && setTime(0)
     }
     return () => clearInterval(intervalId);
   }, [isRunning, time]);

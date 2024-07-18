@@ -17,6 +17,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
   const hash = typeof window !== "undefined" ? window?.location.hash : "";
   
   const handleUrlChange = useCallback(() => {
+    console.log("hash", window.location.hash);
     const hash = window.location.hash.replace(/^#slide/i, "");
     const findIndex = ids.indexOf(hash) + 1;
     const nTitle = titles?.[hash] || defaultTitle || titles?.[ids[0]];
@@ -26,6 +27,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
   }, [hash]);
 
   useEffect(() => {
+    console.log("hash", window.location.hash);
     handleUrlChange();
     
     window.addEventListener('hashchange', handleUrlChange);

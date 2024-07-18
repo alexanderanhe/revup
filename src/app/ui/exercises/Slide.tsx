@@ -91,8 +91,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
       // window.location.hash = hash;
-      const path = `${window.location.origin}${window.location.pathname}`;
-      router.replace(`${path}${hash}`);
+      router.replace(`${hash}`);
     }
   }, [scrolled]);
 

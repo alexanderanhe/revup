@@ -1,12 +1,13 @@
 'use client'
 
-import { ArrowPathIcon, ChevronDoubleDownIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 
 // source: https://blog.logrocket.com/implementing-pull-to-refresh-react-tailwind-css/
 
-const PULL_LENGTH_TO_REFRESH = 80;
+const PULL_LENGTH_TO_REFRESH = 110;
+const SENSIVILITY = 0.7;
 
 export default function PullToRefresh() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,7 +57,7 @@ export default function PullToRefresh() {
      *
      * This tells us how much the user has pulled
      */
-    let pullLength: number = startPoint < screenY ? Math.abs((screenY - startPoint)*0.7) : 0;
+    let pullLength: number = startPoint < screenY ? Math.abs((screenY - startPoint) * SENSIVILITY) : 0;
     setPullChange(pullLength);
     // console.log({ screenY, startPoint, pullLength, pullChange });
   };
@@ -87,26 +88,30 @@ export default function PullToRefresh() {
         !pullChange && "transition-all",
         !loading && "items-start",
         loading && "items-center",
-        (pullChange > PULL_LENGTH_TO_REFRESH || loading ) && "bg-primary/20",
       )}
       style={{
         gridColumn: 'full-width',
-        height: !loading ? Math.min(PULL_LENGTH_TO_REFRESH * 2, pullChange) : PULL_LENGTH_TO_REFRESH
+        height: !loading ? Math.min(PULL_LENGTH_TO_REFRESH * 2, pullChange) : PULL_LENGTH_TO_REFRESH / 2
       } as React.CSSProperties}
     >
       <div className="refresh-icon p-2 rounded-full">
         { loading ? (
           <ArrowPathIcon
-            style={{ transform: `rotate(${pullChange * 2}deg)` }}
-            className={clsx("size-6", loading && "animate-spin")}
+            className={clsx("size-4", loading && "animate-spin")}
           />
         ) : (
           <div
             className="grid place-items-center font-medium"
-            style={{ opacity: Math.min(1, pullChange / PULL_LENGTH_TO_REFRESH) }}
+            style={{ opacity: Math.min(1, pullChange / (PULL_LENGTH_TO_REFRESH / 2)) }}
           >
-            <span className="text-xs text-neutral">Pull to refresh</span>
-            <ChevronDoubleDownIcon style={{ transform: `rotate(${pullChange > PULL_LENGTH_TO_REFRESH ? 180 : 0}deg)` }} className="size-4 transition-transform" />
+            <span className="text-xs">Pull to refresh</span>
+            { pullChange <= PULL_LENGTH_TO_REFRESH ? (
+              <ChevronDoubleDownIcon
+                className="size-4 animate-bounce"
+              />
+            ) : (
+              <ChevronDoubleUpIcon className="size-4 animate-shake" />
+            )}
           </div>
         )}
       </div>
