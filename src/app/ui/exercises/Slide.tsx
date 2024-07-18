@@ -88,10 +88,10 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   }
 
   useEffect(() => {
-    if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
+    if (ref.current && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
-      // window.location.hash = hash;
-      router.replace(`${hash}`);
+      const path = `${window.location.origin}${window.location.pathname}`;
+      window.location.replace(`${path}${hash}`);
     }
   }, [scrolled]);
 
@@ -265,20 +265,38 @@ export default function Slides({ slides }: SlidesProps) {
   useEffect(() => {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
-      const handleScroll = (event: Event) => {
-        setScrolled((event.target as HTMLElement).scrollLeft);
+      let listenerFunc: (this: HTMLElement, ev: Event) => any;
+      const onScrollStop = (callback: (scrollLeft: number) => void) => {
+        let isScrolling: NodeJS.Timeout;
+        if (listenerFunc) {
+          carousel.removeEventListener('scroll', listenerFunc);
+        }
+        listenerFunc = (event) => {
+          clearTimeout(isScrolling);
+          const scrollLeft = (event.target as HTMLElement).scrollLeft;
+          isScrolling = setTimeout(() => {
+            callback(scrollLeft);
+          }, 150);
+        };
+        
+        carousel.addEventListener('scroll', listenerFunc);
+      }
+      const endPull = () => {
+        onScrollStop((scrollLeft) => {
+          setScrolled(scrollLeft);
+        });
       }
 
-      carousel.addEventListener('scroll', handleScroll);
-      return () => {
-        carousel.removeEventListener('scroll', handleScroll);
+      if (window.location.hash) {
+        goToOtherImage(window.location.hash, carouselId);
       }
-    }
-    if (window.location.hash) {
-      goToOtherImage(window.location.hash, carouselId);
+      carousel.addEventListener("touchend", endPull);
+
+      return () => {
+        carousel.removeEventListener("touchend", endPull);
+      }
     }
   }, []);
-
 
   return (
     <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
@@ -320,7 +338,7 @@ const Table = () => (
       <tbody>
         <tr>
           <th>1</th>
-          <td>Alexander</td>
+          <td>Cy David</td>
           <td>Quality Control Specialist</td>
           <td>Littel, Schaden and Vandervort</td>
         </tr>
