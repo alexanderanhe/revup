@@ -54,7 +54,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
   const replaceToHash = (hash: string) => {
     const path = `${window.location.origin}${window.location.pathname}`;
-    window.location.replace(`${path}${hash}`)
+    router.replace(`${path}${hash}`)
   }
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -62,16 +62,6 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     
     const hash = event.currentTarget.hash;
     replaceToHash(hash);
-  }
-
-  function isInViewport(element: HTMLElement) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
   }
 
   const NextButton = () => submit ? (
@@ -87,12 +77,22 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     </a>
   )
 
+  function isInViewport(element: HTMLElement) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
   useEffect(() => {
-    if (ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
+    if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
       // window.location.hash = hash;
       const path = `${window.location.origin}${window.location.pathname}`;
-      window.location.replace(`${path}${hash}`);
+      router.replace(`${path}${hash}`);
     }
   }, [scrolled]);
 
@@ -260,28 +260,41 @@ type SlidesProps = {
 };
 
 export default function Slides({ slides }: SlidesProps) {
-  const [ scrolled, setScrolled ] = useState<number>(0);
+  const [ scrolled, setScrolled ] = useState<number | null>(null);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
     const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carousel) {
-      let isScrolling: NodeJS.Timeout;
-      const handleScroll = (event: Event) => {
-        clearTimeout(isScrolling);
-        isScrolling = setTimeout(() => {
-          setScrolled((event.target as HTMLElement).scrollLeft);
-        }, 150);
+      let listenerFunc: (this: HTMLElement, ev: Event) => any;
+      const onScrollStop = (callback: (scrollLeft: number) => void) => {
+        let isScrolling: NodeJS.Timeout;
+        if (listenerFunc) {
+          carousel.removeEventListener('scroll', listenerFunc);
+        }
+        listenerFunc = (event) => {
+          clearTimeout(isScrolling);
+          const scrollLeft = (event.target as HTMLElement).scrollLeft;
+          isScrolling = setTimeout(() => {
+            callback(scrollLeft);
+          }, 150);
+        };
+        
+        carousel.addEventListener('scroll', listenerFunc);
+      }
+      const endPull = () => {
+        onScrollStop((scrollLeft) => {
+          setScrolled(scrollLeft);
+        });
       }
 
       if (window.location.hash) {
         goToOtherImage(window.location.hash, carouselId);
       }
-
-      carousel.addEventListener('scroll', handleScroll);
+      carousel.addEventListener("touchend", endPull);
 
       return () => {
-        carousel.removeEventListener('scroll', handleScroll);
+        carousel.removeEventListener("touchend", endPull);
       }
     }
   }, []);
