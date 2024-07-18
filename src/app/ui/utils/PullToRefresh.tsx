@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 // source: https://blog.logrocket.com/implementing-pull-to-refresh-react-tailwind-css/
 
-const PULL_LENGTH_TO_REFRESH = 110;
+const PULL_LENGTH_TO_REFRESH = 80;
 
 export default function PullToRefresh() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export default function PullToRefresh() {
      *
      * This tells us how much the user has pulled
      */
-    let pullLength: number = startPoint < screenY ? Math.abs(screenY - startPoint) : 0;
+    let pullLength: number = startPoint < screenY ? Math.abs((screenY - startPoint)*0.7) : 0;
     setPullChange(pullLength);
     // console.log({ screenY, startPoint, pullLength, pullChange });
   };
@@ -85,8 +85,8 @@ export default function PullToRefresh() {
       className={clsx(
         "grid justify-center w-full m-auto",
         !pullChange && "transition-all",
-        (pullChange <= PULL_LENGTH_TO_REFRESH && !loading ) && "items-start",
-        (pullChange > PULL_LENGTH_TO_REFRESH || loading ) && "items-center",
+        !loading && "items-start",
+        loading && "items-center",
         (pullChange > PULL_LENGTH_TO_REFRESH || loading ) && "bg-primary/20",
       )}
       style={{
@@ -95,7 +95,7 @@ export default function PullToRefresh() {
       } as React.CSSProperties}
     >
       <div className="refresh-icon p-2 rounded-full">
-        { (pullChange > PULL_LENGTH_TO_REFRESH || loading ) ? (
+        { loading ? (
           <ArrowPathIcon
             style={{ transform: `rotate(${pullChange * 2}deg)` }}
             className={clsx("size-6", loading && "animate-spin")}
@@ -106,7 +106,7 @@ export default function PullToRefresh() {
             style={{ opacity: Math.min(1, pullChange / PULL_LENGTH_TO_REFRESH) }}
           >
             <span className="text-xs text-neutral">Pull to refresh</span>
-            <ChevronDoubleDownIcon className="size-4" />
+            <ChevronDoubleDownIcon style={{ transform: `rotate(${pullChange > PULL_LENGTH_TO_REFRESH ? 180 : 0}deg)` }} className="size-4 transition-transform" />
           </div>
         )}
       </div>

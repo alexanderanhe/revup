@@ -6,7 +6,7 @@ import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
 import clsx from 'clsx';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
-import { ArrowTopRightOnSquareIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
 
@@ -16,8 +16,6 @@ import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
-import { createReadStream } from 'fs';
-import { clear } from 'console';
 
 type SlideProps = {
   carouselId: string;
@@ -54,12 +52,16 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  const replaceToHash = (hash: string) => {
+    const path = `${window.location.origin}${window.location.pathname}`;
+    window.location.replace(`${path}${hash}`)
+  }
+
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
-    const path = `${window.location.origin}${window.location.pathname}`;
-    window.location.replace(`${path}${hash}`)
+    replaceToHash(hash);
   }
 
   function isInViewport(element: HTMLElement) {
@@ -86,13 +88,14 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   )
 
   useEffect(() => {
-    if (scrolled && ref.current && isInViewport(ref.current)) {
+    if (ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
-      const path = `${window.location.origin}${window.location.pathname}`;
-      window.location.replace(`${path}${hash}`);
+      replaceToHash(hash);
+      // window.location.hash = hash;
+      // const path = `${window.location.origin}${window.location.pathname}`;
+      // window.location.replace(`${path}${hash}`);
     }
   }, [scrolled]);
-
 
   useEffect(() => {
     if (formStateWorkoutItem === 'saved') {
@@ -123,7 +126,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='flex justify-center relative'>
+        <div className='grid grid-cols-1 justify-center relative'>
           {slide.image && (
             <Image
               {...slide.image}
@@ -132,9 +135,23 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
             />
           )}
           <CompletedBackground />
-          <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-xs btn-ghost btn-outline btn-square absolute top-2 right-2">
-            <InformationCircleIcon className="size-5" />
-          </Link>
+          <div className="absolute top-0 left-[50%] -translate-x-1/2 flex items-start justify-end w-full h-[40svh] aspect-square p-5">
+            <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square">
+              <InformationCircleIcon className="size-5" />
+            </Link>
+          </div>
+          <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+            { slideIds?.[slide.index - 1] ? (
+                <a href={`#slide${slideIds?.[slide.index - 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                  <ChevronLeftIcon className="size-5" />
+                </a>
+            ) : <div className="w-5" /> }
+            { slideIds?.[slide.index + 1] && (
+                <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                  <ChevronRightIcon className="size-5" />
+                </a>
+            )}
+          </div>
         </div>
         <div className='content-grid space-y-4 pb-10'>
           <h3 className="text-center pt-4">{ slide.title }</h3>
@@ -244,6 +261,7 @@ type SlidesProps = {
 
 export default function Slides({ slides }: SlidesProps) {
   const [ scrolled, setScrolled ] = useState<number>(0);
+  const [ scrollLeft, setScrollLeft ] = useState<number>(0);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
@@ -253,16 +271,23 @@ export default function Slides({ slides }: SlidesProps) {
       const handleScroll = (event: Event) => {
         clearTimeout(isScrolling);
         isScrolling = setTimeout(() => {
-          setScrolled((event.target as HTMLElement).scrollLeft);
+          setScrollLeft((event.target as HTMLElement).scrollLeft);
         }, 150);
       }
+      const endPull = () => {
+        setScrolled(scrollLeft);
+      }
 
-      carousel.addEventListener('scroll', handleScroll);
       if (window.location.hash) {
         goToOtherImage(window.location.hash, carouselId);
       }
+
+      carousel.addEventListener('scroll', handleScroll);
+      carousel.addEventListener("touchend", endPull);
+
       return () => {
         carousel.removeEventListener('scroll', handleScroll);
+        carousel.removeEventListener("touchend", endPull);
       }
     }
   }, []);

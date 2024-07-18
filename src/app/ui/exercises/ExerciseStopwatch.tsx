@@ -14,10 +14,11 @@ type ExerciseStopwatchProps = {
 }
 
 export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps) {
+  const [ sDate, setSDate ] = useState<string | null | undefined>(startDate);
   const [ formStateStartWorkoutDay, formActionStartWorkoutDay ] = useFormState(handleStartWorkoutDay, null);
   const [ formStateFinishWorkoutDay, formActionFinishWorkoutDay ] = useFormState(handleFinishWorkoutDay, null);
   // state to store time
-  const secondsStarted = diffSeconds(startDate);
+  const secondsStarted = diffSeconds(sDate);
   const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? 0 : secondsStarted);
 
   // state to check stopwatch running or not
@@ -27,7 +28,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
     let intervalId: string | number | NodeJS.Timeout | undefined;
     if (isRunning) {
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
-      intervalId = setInterval(() => setTime(time + 1), 1000);
+      intervalId = setInterval(() => setTime(diffSeconds(sDate)), 1000);
       // Reset timer back to 0 if it is more than max time
       secondsStarted > MAX_SEC_TIME && setTime(0)
     }
@@ -50,7 +51,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
 
   useEffect(() => {
     if (formStateStartWorkoutDay?.status === "done") {
-      setTime(diffSeconds(formStateStartWorkoutDay.date));
+      setSDate(formStateStartWorkoutDay.date);
       setIsRunning(true);
     }
   }, [ formStateStartWorkoutDay ]);
@@ -64,7 +65,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
   return (
     time ? (
       <form action={formActionFinishWorkoutDay} className="relative group grid place-items-center">
-        <SubmitButton className="btn btn-xs btn-ghost">
+        <SubmitButton className="btn btn-xs btn-ghost gap-1">
           <span className="font-medium font-mono countdown">
             { !!hours && (
               <><span style={{
@@ -81,7 +82,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
               } as React.CSSProperties}
             ></span>
           </span>
-          <ClockIcon className="size-4 ml-1" />
+          <ClockIcon className="size-4" />
         </SubmitButton>
       </form>
     ) : (
