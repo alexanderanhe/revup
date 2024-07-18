@@ -90,9 +90,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   useEffect(() => {
     if (ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
-      window.location.hash = hash;
-      // const path = `${window.location.origin}${window.location.pathname}`;
-      // window.location.replace(`${path}${hash}`);
+      // window.location.hash = hash;
+      const path = `${window.location.origin}${window.location.pathname}`;
+      window.location.replace(`${path}${hash}`);
     }
   }, [scrolled]);
 
@@ -261,7 +261,6 @@ type SlidesProps = {
 
 export default function Slides({ slides }: SlidesProps) {
   const [ scrolled, setScrolled ] = useState<number>(0);
-  const [ scrollLeft, setScrollLeft ] = useState<number>(0);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
@@ -271,11 +270,8 @@ export default function Slides({ slides }: SlidesProps) {
       const handleScroll = (event: Event) => {
         clearTimeout(isScrolling);
         isScrolling = setTimeout(() => {
-          setScrollLeft((event.target as HTMLElement).scrollLeft);
+          setScrolled((event.target as HTMLElement).scrollLeft);
         }, 150);
-      }
-      const endPull = () => {
-        setScrolled(scrollLeft);
       }
 
       if (window.location.hash) {
@@ -283,11 +279,9 @@ export default function Slides({ slides }: SlidesProps) {
       }
 
       carousel.addEventListener('scroll', handleScroll);
-      carousel.addEventListener("touchend", endPull);
 
       return () => {
         carousel.removeEventListener('scroll', handleScroll);
-        carousel.removeEventListener("touchend", endPull);
       }
     }
   }, []);
