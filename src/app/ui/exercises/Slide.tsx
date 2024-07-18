@@ -56,8 +56,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
-    const path = `${window.location.origin}${window.location.pathname}`;
-    window.location.replace(`${path}${hash}`)
+    // const path = `${window.location.origin}${window.location.pathname}`;
+    // window.location.replace(`${path}${hash}`)
+    goToOtherImage(hash, carouselId);
   }
 
   const NextButton = () => submit ? (
@@ -85,9 +86,15 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
   useEffect(() => {
     if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
-      const hash = `#${ref.current.id}`;
+      const href = `#${ref.current.id}`;
       // window.location.hash = hash;
-      window.location.replace(`${hash}`);
+      // window.location.replace(`${hash}`);
+      const target = document.querySelector<HTMLDivElement>(href)!;
+      const refs = document.querySelectorAll('[data-active*="true"]');
+      refs.forEach((div) => {
+        div.removeAttribute('data-active');
+      });
+      target.dataset.active = 'true';
     }
   }, [scrolled]);
 
@@ -315,6 +322,11 @@ const goToOtherImage = (href: string, carouselId: string) => {
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
+    const refs = document.querySelectorAll('[data-active*="true"]');
+    refs.forEach((div) => {
+      div.removeAttribute('data-active');
+    });
+    target.dataset.active = 'true';
     const left = target.offsetLeft;
     carousel.scrollTo({ left: left, behavior: 'instant' });
   }
