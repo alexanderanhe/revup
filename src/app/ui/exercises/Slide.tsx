@@ -90,8 +90,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   useEffect(() => {
     if (ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const hash = `#${ref.current.id}`;
-      replaceToHash(hash);
-      // window.location.hash = hash;
+      window.location.hash = hash;
       // const path = `${window.location.origin}${window.location.pathname}`;
       // window.location.replace(`${path}${hash}`);
     }
