@@ -54,7 +54,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
   const replaceToHash = (hash: string) => {
     const path = `${window.location.origin}${window.location.pathname}`;
-    router.replace(`${path}${hash}`)
+    router.replace(`${hash}`)
   }
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
