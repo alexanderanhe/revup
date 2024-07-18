@@ -1,8 +1,7 @@
-// import ExerciseStopwatch from "@/app/ui/exercises/ExerciseStopwatch";
+import ExerciseStopwatch from "@/app/ui/exercises/ExerciseStopwatch";
 import Title from "@/app/ui/exercises/Title";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
-import { getUserCurrentPlan, getUserCurrentPlanWorkouts, getUserPlanStartedAt } from "@/lib/data";
-import { Plan, PlanDay } from "@/lib/definitions";
+import { getUserCurrentPlanWorkouts, getUserPlanStartedAt } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
 
 type Props = {
@@ -24,8 +23,8 @@ export default async function ExercisesLayout({ params: { locale }, children }: 
   return (
     <LayoutContent
       title={<Title titles={titles} defaultTitle={ t("title") } />}
-      // pageMenu={<ExerciseStopwatch startDate={await getUserPlanStartedAt()} />}
-      // pullToRefresh
+      pageMenu={<ExerciseStopwatch startDate={await getUserPlanStartedAt()} />}
+      pullToRefresh
       titleFixed
     >
       { children }
