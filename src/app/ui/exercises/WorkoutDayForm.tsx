@@ -1,7 +1,7 @@
 'use client'
 
-import Card from "@/app/ui/Card"
-import clsx from "clsx"
+// import Card from "@/app/ui/Card"
+// import clsx from "clsx"
 import SubmitButton from "../utils/SubmitButton"
 import { PlusIcon } from "@heroicons/react/24/outline"
 import { useEffect, useRef } from "react"
@@ -36,7 +36,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
       { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
       <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
     </p></section>
-    <section className="grid grid-cols-3 justify-between gap-4">
+    {/* <section className="grid grid-cols-3 justify-between gap-4">
       <Card className={clsx(
         "[&>strong]:font-medium size-24",
         !workout_complex.reps && "shadow-inner bg-base-200/60"
@@ -65,7 +65,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           )}
         </div>
       </Card>
-    </section>
+    </section> */}
     <section>
       <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
         <input type="hidden" name="day" value={ day } />
