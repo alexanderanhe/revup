@@ -4,18 +4,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
-import clsx from 'clsx';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
-import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-import { handleSetWorkoutCloseDay, handleSetWorkoutItem } from "@/lib/actions";
+import { handleSetWorkoutCloseDay } from "@/lib/actions";
 
 import SubmitButton from '@/app/ui/utils/SubmitButton';
-import Card from '@/app/ui/Card';
 import { WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
+import WorkoutDayForm from './WorkoutDayForm';
 
 type SlideProps = {
   carouselId: string;
@@ -45,10 +44,8 @@ type SlideProps = {
 };
 
 function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
-  const formRef = useRef<HTMLFormElement>(null);
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
-  const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -56,6 +53,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
+    console.log('hash', hash);
     // const path = `${window.location.origin}${window.location.pathname}`;
     // window.location.replace(`${path}${hash}`)
     goToOtherImage(hash, carouselId);
@@ -87,8 +85,6 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   useEffect(() => {
     if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
       const href = `#${ref.current.id}`;
-      // window.location.hash = hash;
-      // window.location.replace(`${hash}`);
       const target = document.querySelector<HTMLDivElement>(href)!;
       const refs = document.querySelectorAll('[data-active*="true"]');
       refs.forEach((div) => {
@@ -97,12 +93,6 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       target.dataset.active = 'true';
     }
   }, [scrolled]);
-
-  useEffect(() => {
-    if (formStateWorkoutItem === 'saved') {
-      formRef.current?.reset();
-    }
-  }, [formStateWorkoutItem]);
 
   useEffect(() => {
     if (formStateWorkoutCloseDay === 'done') {
@@ -156,66 +146,14 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
         </div>
         <div className='content-grid space-y-4 pb-10'>
           <h3 className="text-center pt-4">{ slide.title }</h3>
-          <section><p>
-            { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
-            { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
-            { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
-            <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
-          </p></section>
-          <section className="grid grid-cols-3 justify-between gap-4">
-            <Card className={clsx(
-              "[&>strong]:font-medium size-24",
-              !workout_complex.reps && "shadow-inner bg-base-200/60"
-              )}>
-              <div className="flex gap-1 justify-center w-full">
-                { workout_complex.reps ? (
-                  <><strong>{ workout_complex.reps }</strong>reps</>
-                ) : "NO" }
-              </div>
-            </Card>
-            <Card className="[&>strong]:font-medium size-24">
-              <div className="flex gap-1 justify-center w-full">
-                <strong>-</strong>
-                { workout_complex.time_unit }
-              </div>
-            </Card>
-            <Card className={clsx(
-              "[&>strong]:font-medium size-24",
-              completed && 'shadow-inner border-2 border-success bg-success/20 text-success'
-              )}>
-              <div className="flex flex-col items-center gap-1 w-full">
-                { workout_complex.sets ? (
-                  <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
-                ) : (
-                  <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
-                )}
-              </div>
-            </Card>
-          </section>
-          <section>
-            <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
-              <input type="hidden" name="day" value={ day } />
-              <input type="hidden" name="workout_id" value={ workout_id } />
-              <input type="hidden" name="workout_complex_id" value={ slide.id } />
-              <input type="hidden" name="plan_id" value={ plan_id } />
-              <div className="join w-full">
-                { workout_complex.reps && (
-                  <div className="join-item grow grid grid-cols-2">
-                    <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
-                    <input className="input input-bordered rounded-none" name="weight" placeholder={ `${workout_complex.weight_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
-                  </div>
-                )}
-                { workout_complex.time && (
-                  <div className="join-item grow grid grid-cols-1">
-                    <input className="input input-bordered rounded-r-none" name="time" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
-                  </div>
-                )}
-                <SubmitButton disabled={completed} className="btn join-item rounded-r-full">
-                  <PlusIcon className="size-4" />
-                </SubmitButton>
-              </div>
-            </form>
-          </section>
+          <WorkoutDayForm
+            workout_complex={workout_complex}
+            completed={completed}
+            day={day}
+            plan_id={plan_id}
+            workout_id={workout_id}
+            slide_id={slide.id}
+          />
         </div>
       </section>
       <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
