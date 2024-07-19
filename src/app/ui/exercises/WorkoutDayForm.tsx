@@ -40,11 +40,11 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
     <section className="grid grid-cols-3 justify-between gap-4">
       {/* !workout_complex.reps && "shadow-inner bg-base-200/60" */}
       <Card>
-        <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
+        {/* <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
           { workout_complex.reps ? (
             <><strong>{ workout_complex.reps }</strong>reps</>
           ) : "NO" }
-        </div>
+        </div> */}
       </Card>
       <Card>
         {/* <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
