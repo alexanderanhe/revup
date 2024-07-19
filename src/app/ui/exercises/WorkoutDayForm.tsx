@@ -39,22 +39,22 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
     </p></section>
     <section className="grid grid-cols-3 justify-between gap-4">
       {/* !workout_complex.reps && "shadow-inner bg-base-200/60" */}
-      <Card className="[&>strong]:font-medium size-24">
-        {/* <div className="flex gap-1 justify-center w-full">
+      <Card>
+        <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
           { workout_complex.reps ? (
             <><strong>{ workout_complex.reps }</strong>reps</>
           ) : "NO" }
-        </div> */}
+        </div>
       </Card>
-      <Card className="[&>strong]:font-medium size-24">
-        {/* <div className="flex gap-1 justify-center w-full">
+      <Card>
+        {/* <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
           <strong>-</strong>
           { workout_complex.time_unit }
         </div> */}
       </Card>
       {/* completed && 'shadow-inner border-2 border-success bg-success/20 text-success' */}
-      <Card className="[&>strong]:font-medium size-24">
-        {/* <div className="flex flex-col items-center gap-1 w-full">
+      <Card>
+        {/* <div className="flex flex-col items-center [&>strong]:font-medium size-24 gap-1 w-full">
           { workout_complex.sets ? (
             <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
           ) : (
