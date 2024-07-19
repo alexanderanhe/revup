@@ -37,7 +37,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
 
   return (
     <>
-      <section><p>
+      <section className="place-items-center"><p>
         { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
         { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
         { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
@@ -58,7 +58,6 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           progress={progress}
           subtitle={!!workout_complex.reps ? "reps" : ""}
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
-          className="grid grid-cols-1"
         />
       </section>
       <section>
@@ -93,15 +92,14 @@ type MetricProps = {
   subtitle?: React.ReactNode;
   type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
   progress?: number;
-  className?: string;
 }
-const Metric = ({ title, subtitle, type, progress, className }: MetricProps) => (
+const Metric = ({ title, subtitle, type, progress }: MetricProps) => (
   <ProgressCircle
     progress={progress ?? 0}
     type={type}
     icon={(
-      <span className={className}>
-        <strong className={`font-semibold ${jersey10.className}`}>{ title }</strong>
+      <span className="grid grid-col-1 place-items-center gap-[1]">
+        <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
         <span>{ subtitle }</span>
       </span>
     )}
