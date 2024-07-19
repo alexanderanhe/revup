@@ -44,7 +44,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
         <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
       </p></section>
       <section className="flex flex-row justify-center gap-4 w-full">
-        {/* <Metric
+        <Metric
           title={`${!!workout_complex?.reps ? workout_complex.reps : "NO"}`}
           subtitle={!!workout_complex?.reps ? "reps" : ""}
           type={!workout_complex?.reps ? "neutral" : "info"}
@@ -58,7 +58,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           progress={progress}
           subtitle={!!workout_complex.reps ? "reps" : ""}
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
-        /> */}
+        />
       </section>
       <section>
         <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
