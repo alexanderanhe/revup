@@ -1,7 +1,8 @@
 'use client'
 
-// import Card from "@/app/ui/Card"
 // import clsx from "clsx"
+
+import Card from "@/app/ui/Card"
 import SubmitButton from "../utils/SubmitButton"
 import { PlusIcon } from "@heroicons/react/24/outline"
 import { useEffect, useRef } from "react"
@@ -36,11 +37,9 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
       { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
       <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
     </p></section>
-    {/* <section className="grid grid-cols-3 justify-between gap-4">
-      <Card className={clsx(
-        "[&>strong]:font-medium size-24",
-        !workout_complex.reps && "shadow-inner bg-base-200/60"
-        )}>
+    <section className="grid grid-cols-3 justify-between gap-4">
+      {/* !workout_complex.reps && "shadow-inner bg-base-200/60" */}
+      <Card className="[&>strong]:font-medium size-24">
         <div className="flex gap-1 justify-center w-full">
           { workout_complex.reps ? (
             <><strong>{ workout_complex.reps }</strong>reps</>
@@ -53,10 +52,8 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           { workout_complex.time_unit }
         </div>
       </Card>
-      <Card className={clsx(
-        "[&>strong]:font-medium size-24",
-        completed && 'shadow-inner border-2 border-success bg-success/20 text-success'
-        )}>
+      {/* completed && 'shadow-inner border-2 border-success bg-success/20 text-success' */}
+      <Card className="[&>strong]:font-medium size-24">
         <div className="flex flex-col items-center gap-1 w-full">
           { workout_complex.sets ? (
             <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
@@ -65,7 +62,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           )}
         </div>
       </Card>
-    </section> */}
+    </section>
     <section>
       <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
         <input type="hidden" name="day" value={ day } />
