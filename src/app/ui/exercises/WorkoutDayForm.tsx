@@ -37,21 +37,21 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
       { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
       <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
     </p></section>
-    <section className="grid grid-cols-3 justify-between gap-4">
+    <section className="flex flex-row justify-between gap-4 w-full">
       <Metric
-        title={`${!!workout_complex.reps ? workout_complex.reps : "NO"}`}
-        subtitle={!!workout_complex.reps ? "reps" : ""}
-        className={clsx(!workout_complex.reps && "bg-base-200/60")}
+        title={`${!!workout_complex?.reps ? workout_complex.reps : "NO"}`}
+        subtitle={!!workout_complex?.reps ? "reps" : ""}
+        className={clsx(!workout_complex?.reps && "bg-base-200/60")}
       />
       <Metric
         title={`-`}
-        subtitle={ workout_complex.time_unit }
+        subtitle={ workout_complex?.time_unit }
       />
       <Metric
         title={
-          workout_complex.sets ?
-          `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex.sets }`
-          : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex.time }`
+          workout_complex?.sets ?
+          `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex?.sets }`
+          : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex?.time }`
         }
         subtitle={!!workout_complex.reps ? "reps" : ""}
         className={clsx(completed && "border-2 border-success bg-success/20 text-success")}
