@@ -38,26 +38,24 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
       <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
     </p></section>
     <section className="grid grid-cols-3 justify-between gap-4">
-      {/* !workout_complex.reps && "shadow-inner bg-base-200/60" */}
       <Metric
         title={`${!!workout_complex.reps ? workout_complex.reps : "NO"}`}
         subtitle={!!workout_complex.reps ? "reps" : ""}
-        className={clsx(!workout_complex.reps && "shadow-inner bg-base-200/60")}
+        className={clsx(!workout_complex.reps && "bg-base-200/60")}
       />
       <Metric
         title={`-`}
         subtitle={ workout_complex.time_unit }
       />
-      {/* completed && 'shadow-inner border-2 border-success bg-success/20 text-success' */}
-      <Card>
-        {/* <div className="flex flex-col items-center [&>strong]:font-medium size-24 gap-1 w-full">
-          { workout_complex.sets ? (
-            <><strong>{ workout_complex?.sets_done ?? 0 } / { workout_complex.sets }</strong>sets</>
-          ) : (
-            <><strong>{ workout_complex?.time_done ?? 0 } / { workout_complex.time }</strong>{ workout_complex.time_unit }</>
-          )}
-        </div> */}
-      </Card>
+      <Metric
+        title={
+          workout_complex.sets ?
+          `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex.sets }`
+          : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex.time }`
+        }
+        subtitle={!!workout_complex.reps ? "reps" : ""}
+        className={clsx(completed && "border-2 border-success bg-success/20 text-success")}
+      />
     </section>
     <section>
       <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
