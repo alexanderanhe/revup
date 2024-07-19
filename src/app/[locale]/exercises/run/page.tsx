@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { WorkoutImageLink } from "@/lib/definitions";
 import Slides from "@/app/ui/exercises/Slide";
+import clsx from "clsx";
 
 export default async function ExercisesRunPage({
   params: { locale }
@@ -33,7 +34,7 @@ export default async function ExercisesRunPage({
       alt: name,
       // className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain",
       style: { maskImage: "linear-gradient(to right, black 60%, transparent)"},
-      className: "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg"
+      className: clsx("w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg", completed && "blur-sm"),
     },
     buttonClass: `btn w-full`,
     buttonText: t("historyBtn"),

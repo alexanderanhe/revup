@@ -53,10 +53,8 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
-    console.log('hash', hash);
-    // const path = `${window.location.origin}${window.location.pathname}`;
-    // window.location.replace(`${path}${hash}`)
-    goToOtherImage(hash, carouselId);
+    const path = `${window.location.origin}${window.location.pathname}`;
+    window.location.replace(`${path}${hash}`)
   }
 
   const NextButton = () => submit ? (
@@ -84,13 +82,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
   useEffect(() => {
     if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
-      const href = `#${ref.current.id}`;
-      const target = document.querySelector<HTMLDivElement>(href)!;
-      const refs = document.querySelectorAll('[data-active*="true"]');
-      refs.forEach((div) => {
-        div.removeAttribute('data-active');
-      });
-      target.dataset.active = 'true';
+      const hash = `#${ref.current.id}`;
+      const path = `${window.location.origin}${window.location.pathname}`;
+      window.location.replace(`${path}${hash}`)
     }
   }, [scrolled]);
 
@@ -105,7 +99,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   }, []);
 
   const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/20 uppercase font-semibold text-xl p-4">
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
       <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
     </div>
   )
@@ -260,13 +254,9 @@ const goToOtherImage = (href: string, carouselId: string) => {
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
-    const refs = document.querySelectorAll('[data-active*="true"]');
-    refs.forEach((div) => {
-      div.removeAttribute('data-active');
-    });
     target.dataset.active = 'true';
     const left = target.offsetLeft;
-    carousel.scrollTo({ left: left, behavior: 'smooth' });
+    carousel.scrollTo({ left: left, behavior: 'instant' });
   }
 };
 

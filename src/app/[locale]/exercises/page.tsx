@@ -73,11 +73,7 @@ export default async function ExercisesPage({
                 className="absolute inset-0 w-full h-full object-cover object-right"
                 style={{ maskImage: "linear-gradient(to left, black -100%, transparent)"}}
               />
-              { completed && (
-                <div className="grid items-center justify-end absolute inset-0 w-full h-full bg-success/60 z-[1] p-4">
-                  <CheckIcon className="size-10" />
-                </div>
-              )}
+              { completed && <CheckIcon className="size-10 text-success absolute top-1/2 -translate-y-1/2 right-4" />}
             </Card>
             <hr className={clsx(
               excercises?.[i + 1] && tags.some(([name, type]) => name === 'stretching' && type === 'muscle') && 'bg-primary',
