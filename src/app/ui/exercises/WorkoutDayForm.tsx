@@ -1,6 +1,6 @@
 'use client'
 
-// import clsx from "clsx"
+import clsx from "clsx"
 
 import Card from "@/app/ui/Card"
 import SubmitButton from "../utils/SubmitButton"
@@ -39,19 +39,15 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
     </p></section>
     <section className="grid grid-cols-3 justify-between gap-4">
       {/* !workout_complex.reps && "shadow-inner bg-base-200/60" */}
-      <Card>
-        {/* <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
-          { workout_complex.reps ? (
-            <><strong>{ workout_complex.reps }</strong>reps</>
-          ) : "NO" }
-        </div> */}
-      </Card>
-      <Card>
-        {/* <div className="flex gap-1 justify-center [&>strong]:font-medium size-24 w-full">
-          <strong>-</strong>
-          { workout_complex.time_unit }
-        </div> */}
-      </Card>
+      <Metric
+        title={`${!!workout_complex.reps ? workout_complex.reps : "NO"}`}
+        subtitle={!!workout_complex.reps ? "reps" : ""}
+        className={clsx(!workout_complex.reps && "shadow-inner bg-base-200/60")}
+      />
+      <Metric
+        title={`-`}
+        subtitle={ workout_complex.time_unit }
+      />
       {/* completed && 'shadow-inner border-2 border-success bg-success/20 text-success' */}
       <Card>
         {/* <div className="flex flex-col items-center [&>strong]:font-medium size-24 gap-1 w-full">
@@ -90,3 +86,15 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
         </>
   )
 }
+type MetricProps = {
+  title?: string;
+  subtitle?: string;
+  className?: string;
+}
+const Metric = ({ title, subtitle, ...props }: MetricProps) => (
+  <Card {...props}>
+    <div className="flex gap-1 items-center justify-center size-24 w-full">
+      <strong className="font-medium">{ title }</strong> { subtitle}
+    </div>
+  </Card>
+)
