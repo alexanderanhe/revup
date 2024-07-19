@@ -4,19 +4,21 @@ import clsx from "clsx";
 
 type ProgressCircleProps = {
   progress: number;
-  type?: 'success' | 'error' | 'warning' | 'info';
+  type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
   icon?: React.ReactNode;
+  size?: string;
 }
 
-export default function ProgressCircle({ progress, type, icon }: ProgressCircleProps) {
+export default function ProgressCircle({ progress, type, icon, size }: ProgressCircleProps) {
   const workoutProgressStyles = {
     "--value": progress,
-    "--size": "3.2rem"
+    "--size": size ?? "3.2rem"
   } as React.CSSProperties;
   return (
     <div className={clsx(
       "radial-progress text-sm font-semibold",
       typeClasses[type ?? 'neutral'],
+      progress === 100 && 'after:hidden',
       !progress && 'before:hidden after:hidden',
     )} style={workoutProgressStyles} role="progressbar">
       { icon ?? `${progress}%` }
