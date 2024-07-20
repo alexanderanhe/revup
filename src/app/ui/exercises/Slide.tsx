@@ -233,9 +233,14 @@ export default function Slides({ slides }: SlidesProps) {
           setScrolled(scrollLeft);
         });
       }
+      const startPull = (e) => {
+        e.preventDefault();
+      }
 
+      carousel.addEventListener("touchstart", startPull);
       carousel.addEventListener("touchend", endPull);
       return () => {
+        carousel.removeEventListener("touchstart", startPull);
         carousel.removeEventListener("touchend", endPull);
       }
     }
