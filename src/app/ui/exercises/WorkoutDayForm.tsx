@@ -97,18 +97,20 @@ type MetricProps = {
   progress?: number;
   tooltip?: string;
 }
-const Metric = ({ title, subtitle, type, progress, tooltip }: MetricProps) => (
-  <div className="tooltip tooltip-bottom" data-tip={tooltip}>
-    <ProgressCircle
-      progress={progress ?? 0}
-      type={type}
-      // icon={(
-      //   <span className="grid grid-col-1 place-items-center gap-[1]">
-      //     <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
-      //     <span>{ subtitle }</span>
-      //   </span>
-      // )}
-      size="5.8rem"
-    />
-  </div>
-)
+function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
+  return (
+    <div className="tooltip tooltip-bottom" data-tip={tooltip}>
+      <ProgressCircle
+        progress={progress ?? 0}
+        type={type}
+        // icon={(
+        //   <span className="grid grid-col-1 place-items-center gap-[1]">
+        //     <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
+        //     <span>{ subtitle }</span>
+        //   </span>
+        // )}
+        size="5.8rem"
+      />
+    </div>
+  )
+}
