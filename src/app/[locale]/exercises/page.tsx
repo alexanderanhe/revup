@@ -59,7 +59,7 @@ export default async function ExercisesPage({
                 </div>
               ) : <RocketLaunchIcon className="size-5 text-neutral" />}
             </div>
-            <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
+            <Card className="relative w-full min-h-24 timeline-end mb-3 overflow-hidden">
               <ExerciseButton
                 name={name}
                 sets={sets}

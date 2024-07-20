@@ -27,9 +27,9 @@ export default function ExerciseButton({ name, sets, reps, weight, weight_unit, 
     router.push(`${PAGES.EXERCISES}/run`);
   }
   return (
-    <button type="button" onClick={handleSetExercise(id)} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
-      { name }
-      <span className="text-xs font-medium">
+    <button type="button" onClick={handleSetExercise(id)} className="flex flex-col items-start justify-end w-full h-full z-[1]">
+      <span className="w-full font-semibold text-left">{ name }</span>
+      <span className="w-full text-xs font-medium text-left">
         { sets && reps && `${ sets }x${ reps }x${ weight } ${ weight_unit }`}
         { time && time_unit && `${ time } ${ time_unit }`}
       </span>
