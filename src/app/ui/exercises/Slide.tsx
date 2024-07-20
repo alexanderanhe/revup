@@ -83,16 +83,16 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     </div>
   )
 
-  useEffect(() => {
-    if (scrolled !== null && ref.current && isInViewport(ref.current)) {
-      const refs = document.querySelectorAll('[data-active*="true"]');
-      refs.forEach((div) => {
-        div.removeAttribute('data-active');
-      });
-      ref.current.dataset.active = 'true';
-      setExercise(ref.current.id.replace('slide', '') as UUID);
-    }
-  }, [scrolled]);
+  // useEffect(() => {
+  //   if (scrolled !== null && ref.current && isInViewport(ref.current)) {
+  //     const refs = document.querySelectorAll('[data-active*="true"]');
+  //     refs.forEach((div) => {
+  //       div.removeAttribute('data-active');
+  //     });
+  //     ref.current.dataset.active = 'true';
+  //     setExercise(ref.current.id.replace('slide', '') as UUID);
+  //   }
+  // }, [scrolled]);
 
   useEffect(() => {
     if (formStateWorkoutCloseDay === 'done') {
@@ -203,6 +203,8 @@ type SlidesProps = {
 
 export default function Slides({ slides }: SlidesProps) {
   const [ scrolled, setScrolled ] = useState<number | null>(null);
+  const dispatch = useAppDispatch();
+  const setExercise = (state: UUID) => dispatch(set_exercise(state));
   const currExercise = useAppSelector(selectExercise);
   const carouselId = 'exercise-run';
 
@@ -242,6 +244,8 @@ export default function Slides({ slides }: SlidesProps) {
     if (currExercise) {
       const refs = document.querySelectorAll('[data-active*="true"]');
       goToOtherImage(`#slide${currExercise}`, carouselId, !refs.length ? "instant" : "smooth");
+    } else {
+      setExercise(slides[0].id);
     }
   }, [currExercise]);
 
