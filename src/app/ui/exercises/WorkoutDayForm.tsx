@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react"
 import { useFormState } from "react-dom"
 import { handleSetWorkoutItem } from "@/lib/actions"
 import { WorkoutComplexParameters } from "@/lib/definitions"
-// import ProgressCircle from "@/app/ui/utils/ProgressCircle"
+import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import { LockClosedIcon } from "@heroicons/react/24/solid"
 // import { jersey10 } from "@/app/ui/fonts"
 
@@ -22,9 +22,9 @@ type WorkoutDayFormProps = {
 export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id }: WorkoutDayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
-  const progress = (workout_complex.sets 
+  const progress = Math.trunc((workout_complex.sets 
     ? (workout_complex?.sets_done ?? 0) / workout_complex.sets
-    : (workout_complex?.time_done ?? 0) / workout_complex.time) * 100;
+    : (workout_complex?.time_done ?? 0) / workout_complex.time) * 100);
   const progressText = workout_complex?.sets
     ? `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex?.sets }`
     : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex?.time }`;
@@ -101,6 +101,7 @@ function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
   return (
     <div className="tooltip tooltip-bottom" data-tip={tooltip}>
       {title} {subtitle}
+      <ProgressCircle progress={progress ?? 0} />
       {/* <ProgressCircle
         progress={progress ?? 0}
         type={type}
