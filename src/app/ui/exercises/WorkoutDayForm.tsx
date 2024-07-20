@@ -22,12 +22,12 @@ type WorkoutDayFormProps = {
 export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id }: WorkoutDayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
-  // const progress = (workout_complex.sets 
-  //   ? (workout_complex?.sets_done ?? 0) / workout_complex.sets
-  //   : (workout_complex?.time_done ?? 0) / workout_complex.time) * 100;
-  // const progressText = workout_complex?.sets
-  //   ? `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex?.sets }`
-  //   : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex?.time }`;
+  const progress = (workout_complex.sets 
+    ? (workout_complex?.sets_done ?? 0) / workout_complex.sets
+    : (workout_complex?.time_done ?? 0) / workout_complex.time) * 100;
+  const progressText = workout_complex?.sets
+    ? `${ workout_complex?.sets_done ?? 0 } / ${ workout_complex?.sets }`
+    : `${ workout_complex?.time_done ?? 0 } / ${ workout_complex?.time }`;
 
   useEffect(() => {
     if (formStateWorkoutItem === 'saved') {
@@ -55,12 +55,12 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           type="error"
           tooltip="Solo para usuarios premium"
         />
-        {/* <Metric
+        <Metric
           title={progressText}
           progress={progress}
           subtitle={!!workout_complex.reps ? "sets" : workout_complex?.time_unit }
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
-        /> */}
+        />
       </section>
       <section>
         <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
