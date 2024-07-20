@@ -240,7 +240,8 @@ export default function Slides({ slides }: SlidesProps) {
 
   useEffect(() => {
     if (currExercise) {
-      goToOtherImage(`#slide${currExercise}`, carouselId, "instant");
+      const refs = document.querySelectorAll('[data-active*="true"]');
+      goToOtherImage(`#slide${currExercise}`, carouselId, !refs.length ? "instant" : "smooth");
     }
   }, [currExercise]);
 
