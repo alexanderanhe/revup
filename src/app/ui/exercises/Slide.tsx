@@ -57,10 +57,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   const handleClick = (WorkoutHash: string | undefined) => (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (!WorkoutHash) return;
-    
-    goToOtherImage(`#slide${WorkoutHash}`, carouselId, "smooth", () => {
-      setExercise(WorkoutHash as UUID);
-    });
+    setExercise(WorkoutHash as UUID);
   }
 
   const NextButton = () => submit ? (
@@ -228,17 +225,19 @@ export default function Slides({ slides }: SlidesProps) {
           setScrolled(scrollLeft);
         });
       }
-      if (currExercise) {
-        goToOtherImage(`#slide${currExercise}`, carouselId, "instant");
-      }
 
       carousel.addEventListener("touchend", endPull);
-
       return () => {
         carousel.removeEventListener("touchend", endPull);
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (currExercise) {
+      goToOtherImage(`#slide${currExercise}`, carouselId, "instant");
+    }
+  }, [currExercise]);
 
   return (
     <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
