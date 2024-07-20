@@ -47,34 +47,44 @@ type SlideProps = {
 };
 
 function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
-  // const [snap, setSnap] = useState<number | string | null>("355px");
-  // const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
+  const [snap, setSnap] = useState<number | string | null>("355px");
+  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const ref = React.useRef<HTMLDivElement>(null);
-  // const router = useRouter();
+  const router = useRouter();
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
 
-  // const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-  //   event.preventDefault();
+  const handleClick = (WorkoutHash: string | undefined) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (!WorkoutHash) return;
     
-  //   const hash = event.currentTarget.hash;
-  //   goToOtherImage(hash, carouselId, () => {
-  //     setExercise(hash.replace('slide', '') as UUID);
-  //   });
-  // }
+    goToOtherImage(`#slide${WorkoutHash}`, carouselId, "smooth", () => {
+      setExercise(WorkoutHash as UUID);
+    });
+  }
 
-  // const NextButton = () => submit ? (
-  //   <form action={formActionWorkoutCloseDay}>
-  //     <SubmitButton className={ slide.buttonNextClass }>
-  //       { slide.buttonNextText }
-  //     </SubmitButton>
-  //   </form>
-  // ) : (
-  //   <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className={ slide.buttonNextClass }>
-  //     { slide.buttonNextText }
-  //     <ChevronRightIcon className="size-5" />
-  //   </a>
-  // )
+  const NextButton = () => submit ? (
+    <form action={formActionWorkoutCloseDay}>
+      <SubmitButton className={ slide.buttonNextClass }>
+        { slide.buttonNextText }
+      </SubmitButton>
+    </form>
+  ) : (
+    <button
+      type="button"
+      className={ slide.buttonNextClass }
+      onClick={handleClick(slideIds?.[slide.index + 1])}
+    >
+      { slide.buttonNextText }
+      <ChevronRightIcon className="size-5" />
+    </button>
+  )
+
+  const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
+    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
+      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
+    </div>
+  )
 
   useEffect(() => {
     if (scrolled !== null && ref.current && isInViewport(ref.current)) {
@@ -82,21 +92,15 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     }
   }, [scrolled]);
 
-  // useEffect(() => {
-  //   if (formStateWorkoutCloseDay === 'done') {
-  //     window.location.replace('/home');
-  //   }
-  // }, [formStateWorkoutCloseDay]);
+  useEffect(() => {
+    if (formStateWorkoutCloseDay === 'done') {
+      router.push(PAGES.HOME);
+    }
+  }, [formStateWorkoutCloseDay]);
 
   // useEffect(() => {
   //   router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
   // }, []);
-
-  // const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-  //   <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
-  //     <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
-  //   </div>
-  // )
 
   return (
     <div id={`slide${slide.id}`}
@@ -104,8 +108,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       className="carousel-item content-grid grid-rows-1 w-full h-full"
       style={{ gridColumn: 'full-width'}}
     >
-      { scrolled }
-      {/* <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
+      <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
         <div className='grid grid-cols-1 justify-center relative'>
           {slide.image && (
             <Image
@@ -122,19 +125,27 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
           </div>
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
             { slideIds?.[slide.index - 1] ? (
-                <a href={`#slide${slideIds?.[slide.index - 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                <button
+                  type="button"
+                  className="btn btn-circle btn-ghost"
+                  onClick={handleClick(slideIds?.[slide.index - 1])}
+                >
                   <ChevronLeftIcon className="size-5" />
-                </a>
+                </button>
             ) : <div className="w-5" /> }
             { slideIds?.[slide.index + 1] && (
-                <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className="btn btn-circle btn-ghost">
+                <button
+                  type="button"
+                  className="btn btn-circle btn-ghost"
+                  onClick={handleClick(slideIds?.[slide.index + 1])}
+                >
                   <ChevronRightIcon className="size-5" />
-                </a>
+                </button>
             )}
           </div>
         </div>
         <div className='content-grid space-y-4 pb-10'>
-          <h3 className="text-center pt-4">{ slide.title }</h3>
+          <h3 className="text-center pt-4">{ slide.title } "{ scrolled }"</h3>
           <WorkoutDayForm
             workout_complex={workout_complex}
             completed={completed}
@@ -148,11 +159,11 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
         <div className="flex justify-center w-full space-x-3 pb-4">
           { slideIds?.map((id) => (
-            <a key={`slide-nav-${id}`}
-              href={`#slide${id}`}
-              onClick={handleClick}
+            <button key={`slide-nav-${id}`}
+              type="button"
               className={`w-3 h-3 ${slide.id === id ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
-            ></a>
+              onClick={handleClick(id)}
+            ></button>
           ))}
         </div>
         
@@ -179,7 +190,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
           </Drawer.Root>
           <NextButton />
         </div>
-      </footer> */}
+      </footer>
     </div>
   )
 }
@@ -218,7 +229,7 @@ export default function Slides({ slides }: SlidesProps) {
         });
       }
       if (currExercise) {
-        goToOtherImage(`slide${currExercise}`, carouselId);
+        goToOtherImage(`#slide${currExercise}`, carouselId, "instant");
       }
 
       carousel.addEventListener("touchend", endPull);
@@ -256,7 +267,7 @@ function isInViewport(element: HTMLElement) {
   );
 }
 
-function goToOtherImage (href: string, carouselId: string, callback?: () => void) {
+function goToOtherImage (href: string, carouselId: string, behavior: 'instant' | 'smooth' = 'instant', callback?: () => void) {
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
@@ -267,7 +278,7 @@ function goToOtherImage (href: string, carouselId: string, callback?: () => void
     // });
     // target.dataset.active = 'true';
     const left = target.offsetLeft;
-    carousel.scrollTo({ left: left, behavior: 'smooth' });
+    carousel.scrollTo({ left: left, behavior });
     if (callback) {
       callback();
     }

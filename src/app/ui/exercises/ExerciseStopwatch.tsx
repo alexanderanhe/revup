@@ -13,6 +13,12 @@ type ExerciseStopwatchProps = {
   startDate?: string | null
 }
 
+type Stopwatch = {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
 export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps) {
   const [ sDate, setSDate ] = useState<string | null | undefined>(startDate);
   const [ formStateStartWorkoutDay, formActionStartWorkoutDay ] = useFormState(handleStartWorkoutDay, null);
@@ -20,6 +26,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
   // state to store time
   const secondsStarted = diffSeconds(sDate);
   const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? 0 : secondsStarted);
+  const [stopwatch, setStopwatch] = useState<Stopwatch>({ hours: 0, minutes: 0, seconds: 0 });
 
   // state to check stopwatch running or not
   const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : !!secondsStarted);
@@ -30,19 +37,23 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
       intervalId = setInterval(() => setTime(diffSeconds(sDate)), 1000);
       // Reset timer back to 0 if it is more than max time
-      diffSeconds(sDate) > MAX_SEC_TIME && setTime(0)
+      diffSeconds(sDate) > MAX_SEC_TIME && setTime(-1)
     }
     return () => clearInterval(intervalId);
   }, [isRunning, time]);
 
-  // Hours calculation
-  const hours = Math.floor(time / 3600);
+  useEffect(() => {
+    // Hours calculation
+    const hours = Math.floor(time / 3600);
 
-  // Minutes calculation
-  const minutes = Math.floor((time % 3600) / 60);
+    // Minutes calculation
+    const minutes = Math.floor((time % 3600) / 60);
 
-  // Seconds calculation
-  const seconds = Math.floor((time % 60));
+    // Seconds calculation
+    const seconds = Math.floor((time % 60));
+
+    setStopwatch({ hours, minutes, seconds });
+  }, [time]);
 
   // Method to start and stop timer
   // const startAndStop = () => {
@@ -63,22 +74,22 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
   }, [ formStateFinishWorkoutDay ]);
 
   return (
-    time ? (
+    time >= 0 ? (
       <form action={formActionFinishWorkoutDay} className="relative group grid place-items-center">
         <SubmitButton className="btn btn-xs btn-ghost gap-1">
           <span className="font-medium font-mono countdown">
-            { !!hours && (
+            { !!stopwatch.hours && (
               <><span style={{
-                  "--value": hours,
+                  "--value": stopwatch.hours,
                 } as React.CSSProperties}
               ></span>:</>
             )}
             <span style={{
-                "--value": minutes,
+                "--value": stopwatch.minutes,
               } as React.CSSProperties}
             ></span>:
             <span style={{
-                "--value": seconds,
+                "--value": stopwatch.seconds,
               } as React.CSSProperties}
             ></span>
           </span>
@@ -99,5 +110,5 @@ const diffSeconds = (startDate?: Date | string | null) => {
   const now = new Date();
   const started_at = startDate instanceof Date ? startDate : new Date(Date.parse(startDate ?? ""));
   const sec =  Math.floor((now.getTime() - (started_at ?? now).getTime()) / 1000);
-  return sec >= 0 ? sec : 0;
+  return sec >= 0 ? sec : -1;
 }
