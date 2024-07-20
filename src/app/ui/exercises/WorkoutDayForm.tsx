@@ -100,15 +100,16 @@ type MetricProps = {
 function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
   return (
     <div className="tooltip tooltip-bottom" data-tip={tooltip}>
+      {title}
       {/* <ProgressCircle
         progress={progress ?? 0}
         type={type}
-        icon={(
+        icon={
           <span className="grid grid-col-1 place-items-center gap-[1]">
             <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
             <span>{ subtitle }</span>
           </span>
-        )}
+        }
         size="5.8rem"
       /> */}
     </div>
