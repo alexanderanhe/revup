@@ -145,7 +145,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
           </div>
         </div>
         <div className='content-grid space-y-4 pb-10'>
-          <h3 className="text-center pt-4">{ slide.title } "{ scrolled }"</h3>
+          <h3 className="text-center pt-4">{ slide.title } &quot;{ scrolled }&quot;</h3>
           <WorkoutDayForm
             workout_complex={workout_complex}
             completed={completed}
