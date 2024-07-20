@@ -47,44 +47,34 @@ type SlideProps = {
 };
 
 function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
-  const [snap, setSnap] = useState<number | string | null>("355px");
-  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
+  // const [snap, setSnap] = useState<number | string | null>("355px");
+  // const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const ref = React.useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
 
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
+  // const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  //   event.preventDefault();
     
-    const hash = event.currentTarget.hash;
-    goToOtherImage(hash, carouselId, () => {
-      setExercise(hash.replace('slide', '') as UUID);
-    });
-  }
+  //   const hash = event.currentTarget.hash;
+  //   goToOtherImage(hash, carouselId, () => {
+  //     setExercise(hash.replace('slide', '') as UUID);
+  //   });
+  // }
 
-  const NextButton = () => submit ? (
-    <form action={formActionWorkoutCloseDay}>
-      <SubmitButton className={ slide.buttonNextClass }>
-        { slide.buttonNextText }
-      </SubmitButton>
-    </form>
-  ) : (
-    <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className={ slide.buttonNextClass }>
-      { slide.buttonNextText }
-      <ChevronRightIcon className="size-5" />
-    </a>
-  )
-
-  function isInViewport(element: HTMLElement) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-  }
+  // const NextButton = () => submit ? (
+  //   <form action={formActionWorkoutCloseDay}>
+  //     <SubmitButton className={ slide.buttonNextClass }>
+  //       { slide.buttonNextText }
+  //     </SubmitButton>
+  //   </form>
+  // ) : (
+  //   <a href={`#slide${slideIds?.[slide.index + 1]}`} onClick={handleClick} className={ slide.buttonNextClass }>
+  //     { slide.buttonNextText }
+  //     <ChevronRightIcon className="size-5" />
+  //   </a>
+  // )
 
   useEffect(() => {
     if (scrolled !== null && ref.current && isInViewport(ref.current)) {
@@ -92,21 +82,21 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     }
   }, [scrolled]);
 
-  useEffect(() => {
-    if (formStateWorkoutCloseDay === 'done') {
-      window.location.replace('/home');
-    }
-  }, [formStateWorkoutCloseDay]);
+  // useEffect(() => {
+  //   if (formStateWorkoutCloseDay === 'done') {
+  //     window.location.replace('/home');
+  //   }
+  // }, [formStateWorkoutCloseDay]);
 
-  useEffect(() => {
-    router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
-  }, []);
+  // useEffect(() => {
+  //   router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
+  // }, []);
 
-  const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
-      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
-    </div>
-  )
+  // const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
+  //   <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
+  //     <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
+  //   </div>
+  // )
 
   return (
     <div id={`slide${slide.id}`}
@@ -114,7 +104,8 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
       className="carousel-item content-grid grid-rows-1 w-full h-full"
       style={{ gridColumn: 'full-width'}}
     >
-      <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
+      { scrolled }
+      {/* <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
         <div className='grid grid-cols-1 justify-center relative'>
           {slide.image && (
             <Image
@@ -188,7 +179,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
           </Drawer.Root>
           <NextButton />
         </div>
-      </footer>
+      </footer> */}
     </div>
   )
 }
@@ -255,7 +246,17 @@ export default function Slides({ slides }: SlidesProps) {
   )
 }
 
-const goToOtherImage = (href: string, carouselId: string, callback?: () => void) => {
+function isInViewport(element: HTMLElement) {
+  const rect = element.getBoundingClientRect();
+  return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+}
+
+function goToOtherImage (href: string, carouselId: string, callback?: () => void) {
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
