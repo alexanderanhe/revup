@@ -25,7 +25,7 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
   const [ formStateFinishWorkoutDay, formActionFinishWorkoutDay ] = useFormState(handleFinishWorkoutDay, null);
   // state to store time
   const secondsStarted = diffSeconds(sDate);
-  const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? 0 : secondsStarted);
+  const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? -1 : secondsStarted);
   const [stopwatch, setStopwatch] = useState<Stopwatch>({ hours: 0, minutes: 0, seconds: 0 });
 
   // state to check stopwatch running or not

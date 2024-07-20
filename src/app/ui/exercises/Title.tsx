@@ -4,7 +4,7 @@ import { selectExercise } from "@/lib/features/app";
 import { useAppSelector } from "@/lib/hooks";
 import { PAGES } from "@/lib/routes";
 import { usePathname } from "@/navigation";
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 
 type TitleProps = {
   titles: Record<string, string>;
