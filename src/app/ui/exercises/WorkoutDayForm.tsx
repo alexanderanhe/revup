@@ -48,15 +48,17 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           title={`${!!workout_complex?.reps ? workout_complex.reps : "NO"}`}
           subtitle={!!workout_complex?.reps ? "reps" : ""}
           type={!workout_complex?.reps ? "neutral" : "info"}
+          tooltip={!workout_complex?.reps ? "No aplica para este ejercicio." : undefined}
         />
         <Metric
           subtitle={<LockClosedIcon className="size-8" />}
           type="error"
+          tooltip="Solo para usuarios premium"
         />
         <Metric
           title={progressText}
           progress={progress}
-          subtitle={!!workout_complex.reps ? "reps" : ""}
+          subtitle={!!workout_complex.reps ? "sets" : workout_complex?.time_unit }
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
         />
       </section>
@@ -92,17 +94,20 @@ type MetricProps = {
   subtitle?: React.ReactNode;
   type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
   progress?: number;
+  tooltip?: string;
 }
-const Metric = ({ title, subtitle, type, progress }: MetricProps) => (
-  <ProgressCircle
-    progress={progress ?? 0}
-    type={type}
-    icon={(
-      <span className="grid grid-col-1 place-items-center gap-[1]">
-        <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
-        <span>{ subtitle }</span>
-      </span>
-    )}
-    size="6.5rem"
-  />
+const Metric = ({ title, subtitle, type, progress, tooltip }: MetricProps) => (
+  <div className="tooltip tooltip-bottom" data-tip={tooltip}>
+    <ProgressCircle
+      progress={progress ?? 0}
+      type={type}
+      icon={(
+        <span className="grid grid-col-1 place-items-center gap-[1]">
+          <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
+          <span>{ subtitle }</span>
+        </span>
+      )}
+      size="6.5rem"
+    />
+  </div>
 )

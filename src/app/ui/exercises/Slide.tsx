@@ -140,14 +140,14 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
         </div>
         <div className='content-grid space-y-4 pb-10'>
           <h3 className="text-center pt-4">{ slide.title }</h3>
-          {/* <WorkoutDayForm
+          <WorkoutDayForm
             workout_complex={workout_complex}
             completed={completed}
             day={day}
             plan_id={plan_id}
             workout_id={workout_id}
             slide_id={slide.id}
-          /> */}
+          />
         </div>
       </section>
       <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
