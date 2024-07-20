@@ -59,7 +59,7 @@ export default async function ExercisesPage({
               ) : <RocketLaunchIcon className="size-5 text-neutral" />}
             </div>
             <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
-              <Link href={`/exercises/run#slide${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
+              <Link href={`/exercises/run?w=${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
                 { name }
                 <span className="text-xs font-medium">
                   { sets && reps && `${ sets }x${ reps }x${ weight } ${ weight_unit }`}
