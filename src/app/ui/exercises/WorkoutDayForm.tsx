@@ -102,12 +102,12 @@ const Metric = ({ title, subtitle, type, progress, tooltip }: MetricProps) => (
     <ProgressCircle
       progress={progress ?? 0}
       type={type}
-      icon={(
-        <span className="grid grid-col-1 place-items-center gap-[1]">
-          <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
-          <span>{ subtitle }</span>
-        </span>
-      )}
+      // icon={(
+      //   <span className="grid grid-col-1 place-items-center gap-[1]">
+      //     <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ title }</strong>
+      //     <span>{ subtitle }</span>
+      //   </span>
+      // )}
       size="5.8rem"
     />
   </div>
