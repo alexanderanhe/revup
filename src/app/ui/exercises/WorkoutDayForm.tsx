@@ -7,7 +7,7 @@ import { useFormState } from "react-dom"
 import { handleSetWorkoutItem } from "@/lib/actions"
 import { WorkoutComplexParameters } from "@/lib/definitions"
 // import ProgressCircle from "@/app/ui/utils/ProgressCircle"
-// import { LockClosedIcon } from "@heroicons/react/24/solid"
+import { LockClosedIcon } from "@heroicons/react/24/solid"
 // import { jersey10 } from "@/app/ui/fonts"
 
 type WorkoutDayFormProps = {
@@ -50,11 +50,11 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           type={!workout_complex?.reps ? "neutral" : "info"}
           tooltip={!workout_complex?.reps ? "No aplica para este ejercicio." : undefined}
         /> */}
-        {/* <Metric
+        <Metric
           subtitle={<LockClosedIcon className="size-8" />}
           type="error"
           tooltip="Solo para usuarios premium"
-        /> */}
+        />
         {/* <Metric
           title={progressText}
           progress={progress}
