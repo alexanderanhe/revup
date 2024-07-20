@@ -51,12 +51,6 @@ const nextConfig = withNextIntl()({
         port: '',
         pathname: '/UI9du3cl2o0e9fkY_DKS8Q/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'img.daisyui.com',
-        port: '',
-        pathname: '/images/stock/**',
-      },
     ],
   },
   webpack: (config) => {

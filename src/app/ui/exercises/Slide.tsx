@@ -198,98 +198,59 @@ type SlidesProps = {
 };
 
 export default function Slides({ slides }: SlidesProps) {
-  // const [ scrolled, setScrolled ] = useState<number | null>(null);
-  // const currExercise = useAppSelector(selectExercise);
-  // const carouselId = 'exercise-run';
+  const [ scrolled, setScrolled ] = useState<number | null>(null);
+  const currExercise = useAppSelector(selectExercise);
+  const carouselId = 'exercise-run';
 
-  // useEffect(() => {
-  //   const carousel = document.getElementById(carouselId) as HTMLElement;
-  //   if (carousel) {
-  //     let listenerFunc: (this: HTMLElement, ev: Event) => any;
-  //     const onScrollStop = (callback: (scrollLeft: number) => void) => {
-  //       let isScrolling: NodeJS.Timeout;
-  //       if (listenerFunc) {
-  //         carousel.removeEventListener('scroll', listenerFunc);
-  //       }
-  //       listenerFunc = (event) => {
-  //         clearTimeout(isScrolling);
-  //         const scrollLeft = (event.target as HTMLElement).scrollLeft;
-  //         isScrolling = setTimeout(() => {
-  //           callback(scrollLeft);
-  //         }, 150);
-  //       };
+  useEffect(() => {
+    const carousel = document.getElementById(carouselId) as HTMLElement;
+    if (carousel) {
+      let listenerFunc: (this: HTMLElement, ev: Event) => any;
+      const onScrollStop = (callback: (scrollLeft: number) => void) => {
+        let isScrolling: NodeJS.Timeout;
+        if (listenerFunc) {
+          carousel.removeEventListener('scroll', listenerFunc);
+        }
+        listenerFunc = (event) => {
+          clearTimeout(isScrolling);
+          const scrollLeft = (event.target as HTMLElement).scrollLeft;
+          isScrolling = setTimeout(() => {
+            callback(scrollLeft);
+          }, 150);
+        };
         
-  //       carousel.addEventListener('scroll', listenerFunc);
-  //     }
-  //     const endPull = () => {
-  //       onScrollStop((scrollLeft) => {
-  //         setScrolled(scrollLeft);
-  //       });
-  //     }
-  //     if (currExercise) {
-  //       goToOtherImage(`slide${currExercise}`, carouselId);
-  //     }
+        carousel.addEventListener('scroll', listenerFunc);
+      }
+      const endPull = () => {
+        onScrollStop((scrollLeft) => {
+          setScrolled(scrollLeft);
+        });
+      }
+      if (currExercise) {
+        goToOtherImage(`slide${currExercise}`, carouselId);
+      }
 
-  //     carousel.addEventListener("touchend", endPull);
+      carousel.addEventListener("touchend", endPull);
 
-  //     return () => {
-  //       carousel.removeEventListener("touchend", endPull);
-  //     }
-  //   }
-  // }, []);
+      return () => {
+        carousel.removeEventListener("touchend", endPull);
+      }
+    }
+  }, []);
 
-  // return (
-  //   <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
-  //     { slides.map((slide, index) => (
-  //         <Slide
-  //           {...slide}
-  //           carouselId={carouselId}
-  //           key={`Slide${slide.id}`}
-  //           index={index}
-  //           submit={index === slides.length - 1}
-  //           slideIds={slides.map(({ id }) => id)}
-  //           scrolled={scrolled}
-  //         />
-  //     ))}
-  //   </div>
-  // )
   return (
-    <div className="carousel carousel-center bg-neutral rounded-box max-w-md space-x-4 p-4">
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp"
-          className="rounded-box" />
-      </div>
-      <div className="carousel-item">
-        <img
-          src="https://img.daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.webp"
-          className="rounded-box" />
-      </div>
+    <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
+      { slides.map((slide, index) => (
+          <Slide
+            {...slide}
+            carouselId={carouselId}
+            key={`Slide${slide.id}`}
+            index={index}
+            submit={index === slides.length - 1}
+            slideIds={slides.map(({ id }) => id)}
+            scrolled={scrolled}
+          />
+      ))}
     </div>
   )
 }
