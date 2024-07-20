@@ -19,7 +19,6 @@ import WorkoutDayForm from '@/app/ui/exercises/WorkoutDayForm';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 
 type SlideProps = {
-  carouselId: string;
   scrolled?: number;
   id: string;
   title?: string;
@@ -46,7 +45,7 @@ type SlideProps = {
   history: React.ReactNode;
 };
 
-function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
+function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const ref = useRef<HTMLDivElement>(null);
@@ -206,55 +205,57 @@ export default function Slides({ slides }: SlidesProps) {
   const dispatch = useAppDispatch();
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
   const currExercise = useAppSelector(selectExercise);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const carouselId = 'exercise-run';
 
-  // useEffect(() => {
-  //   const carousel = document.getElementById(carouselId) as HTMLElement;
-  //   if (carousel) {
-  //     let listenerFunc: (this: HTMLElement, ev: Event) => any;
-  //     const onScrollStop = (callback: (scrollLeft: number) => void) => {
-  //       let isScrolling: NodeJS.Timeout;
-  //       if (listenerFunc) {
-  //         carousel.removeEventListener('scroll', listenerFunc);
-  //       }
-  //       listenerFunc = (event) => {
-  //         clearTimeout(isScrolling);
-  //         const scrollLeft = (event.target as HTMLElement).scrollLeft;
-  //         isScrolling = setTimeout(() => {
-  //           callback(scrollLeft);
-  //         }, 150);
-  //       };
+  useEffect(() => {
+    // const carousel = document.getElementById(carouselId) as HTMLElement;
+    if (carouselRef.current) {
+      const carousel = carouselRef.current;
+      let listenerFunc: (this: HTMLElement, ev: Event) => any;
+      const onScrollStop = (callback: (scrollLeft: number) => void) => {
+        let isScrolling: NodeJS.Timeout;
+        if (listenerFunc) {
+          carousel.removeEventListener('scroll', listenerFunc);
+        }
+        listenerFunc = (event) => {
+          clearTimeout(isScrolling);
+          const scrollLeft = (event.target as HTMLElement).scrollLeft;
+          isScrolling = setTimeout(() => {
+            callback(scrollLeft);
+          }, 150);
+        };
         
-  //       carousel.addEventListener('scroll', listenerFunc);
-  //     }
-  //     const endPull = () => {
-  //       onScrollStop((scrollLeft) => {
-  //         setScrolled(scrollLeft);
-  //       });
-  //     }
+        carousel.addEventListener('scroll', listenerFunc);
+      }
+      const endPull = () => {
+        onScrollStop((scrollLeft) => {
+          setScrolled(scrollLeft);
+        });
+      }
 
-  //     carousel.addEventListener("touchend", endPull);
-  //     return () => {
-  //       carousel.removeEventListener("touchend", endPull);
-  //     }
-  //   }
-  // }, []);
+      carousel.addEventListener("touchend", endPull);
+      return () => {
+        carousel.removeEventListener("touchend", endPull);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (currExercise) {
       const refs = document.querySelectorAll('[data-active*="true"]');
-      goToOtherImage(`#slide${currExercise}`, carouselId, !refs.length ? "instant" : "smooth");
+      carouselRef.current && goToOtherImage(`#slide${currExercise}`, carouselRef.current, !refs.length ? "instant" : "smooth");
     } else {
       setExercise(slides[0].id);
     }
   }, [currExercise]);
 
   return (
-    <div id={carouselId} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
+    <div id={carouselId} ref={carouselRef} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
       { slides.map((slide, index) => (
           <Slide
             {...slide}
-            carouselId={carouselId}
+            carouselRef={carouselRef}
             key={`Slide${slide.id}`}
             index={index}
             submit={index === slides.length - 1}
@@ -276,8 +277,7 @@ function isInViewport(element: HTMLElement) {
   );
 }
 
-function goToOtherImage (href: string, carouselId: string, behavior: 'instant' | 'smooth' = 'instant', callback?: () => void) {
-  const carousel = document.getElementById(carouselId);
+function goToOtherImage (href: string, carousel: HTMLDivElement, behavior: 'instant' | 'smooth' = 'instant', callback?: () => void) {
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
     if (!target || target.dataset.active) return;
