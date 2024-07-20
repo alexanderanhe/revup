@@ -208,37 +208,37 @@ export default function Slides({ slides }: SlidesProps) {
   const currExercise = useAppSelector(selectExercise);
   const carouselId = 'exercise-run';
 
-  useEffect(() => {
-    const carousel = document.getElementById(carouselId) as HTMLElement;
-    if (carousel) {
-      let listenerFunc: (this: HTMLElement, ev: Event) => any;
-      const onScrollStop = (callback: (scrollLeft: number) => void) => {
-        let isScrolling: NodeJS.Timeout;
-        if (listenerFunc) {
-          carousel.removeEventListener('scroll', listenerFunc);
-        }
-        listenerFunc = (event) => {
-          clearTimeout(isScrolling);
-          const scrollLeft = (event.target as HTMLElement).scrollLeft;
-          isScrolling = setTimeout(() => {
-            callback(scrollLeft);
-          }, 150);
-        };
+  // useEffect(() => {
+  //   const carousel = document.getElementById(carouselId) as HTMLElement;
+  //   if (carousel) {
+  //     let listenerFunc: (this: HTMLElement, ev: Event) => any;
+  //     const onScrollStop = (callback: (scrollLeft: number) => void) => {
+  //       let isScrolling: NodeJS.Timeout;
+  //       if (listenerFunc) {
+  //         carousel.removeEventListener('scroll', listenerFunc);
+  //       }
+  //       listenerFunc = (event) => {
+  //         clearTimeout(isScrolling);
+  //         const scrollLeft = (event.target as HTMLElement).scrollLeft;
+  //         isScrolling = setTimeout(() => {
+  //           callback(scrollLeft);
+  //         }, 150);
+  //       };
         
-        carousel.addEventListener('scroll', listenerFunc);
-      }
-      const endPull = () => {
-        onScrollStop((scrollLeft) => {
-          setScrolled(scrollLeft);
-        });
-      }
+  //       carousel.addEventListener('scroll', listenerFunc);
+  //     }
+  //     const endPull = () => {
+  //       onScrollStop((scrollLeft) => {
+  //         setScrolled(scrollLeft);
+  //       });
+  //     }
 
-      carousel.addEventListener("touchend", endPull);
-      return () => {
-        carousel.removeEventListener("touchend", endPull);
-      }
-    }
-  }, []);
+  //     carousel.addEventListener("touchend", endPull);
+  //     return () => {
+  //       carousel.removeEventListener("touchend", endPull);
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (currExercise) {
