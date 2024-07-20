@@ -1,24 +1,27 @@
 import { auth } from "@/auth";
 
-import Image from "next/image";
-import { CheckIcon } from "@heroicons/react/24/solid";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+// import Image from "next/image";
+// import { CheckIcon } from "@heroicons/react/24/solid";
+// import { XMarkIcon } from "@heroicons/react/24/outline";
 
 // import { User, selectUser, set_user } from "@/lib/features/auth";
 // import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 // import Nav from "./Nav";
-import clsx from "clsx";
 import { Link } from "@/navigation";
 // import ProfileImage from "@/app/ui/ProfileImage";
-import { User } from "@/lib/definitions";
-import NotificationsButton from "../NotificationsButton";
+import NotificationsButton from "@/app/ui/utils/NotificationsButton";
+import PullToRefresh from "@/app/ui/utils/PullToRefresh";
 
-export default async function Header() {
+import { User } from "@/lib/definitions";
+
+export default async function Header({ pullToRefresh }: { pullToRefresh?: boolean | string }) {
   const session = await auth();
   const user: User | undefined = session?.user;
 
   return (
     <header className="content-grid sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 bg-base-100/75">
+      { pullToRefresh && <PullToRefresh />}
       <nav className="grid grid-cols-[1fr_auto] px-0 py-4">
         <div className="grid grid-cols-[auto_1fr] gap-2 items-center">
           {/* <div className="dropdown dropdown-start">

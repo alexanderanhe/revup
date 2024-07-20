@@ -117,6 +117,7 @@ export type WorkoutComplexParameters = {
   weight_done?: number;
   recommendations: string;
   comments: string;
+  created_at?: Date;
 }
 export type PlanDay = {
   day: number;

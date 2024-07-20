@@ -466,6 +466,25 @@ export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): 
   }
 }
 
+export async function getWorkoutItems(workout_id: string): Promise<WorkoutComplex[] | null> {
+  try {
+    const { rows, rowCount } = await sql<WorkoutComplex>`
+      SELECT puwc.* FROM plans_user_workouts_complex puwc
+      JOIN workouts_complex wc ON puwc.workout_complex_id=wc.id
+      WHERE puwc.workout_id=${workout_id}
+      ORDER BY puwc.created_at DESC;
+    `;
+    if (rowCount === 0) {
+      return null;
+    }
+    return rows;
+  } catch (error) {
+    console.error('Failed to fetch workout item:', error);
+    return null;
+  }
+
+}
+
 export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;}): Promise<string> {
   try {
     const session = await auth();

@@ -10,6 +10,7 @@ import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 
 import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 import CheckIcon from "@/components/utils/icons/CheckIcon";
+import ExerciseButton from "@/app/ui/exercises/ExerciseButton";
 
 export default async function ExercisesPage({
   params: { locale }
@@ -59,13 +60,16 @@ export default async function ExercisesPage({
               ) : <RocketLaunchIcon className="size-5 text-neutral" />}
             </div>
             <Card className="relative min-h-24 timeline-end mb-3 overflow-hidden">
-              <Link href={`/exercises/run?w=${id}`} className="grid items-end justify-start w-full h-full z-[1] font-semibold">
-                { name }
-                <span className="text-xs font-medium">
-                  { sets && reps && `${ sets }x${ reps }x${ weight } ${ weight_unit }`}
-                  { time && time_unit && `${ time } ${ time_unit }`}
-                </span>
-              </Link>
+              <ExerciseButton
+                name={name}
+                sets={sets}
+                reps={reps}
+                weight={weight}
+                weight_unit={weight_unit}
+                time={time}
+                time_unit={time_unit}
+                id={id}
+              />
               <ImageWorkout
                 image={image_banner?.[0] as WorkoutImage}
                 width={100}

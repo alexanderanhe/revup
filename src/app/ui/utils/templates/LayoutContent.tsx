@@ -22,7 +22,7 @@ export default function LayoutContent({ title, titleFixed, pageMenu, bg, childre
   return (
     <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
-      { head && <Header />}
+      { head && <Header pullToRefresh={!title && pullToRefresh} />}
       <main className={clsx(
         "content-grid grid-flow-row auto-rows-max place-items-start space-y-6",
         className

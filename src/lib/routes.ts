@@ -5,6 +5,7 @@ export const PAGES = {
   ON_BOARDING: '/on-boarding',
   ASSESSMENT: '/assessment',
   EXPLORE: '/explore',
+  EXERCISES: '/exercises',
   WORKOUT: '/workout',
   PROFILE: '/profile',
   CONTACT_US: '/contact-us',

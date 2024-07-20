@@ -1,9 +1,11 @@
 import { getUserCurrentPlanWorkouts } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
+import clsx from "clsx";
+
+import Slides from "@/app/ui/exercises/Slide";
+import HistoryTable from "@/app/ui/exercises/HistoryTable";
 
 import { WorkoutImageLink } from "@/lib/definitions";
-import Slides from "@/app/ui/exercises/Slide";
-import clsx from "clsx";
 
 export default async function ExercisesRunPage({
   params: { locale }
@@ -40,6 +42,7 @@ export default async function ExercisesRunPage({
     buttonText: t("historyBtn"),
     buttonNextClass: `btn ${i === exercises.length - 1 ? 'btn-primary' : 'btn-ghost'} w-full`,
     buttonNextText: i === exercises.length - 1 ? t("finishBtn") : t("nextBtn"),
+    history: <HistoryTable workout_id={workout_id} />,
   }));
 
   return (

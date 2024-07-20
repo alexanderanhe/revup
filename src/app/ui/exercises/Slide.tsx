@@ -6,15 +6,17 @@ import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import { ArrowTopRightOnSquareIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { selectExercise, set_exercise } from "@/lib/features/app";
 
 import { handleSetWorkoutCloseDay } from "@/lib/actions";
 
 import SubmitButton from '@/app/ui/utils/SubmitButton';
-import { WorkoutComplexParameters } from '@/lib/definitions';
+import { UUID, WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
 import WorkoutDayForm from './WorkoutDayForm';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 
 type SlideProps = {
   carouselId: string;
@@ -41,19 +43,24 @@ type SlideProps = {
   buttonNextText?: string;
   submit?: boolean;
   slideIds?: string[];
+  history: React.ReactNode;
 };
 
-function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
+function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch()
+  const setExercise = (state: UUID) => dispatch(set_exercise(state));
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     
     const hash = event.currentTarget.hash;
-    goToOtherImage(hash, carouselId);
+    goToOtherImage(hash, carouselId, () => {
+      setExercise(hash.replace('slide', '') as UUID);
+    });
   }
 
   const NextButton = () => submit ? (
@@ -80,9 +87,8 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
   }
 
   useEffect(() => {
-    if (scrolled !== null && ref.current && `#${ref.current.id}` !== window.location.hash && isInViewport(ref.current)) {
-      const hash = `#${ref.current.id}`;
-      // goToOtherImage(hash, carouselId);
+    if (scrolled !== null && ref.current && isInViewport(ref.current)) {
+      setExercise(ref.current.id.replace('slide', '') as UUID);
     }
   }, [scrolled]);
 
@@ -175,7 +181,7 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
               <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">
                 <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" />
                 <div className="flex flex-col max-w-md mx-auto w-full p-4 pt-5 space-y-2">
-                  <Table />
+                  { history }
                 </div>
               </Drawer.Content>
             </Drawer.Portal>
@@ -193,6 +199,7 @@ type SlidesProps = {
 
 export default function Slides({ slides }: SlidesProps) {
   const [ scrolled, setScrolled ] = useState<number | null>(null);
+  const currExercise = useAppSelector(selectExercise);
   const carouselId = 'exercise-run';
 
   useEffect(() => {
@@ -219,10 +226,10 @@ export default function Slides({ slides }: SlidesProps) {
           setScrolled(scrollLeft);
         });
       }
-
-      if (window.location.hash) {
-        goToOtherImage(window.location.hash, carouselId);
+      if (currExercise) {
+        goToOtherImage(`slide${currExercise}`, carouselId);
       }
+
       carousel.addEventListener("touchend", endPull);
 
       return () => {
@@ -248,10 +255,11 @@ export default function Slides({ slides }: SlidesProps) {
   )
 }
 
-const goToOtherImage = (href: string, carouselId: string) => {
+const goToOtherImage = (href: string, carouselId: string, callback?: () => void) => {
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
+    if (!target) return;
     // const refs = document.querySelectorAll('[data-active*="true"]');
     // refs.forEach((div) => {
     //   div.removeAttribute('data-active');
@@ -259,48 +267,8 @@ const goToOtherImage = (href: string, carouselId: string) => {
     // target.dataset.active = 'true';
     const left = target.offsetLeft;
     carousel.scrollTo({ left: left, behavior: 'smooth' });
+    if (callback) {
+      callback();
+    }
   }
 };
-
-const Table = () => (
-  <div className="overflow-x-auto">
-    <table className="table table-xs">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Job</th>
-          <th>company</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>1</th>
-          <td>Cy Ganderton</td>
-          <td>Quality Control Specialist</td>
-          <td>Littel, Schaden and Vandervort</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>Hart Hagerty</td>
-          <td>Desktop Support Technician</td>
-          <td>Zemlak, Daniel and Leannon</td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td>Brice Swyre</td>
-          <td>Tax Accountant</td>
-          <td>Carroll Group</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Job</th>
-          <th>company</th>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-)

@@ -24,7 +24,6 @@ export default async function ExercisesLayout({ params: { locale }, children }: 
     <LayoutContent
       title={<Title titles={titles} defaultTitle={ t("title") } />}
       pageMenu={<ExerciseStopwatch startDate={await getUserPlanStartedAt()} />}
-      pullToRefresh
       titleFixed
     >
       { children }

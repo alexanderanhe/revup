@@ -1,8 +1,9 @@
 'use client'
 
-import { ArrowPathIcon, ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
-import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
+import { useRouter } from "@/navigation";
+import { ArrowPathIcon, ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 
 // source: https://blog.logrocket.com/implementing-pull-to-refresh-react-tailwind-css/
 
@@ -10,6 +11,7 @@ const PULL_LENGTH_TO_REFRESH = 110;
 const SENSIVILITY = 0.7;
 
 export default function PullToRefresh() {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   /**
     state to hold the start point
@@ -31,7 +33,9 @@ export default function PullToRefresh() {
       refreshCont.current.classList.add("loading");
       setLoading(true)
       setTimeout(() => {
-        window.location.reload();
+        // window.location.reload();
+        router.refresh();
+        setLoading(false);
       }, 1000);
     }
   };
