@@ -85,6 +85,11 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
 
   useEffect(() => {
     if (scrolled !== null && ref.current && isInViewport(ref.current)) {
+      const refs = document.querySelectorAll('[data-active*="true"]');
+      refs.forEach((div) => {
+        div.removeAttribute('data-active');
+      });
+      ref.current.dataset.active = 'true';
       setExercise(ref.current.id.replace('slide', '') as UUID);
     }
   }, [scrolled]);
@@ -95,9 +100,9 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     }
   }, [formStateWorkoutCloseDay]);
 
-  // useEffect(() => {
-  //   router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
-  // }, []);
+  useEffect(() => {
+    router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
+  }, []);
 
   return (
     <div id={`slide${slide.id}`}
@@ -270,12 +275,12 @@ function goToOtherImage (href: string, carouselId: string, behavior: 'instant' |
   const carousel = document.getElementById(carouselId);
   if (carousel) {
     const target = document.querySelector<HTMLDivElement>(href)!;
-    if (!target) return;
-    // const refs = document.querySelectorAll('[data-active*="true"]');
-    // refs.forEach((div) => {
-    //   div.removeAttribute('data-active');
-    // });
-    // target.dataset.active = 'true';
+    if (!target || target.dataset.active) return;
+    const refs = document.querySelectorAll('[data-active*="true"]');
+    refs.forEach((div) => {
+      div.removeAttribute('data-active');
+    });
+    target.dataset.active = 'true';
     const left = target.offsetLeft;
     carousel.scrollTo({ left: left, behavior });
     if (callback) {
