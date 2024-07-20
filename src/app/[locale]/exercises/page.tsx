@@ -1,5 +1,5 @@
-import { Link } from "@/navigation";
 import clsx from "clsx";
+import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 import { RocketLaunchIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
@@ -7,10 +7,11 @@ import { getUserCurrentPlan, getUserCurrentPlanWorkouts } from "@/lib/data";
 import Card from "@/app/ui/Card";
 import NextWorkout from "@/app/ui/exercises/NextWorkout";
 import ImageWorkout from "@/app/ui/utils/ImageWorkout";
-
-import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 import CheckIcon from "@/components/utils/icons/CheckIcon";
 import ExerciseButton from "@/app/ui/exercises/ExerciseButton";
+import { PAGES } from "@/lib/routes";
+
+import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 
 export default async function ExercisesPage({
   params: { locale }
@@ -87,7 +88,7 @@ export default async function ExercisesPage({
         ))}
       </ul>
       <Link
-        href={`/exercises/run`}
+        href={`${PAGES.EXERCISES}/run`}
         className="btn btn-primary w-full"
       >Start</Link>
     </>

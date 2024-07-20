@@ -1,14 +1,16 @@
 'use client'
 
-import SubmitButton from "@/app/ui/utils/SubmitButton"
-import { PlusIcon } from "@heroicons/react/24/outline"
 import { useEffect, useRef } from "react"
 import { useFormState } from "react-dom"
-import { handleSetWorkoutItem } from "@/lib/actions"
-import { WorkoutComplexParameters } from "@/lib/definitions"
-import ProgressCircle from "@/app/ui/utils/ProgressCircle"
+import { PlusIcon } from "@heroicons/react/24/outline"
 import { LockClosedIcon } from "@heroicons/react/24/solid"
 import { jersey10 } from "@/app/ui/fonts"
+
+import { handleSetWorkoutItem } from "@/lib/actions"
+import ProgressCircle from "@/app/ui/utils/ProgressCircle"
+import SubmitButton from "@/app/ui/utils/SubmitButton"
+
+import { WorkoutComplexParameters } from "@/lib/definitions"
 
 type WorkoutDayFormProps = {
   workout_complex: WorkoutComplexParameters;

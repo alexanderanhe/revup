@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Drawer } from 'vaul';
 import { useFormState } from 'react-dom';
@@ -15,7 +15,7 @@ import { UUID, WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
-import WorkoutDayForm from './WorkoutDayForm';
+import WorkoutDayForm from '@/app/ui/exercises/WorkoutDayForm';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 
 type SlideProps = {
@@ -49,7 +49,7 @@ type SlideProps = {
 function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
@@ -83,16 +83,16 @@ function Slide({ carouselId, scrolled, submit, slideIds, workout_complex, workou
     </div>
   )
 
-  // useEffect(() => {
-  //   if (scrolled !== null && ref.current && isInViewport(ref.current)) {
-  //     const refs = document.querySelectorAll('[data-active*="true"]');
-  //     refs.forEach((div) => {
-  //       div.removeAttribute('data-active');
-  //     });
-  //     ref.current.dataset.active = 'true';
-  //     setExercise(ref.current.id.replace('slide', '') as UUID);
-  //   }
-  // }, [scrolled]);
+  useEffect(() => {
+    if (scrolled !== null && ref.current && isInViewport(ref.current)) {
+      const refs = document.querySelectorAll('[data-active*="true"]');
+      refs.forEach((div) => {
+        div.removeAttribute('data-active');
+      });
+      ref.current.dataset.active = 'true';
+      setExercise(ref.current.id.replace('slide', '') as UUID);
+    }
+  }, [scrolled]);
 
   useEffect(() => {
     if (formStateWorkoutCloseDay === 'done') {

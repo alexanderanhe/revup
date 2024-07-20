@@ -1,6 +1,6 @@
-import { getUserCurrentPlanWorkouts } from "@/lib/data";
-import { getTranslations } from "next-intl/server";
 import clsx from "clsx";
+import { getTranslations } from "next-intl/server";
+import { getUserCurrentPlanWorkouts } from "@/lib/data";
 
 import Slides from "@/app/ui/exercises/Slide";
 import HistoryTable from "@/app/ui/exercises/HistoryTable";
