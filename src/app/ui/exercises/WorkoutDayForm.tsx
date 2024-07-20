@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react"
 import { useFormState } from "react-dom"
 import { handleSetWorkoutItem } from "@/lib/actions"
 import { WorkoutComplexParameters } from "@/lib/definitions"
-// import ProgressCircle from "@/app/ui/utils/ProgressCircle"
+import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import { LockClosedIcon } from "@heroicons/react/24/solid"
 import { jersey10 } from "@/app/ui/fonts"
 
@@ -100,8 +100,7 @@ type MetricProps = {
 function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
   return (
     <div className="tooltip tooltip-bottom" data-tip={tooltip}>
-      {title} {subtitle}
-      {/* <ProgressCircle
+      <ProgressCircle
         progress={progress ?? 0}
         type={type}
         icon={
@@ -111,7 +110,7 @@ function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
           </span>
         }
         size="5.8rem"
-      /> */}
+      />
     </div>
   )
 }
