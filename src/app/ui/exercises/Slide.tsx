@@ -233,7 +233,7 @@ export default function Slides({ slides }: SlidesProps) {
           setScrolled(scrollLeft);
         });
       }
-      const startPull = (e) => {
+      const startPull = (e: any) => {
         e.preventDefault();
       }
 
