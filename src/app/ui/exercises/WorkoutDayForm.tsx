@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { useFormState } from "react-dom"
-import { PlusIcon } from "@heroicons/react/24/outline"
+import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import { LockClosedIcon } from "@heroicons/react/24/solid"
 import { jersey10 } from "@/app/ui/fonts"
 
@@ -11,6 +11,7 @@ import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import SubmitButton from "@/app/ui/utils/SubmitButton"
 
 import { WorkoutComplexParameters } from "@/lib/definitions"
+import CircularSliderControls from "./CircularSliderControls"
 
 type WorkoutDayFormProps = {
   workout_complex: WorkoutComplexParameters;
@@ -20,6 +21,8 @@ type WorkoutDayFormProps = {
   workout_id: string;
   slide_id: string;
 }
+
+const CIRCLE_SIZE = 90;
 
 export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id }: WorkoutDayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -64,13 +67,18 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
         />
       </section>
-      <section>
+      <section style={{ margin: "0" }}>
         <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
           <input type="hidden" name="day" value={ day } />
           <input type="hidden" name="workout_id" value={ workout_id } />
           <input type="hidden" name="workout_complex_id" value={ slide_id } />
           <input type="hidden" name="plan_id" value={ plan_id } />
-          <div className="join w-full">
+          <CircularSliderControls workout_complex={workout_complex} disabled={completed}>
+            <SubmitButton disabled={completed} className="btn btn-circlet btn-lg">
+              <ChevronRightIcon className="size-4" />
+            </SubmitButton>
+          </CircularSliderControls>
+          {/* <div className="join w-full">
             { workout_complex.reps && (
               <div className="join-item grow grid grid-cols-2">
                 <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
@@ -82,10 +90,11 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
                 <input className="input input-bordered rounded-r-none" name="time" placeholder={ `${workout_complex.time_unit}` } type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
               </div>
             )}
+
             <SubmitButton disabled={completed} className="btn join-item rounded-r-full">
               <PlusIcon className="size-4" />
             </SubmitButton>
-          </div>
+          </div> */}
         </form>
       </section>
     </>
@@ -111,7 +120,7 @@ function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
             <span>{ subtitle }</span>
           </span>
         }
-        size="5.8rem"
+        size={`${CIRCLE_SIZE}px`}
       />
     </div>
   )

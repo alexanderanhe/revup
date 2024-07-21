@@ -46,8 +46,6 @@ type SlideProps = {
 };
 
 function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
-  const [snap, setSnap] = useState<number | string | null>("355px");
-  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const dispatch = useAppDispatch()
@@ -58,23 +56,6 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
     if (!WorkoutHash) return;
     setExercise(WorkoutHash as UUID);
   }
-
-  const NextButton = () => submit ? (
-    <form action={formActionWorkoutCloseDay}>
-      <SubmitButton className={ slide.buttonNextClass }>
-        { slide.buttonNextText }
-      </SubmitButton>
-    </form>
-  ) : (
-    <button
-      type="button"
-      className={ slide.buttonNextClass }
-      onClick={handleClick(slideIds?.[slide.index + 1])}
-    >
-      { slide.buttonNextText }
-      <ChevronRightIcon className="size-5" />
-    </button>
-  )
 
   const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
     <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
@@ -94,12 +75,6 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
   }, [scrolled]);
 
   useEffect(() => {
-    if (formStateWorkoutCloseDay === 'done') {
-      router.push(PAGES.HOME);
-    }
-  }, [formStateWorkoutCloseDay]);
-
-  useEffect(() => {
     router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
   }, []);
 
@@ -112,11 +87,13 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
         <div className='grid grid-cols-1 justify-center relative -mb-14'>
           {slide.image && (
-            <Image
-              {...slide.image}
-              width={400}
-              height={400}
-            />
+            <div className="box w-full">
+              <Image
+                {...slide.image}
+                width={400}
+                height={400}
+              />
+            </div>
           )}
           <CompletedBackground />
           <div className="absolute top-0 left-[50%] -translate-x-1/2 flex items-start justify-end w-full h-[40svh] aspect-square p-5">
@@ -157,42 +134,82 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
           />
         </div>
       </section>
-      <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
-        <div className="flex justify-center w-full space-x-3 pb-4">
-          { slideIds?.map((id) => (
-            <button key={`slide-nav-${id}`}
-              type="button"
-              className={`w-3 h-3 ${slide.id === id ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
-              onClick={handleClick(id)}
-            ></button>
-          ))}
-        </div>
-        
-        <div className="grid grid-cols-2 gap-1">
-          <Drawer.Root
-            snapPoints={["355px", 1]}
-            activeSnapPoint={snap}
-            setActiveSnapPoint={setSnap}
-            shouldScaleBackground
-          >
-            <Drawer.Overlay className="fixed inset-0 bg-black/80" />
-            <Drawer.Trigger className={ slide.buttonClass }>
-              { slide.buttonText }
-              <ArrowTopRightOnSquareIcon className="size-5" />
-            </Drawer.Trigger>
-            <Drawer.Portal>
-              <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">
-                <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" />
-                <div className="flex flex-col max-w-md mx-auto w-full p-4 pt-5 space-y-2">
-                  { history }
-                </div>
-              </Drawer.Content>
-            </Drawer.Portal>
-          </Drawer.Root>
-          <NextButton />
-        </div>
-      </footer>
     </div>
+  )
+}
+
+function FooterItem({ scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
+  const [snap, setSnap] = useState<number | string | null>("355px");
+  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
+  const router = useRouter();
+  const dispatch = useAppDispatch()
+  const setExercise = (state: UUID) => dispatch(set_exercise(state));
+
+  const handleClick = (WorkoutHash: string | undefined) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (!WorkoutHash) return;
+    setExercise(WorkoutHash as UUID);
+  }
+  
+  const NextButton = () => submit ? (
+    <form action={formActionWorkoutCloseDay}>
+      <SubmitButton className={ slide.buttonNextClass }>
+        { slide.buttonNextText }
+      </SubmitButton>
+    </form>
+  ) : (
+    <button
+      type="button"
+      className={ slide.buttonNextClass }
+      onClick={handleClick(slideIds?.[slide.index + 1])}
+    >
+      { slide.buttonNextText }
+      <ChevronRightIcon className="size-5" />
+    </button>
+  )
+
+  useEffect(() => {
+    if (formStateWorkoutCloseDay === 'done') {
+      router.push(PAGES.HOME);
+    }
+  }, [formStateWorkoutCloseDay]);
+
+  return (
+    <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
+      <div className="flex justify-center w-full space-x-3 pb-4">
+        { slideIds?.map((id) => (
+          <button key={`slide-nav-${id}`}
+            type="button"
+            className={`w-3 h-3 ${slide.id === id ? 'bg-base-300' : 'bg-base-200'} rounded-full`}
+            onClick={handleClick(id)}
+          ></button>
+        ))}
+      </div>
+      
+      <div className="grid grid-cols-2 gap-1">
+        <Drawer.Root
+          snapPoints={["355px", 1]}
+          activeSnapPoint={snap}
+          setActiveSnapPoint={setSnap}
+          shouldScaleBackground
+        >
+          <Drawer.Overlay className="fixed inset-0 bg-black/80" />
+          <Drawer.Trigger className={ slide.buttonClass }>
+            { slide.buttonText }
+            <ArrowTopRightOnSquareIcon className="size-5" />
+          </Drawer.Trigger>
+          <Drawer.Portal>
+            <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">
+              <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" />
+              <div className="content-grid mx-auto w-full p-4 pt-5 space-y-2">
+                { history }
+              </div>
+            </Drawer.Content>
+          </Drawer.Portal>
+        </Drawer.Root>
+        <NextButton />
+      </div>
+    </footer>
   )
 }
 
@@ -251,17 +268,27 @@ export default function Slides({ slides }: SlidesProps) {
   }, [currExercise]);
 
   return (
-    <div id={carouselId} ref={carouselRef} className="carousel grid-flow-row space-x-4 w-full h-svh" style={{gridColumn: 'full-width', margin: '0'}}>
-      { slides.map((slide, index) => (
-          <Slide
-            {...slide}
-            carouselRef={carouselRef}
-            key={`Slide${slide.id}`}
-            index={index}
-            submit={index === slides.length - 1}
-            slideIds={slides.map(({ id }) => id)}
-            scrolled={scrolled}
-          />
+    // grid-flow-row
+    <div className="grid full-width grid-rows-[1fr_auto] w-full h-svh">
+      <div id={carouselId} ref={carouselRef} className="carousel space-x-4 w-full" style={{gridColumn: 'full-width', margin: '0'}}>
+        { slides.map((slide) => (
+            <Slide
+              key={`Slide${slide.id}`}
+              carouselRef={carouselRef}
+              submit={slide.index === slides.length - 1}
+              slideIds={slides.map(({ id }) => id)}
+              scrolled={scrolled}
+              {...slide}
+            />
+        ))}
+      </div>
+      { slides.filter(({id}) => id === currExercise).map((slide) => (
+        <FooterItem
+          key={`FooterItem${slide.id}`}
+          submit={slide.index === slides.length - 1}
+          slideIds={slides.map(({ id }) => id)}
+          {...slide}
+        />
       ))}
     </div>
   )
