@@ -110,7 +110,7 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='grid grid-cols-1 justify-center relative'>
+        <div className='grid grid-cols-1 justify-center relative -mb-14'>
           {slide.image && (
             <Image
               {...slide.image}
@@ -146,7 +146,7 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
           </div>
         </div>
         <div className='content-grid space-y-4 pb-10'>
-          <h3 className="text-center pt-4">{ slide.title } &quot;{ scrolled }&quot;</h3>
+          <h3 className="text-center pt-4 z-[1]">{ slide.title }</h3>
           <WorkoutDayForm
             workout_complex={workout_complex}
             completed={completed}
@@ -233,14 +233,9 @@ export default function Slides({ slides }: SlidesProps) {
           setScrolled(scrollLeft);
         });
       }
-      const startPull = (e: any) => {
-        e.preventDefault();
-      }
 
-      carousel.addEventListener("touchstart", startPull);
       carousel.addEventListener("touchend", endPull);
       return () => {
-        carousel.removeEventListener("touchstart", startPull);
         carousel.removeEventListener("touchend", endPull);
       }
     }
