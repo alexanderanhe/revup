@@ -269,7 +269,7 @@ export default function Slides({ slides }: SlidesProps) {
 
   return (
     // grid-flow-row
-    <div className="grid full-width grid-rows-[1fr_auto] w-full h-svh">
+    <div className="grid full-width grid-rows-[1fr_auto] w-full h-svh" style={{ margin: "0" }}>
       <div id={carouselId} ref={carouselRef} className="carousel space-x-4 w-full" style={{gridColumn: 'full-width', margin: '0'}}>
         { slides.map((slide) => (
             <Slide

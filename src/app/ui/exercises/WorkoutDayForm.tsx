@@ -67,7 +67,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
         />
       </section>
-      <section style={{ margin: "0" }}>
+      <section>
         <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
           <input type="hidden" name="day" value={ day } />
           <input type="hidden" name="workout_id" value={ workout_id } />

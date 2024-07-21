@@ -31,8 +31,9 @@ export default function CustomCircularSlider({ label, data, dataIndex, disabled,
         labelColor={isDragging && !disabled ? "#F0A367" : "currentColor"}
         onChange={ (value: string) => { setValue(value); } }
         isDragging={(value: boolean) => setIsDragging(value)}
+        knobSize={16} // Default: 32
         knobDraggable={!disabled}
-        // hideKnobRing={!disabled}
+        hideKnob={!disabled}
       >
         <div className="w-3 h-3 bg-base-300 rounded-full"></div>
       </CircularSlider>
