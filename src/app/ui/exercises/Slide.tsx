@@ -122,7 +122,7 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
             )}
           </div>
         </div>
-        <div className='content-grid space-y-4 pb-10'>
+        <div className='content-grid space-y-4'>
           <h3 className="max-h-20 text-center line-clamp-2 z-[1]">{ slide.title }</h3>
           <WorkoutDayForm
             workout_complex={workout_complex}
