@@ -33,7 +33,7 @@ export default function CustomCircularSlider({ label, data, dataIndex, disabled,
         isDragging={(value: boolean) => setIsDragging(value)}
         knobSize={16} // Default: 32
         knobDraggable={!disabled}
-        hideKnob={!disabled}
+        hideKnob={disabled}
       >
         <div className="w-3 h-3 bg-base-300 rounded-full"></div>
       </CircularSlider>
