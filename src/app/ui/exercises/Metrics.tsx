@@ -35,7 +35,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, weight,
         title={progressText}
         progress={progress}
         subtitle={!!reps ? "sets" : time_unit }
-        type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
+        type={completed ? "neutral" : ( progress > 0 ? "info" : "neutral" )}
       />
   </div>
   )

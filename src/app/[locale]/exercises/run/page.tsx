@@ -36,7 +36,11 @@ export default async function ExercisesRunPage({
       alt: name,
       // className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain",
       style: { maskImage: "linear-gradient(to bottom, black 60%, transparent)"},
-      className: clsx("w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg", completed && "blur-sm"),
+      className: clsx(
+        "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg",
+        completed && "blur-sm",
+        !completed && "blur-sm tall:blur-none",
+      ),
     },
     buttonClass: `btn w-full`,
     buttonText: t("historyBtn"),

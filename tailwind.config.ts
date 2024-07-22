@@ -42,11 +42,15 @@ const config: Config = {
           '40%, 60%': {
               transform: 'translate3d(4px, 0, 0)'
           }
-      }
+        }
       },
       colors: {
         "primary-muted": "oklch(var(--primary-muted) / <alpha-value>)",
       },
+      screens: {
+        'tall': { 'raw': '(min-height: 800px)' },
+        // => @media (min-height: 800px) { ... }
+      }
     },
   },
   daisyui: {
