@@ -52,13 +52,18 @@ export default function CircularSliderControls({ workout_complex, disabled }: Ci
 }
 
 function RepsControl({ reps, weight, weight_unit, disabled }: { reps: number, weight: number, weight_unit: string, disabled: boolean }) {
+  const dataReps = Array.from({ length: Math.abs(reps * 1.5) }, (_, i) => `${i + 1}`);
+  const dataIndexReps = ~~(reps ?? 1) - 1;
+  const dataWeight = Array.from({ length: Math.abs(weight / 5 * 1.8) }, (_, i) => `${(i + 1) * 5}`);
+  const dataIndexWeight = ~~(weight ?? 25) / 5 - 1;
+
   return (
     <>
       <NoSSRCustomCircularSlider
         name="reps"
         label="reps"
-        data={Array.from({ length: Math.abs(reps * 1.5) }, (_, i) => `${i + 1}`)}
-        dataIndex={~~(reps ?? 1) - 1}
+        data={dataReps}
+        dataIndex={dataIndexReps}
         append="x"
         interval={1}
         disabled={disabled}
@@ -66,8 +71,8 @@ function RepsControl({ reps, weight, weight_unit, disabled }: { reps: number, we
       <NoSSRCustomCircularSlider
         name="weight"
         label="weight"
-        data={Array.from({ length: Math.abs(weight / 5 * 1.8) }, (_, i) => `${(i + 1) * 5}`)}
-        dataIndex={~~(weight ?? 25) / 5 - 1}
+        data={dataWeight}
+        dataIndex={dataIndexWeight}
         append={weight_unit}
         interval={5}
         disabled={disabled}
@@ -77,12 +82,14 @@ function RepsControl({ reps, weight, weight_unit, disabled }: { reps: number, we
 }
 
 function TimeControl({ time, time_unit, disabled }: { time: number, time_unit: string, disabled: boolean }) {
+  const data = Array.from({ length: Math.abs(time * 2) }, (_, i) => `${i + 1}`);
+  const dataIndex = ~~(time ?? 1) - 1;
   return (
     <NoSSRCustomCircularSlider
       name="time"
       label="time"
-      data={Array.from({ length: Math.abs(time * 2) }, (_, i) => `${i + 1}`)}
-      dataIndex={~~(time ?? 1) - 1}
+      data={data}
+      dataIndex={dataIndex}
       append={time_unit}
       interval={1}
       disabled={disabled}

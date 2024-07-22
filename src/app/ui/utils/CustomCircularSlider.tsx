@@ -22,14 +22,14 @@ export default function CustomCircularSlider({ name, label, append, data, dataIn
   const [value, setValue] = useState<string>(data[dataIndex]);
   const min = ~~(data.at(0) ?? 1);
   const max = ~~(data.at(-1) ?? 100);
-  console.log({value, min, max, disabled, isDragging})
+
   return (
     <>
       <CircularSlider
         min={min}
         max={max}
         data={data}
-        dataIndex={disabled ? 0 : dataIndex}
+        dataIndex={dataIndex}
         width={90}
         progressSize={SIZE}
         trackSize={SIZE}
@@ -49,6 +49,7 @@ export default function CustomCircularSlider({ name, label, append, data, dataIn
         renderLabelValue={<>
           <span className={clsx(
             "grid grid-cols-1 place-items-center gap-[1] absolute inset-0 p-4",
+            disabled && "text-neutral",
             isDragging && "text-secondary"
           )}>
             <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ value }</strong>

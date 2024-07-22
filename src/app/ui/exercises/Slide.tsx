@@ -17,9 +17,9 @@ import { PAGES } from '@/lib/routes';
 import CheckIcon from '@/components/utils/icons/CheckIcon';
 import WorkoutDayForm from '@/app/ui/exercises/WorkoutDayForm';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import Metrics from './Metrics';
 
 type SlideProps = {
-  scrolled?: number;
   id: string;
   title?: string;
   description?: string;
@@ -40,14 +40,11 @@ type SlideProps = {
   buttonText?: string;
   buttonNextClass?: string;
   buttonNextText?: string;
-  submit?: boolean;
   slideIds?: string[];
-  history: React.ReactNode;
 };
 
-function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
+function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
 
@@ -57,35 +54,14 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
     setExercise(WorkoutHash as UUID);
   }
 
-  const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full uppercase font-semibold text-xl p-4">
-      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-xl text-success" /> { children }</div>
-    </div>
-  )
-
-  useEffect(() => {
-    if (scrolled !== null && ref.current && isInViewport(ref.current)) {
-      const refs = document.querySelectorAll('[data-active*="true"]');
-      refs.forEach((div) => {
-        div.removeAttribute('data-active');
-      });
-      ref.current.dataset.active = 'true';
-      setExercise(ref.current.id.replace('slide', '') as UUID);
-    }
-  }, [scrolled]);
-
-  useEffect(() => {
-    router.prefetch(`${PAGES.WORKOUT}/${workout_id}`);
-  }, []);
-
   return (
     <div id={`slide${slide.id}`}
       ref={ref}
       className="carousel-item content-grid grid-rows-1 w-full h-full"
       style={{ gridColumn: 'full-width'}}
     >
-      <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='grid grid-cols-1 justify-center relative -mb-14'>
+      <section className="grid grid-cols-1 grid-rows-[auto_1fr] h-full [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
+        <div className='grid grid-cols-1 justify-center relative'>
           {slide.image && (
             <div className="box w-full">
               <Image
@@ -95,11 +71,16 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
               />
             </div>
           )}
-          <CompletedBackground />
-          <div className="absolute top-0 left-[50%] -translate-x-1/2 flex items-start justify-end w-full h-[40svh] aspect-square p-5">
-            <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square">
+          <div className="grid place-items-center absolute inset-0 w-full h-full uppercase font-semibold text-xl p-4">
+            <div className="flex items-center gap-2">
+              <CheckIcon className="size-20 drop-shadow-xl text-success" />
+            </div>
+          </div>
+          <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-end w-full h-[40svh] aspect-square p-5">
+            <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square self-start">
               <InformationCircleIcon className="size-5" />
             </Link>
+            <Metrics {...workout_complex} completed={completed} />
           </div>
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
             { slideIds?.[slide.index - 1] ? (
@@ -124,6 +105,11 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
         </div>
         <div className='content-grid space-y-4'>
           <h3 className="max-h-20 text-center line-clamp-2 z-[1]">{ slide.title }</h3>
+          <section className="place-items-center"><p>
+            {/* { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` } */}
+            { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
+            { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
+          </p></section>
           <WorkoutDayForm
             workout_complex={workout_complex}
             completed={completed}
@@ -138,12 +124,23 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
   )
 }
 
-function FooterItem({ scrolled, submit, slideIds, workout_complex, workout_id, plan_id, day, completed, history, ...slide }: SlideProps) {
+type FooterItemProps = {
+  carouselRef: React.RefObject<HTMLDivElement>;
+  slides: any[];
+};
+
+function FooterItem({ carouselRef, slides }: FooterItemProps) {
   const [snap, setSnap] = useState<number | string | null>("355px");
   const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, null);
-  const router = useRouter();
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
+  const currExercise = useAppSelector(selectExercise);
+  const router = useRouter();
+  const slide = slides.find(({ id }) => id === currExercise);
+  
+  const slideIds = slides.map(({ id }) => id);
+  const submit = slideIds.indexOf(currExercise) === slideIds.length - 1;
+  const history = slide?.history;
 
   const handleClick = (WorkoutHash: string | undefined) => (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -166,13 +163,23 @@ function FooterItem({ scrolled, submit, slideIds, workout_complex, workout_id, p
       { slide.buttonNextText }
       <ChevronRightIcon className="size-5" />
     </button>
-  )
+  );
+
+  useEffect(() => {
+    if (currExercise ) {
+      carouselRef.current && goToOtherImage(`#slide${currExercise}`, carouselRef.current, "smooth");
+    } else if (slideIds?.[0]) {
+      setExercise(slideIds[0] as UUID);
+    }
+  }, [ currExercise ]);
 
   useEffect(() => {
     if (formStateWorkoutCloseDay === 'done') {
       router.push(PAGES.HOME);
     }
   }, [formStateWorkoutCloseDay]);
+
+  if (!slide) return null;
 
   return (
     <footer className="grid grid-cols-1 gap-2 g-gradient-to-t from-base-100 pb-10">
@@ -218,15 +225,13 @@ type SlidesProps = {
 };
 
 export default function Slides({ slides }: SlidesProps) {
-  const [ scrolled, setScrolled ] = useState<number | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
   const currExercise = useAppSelector(selectExercise);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const carouselId = 'exercise-run';
+  const router = useRouter();
 
   useEffect(() => {
-    // const carousel = document.getElementById(carouselId) as HTMLElement;
     if (carouselRef.current) {
       const carousel = carouselRef.current;
       let listenerFunc: (this: HTMLElement, ev: Event) => any;
@@ -247,8 +252,26 @@ export default function Slides({ slides }: SlidesProps) {
       }
       const endPull = () => {
         onScrollStop((scrollLeft) => {
-          setScrolled(scrollLeft);
+          console.log("Scrolling", scrollLeft);
+          const refs = document.querySelectorAll('.carousel-item') as NodeListOf<HTMLElement>;
+          refs.forEach((ref) => {
+            const workout_id = ref.id.replace('slide', '');
+            if (isInViewport(ref)) {
+              ref.dataset.active = 'true';
+              setExercise(workout_id as UUID);
+            } else if (ref.dataset.active) {
+              ref.removeAttribute('data-active');
+            }
+            router.prefetch(`${PAGES.WORKOUT}/${workout_id}`)
+          });
         });
+      }
+
+      if (currExercise) {
+        const refs = document.querySelectorAll('[data-active*="true"]');
+        carouselRef.current && goToOtherImage(`#slide${currExercise}`, carouselRef.current, !refs.length ? "instant" : "smooth");
+      } else {
+        setExercise(slides[0].id);
       }
 
       carousel.addEventListener("touchend", endPull);
@@ -258,38 +281,25 @@ export default function Slides({ slides }: SlidesProps) {
     }
   }, []);
 
-  useEffect(() => {
-    if (currExercise) {
-      const refs = document.querySelectorAll('[data-active*="true"]');
-      carouselRef.current && goToOtherImage(`#slide${currExercise}`, carouselRef.current, !refs.length ? "instant" : "smooth");
-    } else {
-      setExercise(slides[0].id);
-    }
-  }, [currExercise]);
-
   return (
     // grid-flow-row
     <div className="grid full-width grid-rows-[1fr_auto] w-full h-svh" style={{ margin: "0" }}>
-      <div id={carouselId} ref={carouselRef} className="carousel space-x-4 w-full" style={{gridColumn: 'full-width', margin: '0'}}>
+      <div ref={carouselRef} className="carousel space-x-4 w-full" style={{gridColumn: 'full-width', margin: '0'}}>
         { slides.map((slide) => (
             <Slide
               key={`Slide${slide.id}`}
               carouselRef={carouselRef}
               submit={slide.index === slides.length - 1}
               slideIds={slides.map(({ id }) => id)}
-              scrolled={scrolled}
               {...slide}
             />
         ))}
       </div>
-      { slides.filter(({id}) => id === currExercise).map((slide) => (
-        <FooterItem
-          key={`FooterItem${slide.id}`}
-          submit={slide.index === slides.length - 1}
-          slideIds={slides.map(({ id }) => id)}
-          {...slide}
-        />
-      ))}
+      <FooterItem
+        key={`FooterItem`}
+        carouselRef={carouselRef}
+        slides={slides}
+      />
     </div>
   )
 }
