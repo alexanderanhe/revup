@@ -48,7 +48,7 @@ const config: Config = {
         "primary-muted": "oklch(var(--primary-muted) / <alpha-value>)",
       },
       screens: {
-        'tall': { 'raw': '(min-height: 800px)' },
+        'tall': { 'raw': '(min-height: 700px)' },
         // => @media (min-height: 800px) { ... }
       }
     },
