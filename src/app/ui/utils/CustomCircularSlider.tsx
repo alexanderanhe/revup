@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import CircularSlider from '@fseehawer/react-circular-slider';
+import { jersey10 } from "@/app/ui/fonts";
+import clsx from "clsx";
 
 const SIZE = 10;
 
@@ -17,35 +19,43 @@ type CustomCircularSliderProps = {
 
 export default function CustomCircularSlider({ name, label, append, data, dataIndex, disabled, interval}: CustomCircularSliderProps) {
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<string>(data[dataIndex]);
+  const min = ~~(data.at(0) ?? 1);
+  const max = ~~(data.at(-1) ?? 100);
+  console.log({value, min, max, disabled, isDragging})
   return (
     <>
       <CircularSlider
-        label={label}
-        verticalOffset={"0rem"}
+        min={min}
+        max={max}
         data={data}
-        dataIndex={dataIndex}
-        appendToValue={append}
+        dataIndex={disabled ? 0 : dataIndex}
         width={90}
         progressSize={SIZE}
         trackSize={SIZE}
-        labelFontSize={"0.8rem"} // Default: 1rem
-        valueFontSize={"1rem"} // Default: 4rem
-        progressColorFrom={isDragging && !disabled ? "#F0A367" : "oklch(var(--p))"}
-        progressColorTo={isDragging && !disabled ? "#F65749" : "oklch(var(--p))"}
-        labelColor={isDragging && !disabled ? "#F0A367" : "currentColor"}
+        progressColorFrom={!disabled ? (isDragging ? "oklch(var(--s))" : "oklch(var(--p))") : "transparent"}
+        progressColorTo={!disabled ? (isDragging ? "oklch(var(--s))" : "oklch(var(--p))") : "transparent"}
         trackColor="none"
-        knobColor="oklch(var(--s))"
-        knobSize={SIZE * 3} // Default: 32
+        knobColor="oklch(var(--nc))"
+        knobSize={SIZE * 2.5} // Default: 32
         knobDraggable={!disabled}
         hideKnob={disabled}
         trackDraggable={!disabled}
         continuous={{
-          enabled: true,
-          clicks: 100,
+          enabled: !disabled,
+          clicks: max,
           interval
         }}
-        onChange={ (value: string) => { setValue(value); } }
+        renderLabelValue={<>
+          <span className={clsx(
+            "grid grid-cols-1 place-items-center gap-[1] absolute inset-0 p-4",
+            isDragging && "text-secondary"
+          )}>
+            <strong className={`text-3xl font-semibold ${jersey10.className}`}>{ value }</strong>
+            <span className="text-sm font-medium">{ append }</span>
+          </span>
+        </>}
+        onChange={(value: string) => setValue(value)}
         isDragging={(value: boolean) => setIsDragging(value)}
       >
         <div className="w-3 h-3 bg-base-300 rounded-full"></div>

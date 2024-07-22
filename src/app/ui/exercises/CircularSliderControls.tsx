@@ -10,50 +10,49 @@ const NoSSR = dynamic(() => import('@/app/ui/utils/CustomCircularSlider'), { ssr
 type CircularSliderControlsProps = {
   workout_complex: WorkoutComplexParameters;
   disabled?: boolean;
-  children?: React.ReactNode;
 }
 
-export default function CircularSliderControls({ workout_complex, disabled, children }: CircularSliderControlsProps) {
+export default function CircularSliderControls({ workout_complex, disabled }: CircularSliderControlsProps) {
   return (
     <div className={clsx(
-      "flex items-center justify-center gap-4 w-full", 
+      "flex items-center justify-center gap-4", 
       `[&>div>div:nth-child(2)>div:nth-child(2)>code]:${jersey10.className}`,
-      `[&>div>svg>circle]:fill-primary/20`,
+      !disabled && `[&>div>svg>circle]:fill-primary/10`,
+      disabled && `[&>div>svg>circle]:fill-neutral/10`
     )}>
       { workout_complex.reps && (
         <>
           <NoSSR
-            label="Reps"
+            name="reps"
+            label="reps"
             data={Array.from({ length: Math.abs(workout_complex?.reps * 1.5) }, (_, i) => `${i + 1}`)}
             dataIndex={~~(workout_complex?.reps ?? 1) - 1}
             append="x"
-            disabled={disabled}
             interval={1}
-            name="reps"
+            disabled={disabled}
           />
           <NoSSR
-            label="Weight"
-            data={Array.from({ length: Math.abs(workout_complex?.weight / 5 * 1.5) }, (_, i) => `${(i + 1) * 5}`)}
+            name="weight"
+            label="weight"
+            data={Array.from({ length: Math.abs(workout_complex?.weight / 5 * 1.8) }, (_, i) => `${(i + 1) * 5}`)}
             dataIndex={~~(workout_complex?.weight ?? 25) / 5 - 1}
             append={workout_complex?.weight_unit}
             interval={5}
             disabled={disabled}
-            name="weight"
           />
         </>
       )}
       { workout_complex.time && (
         <NoSSR
-          label="Time"
-          data={Array.from({ length: Math.abs(workout_complex?.time * 1.5) }, (_, i) => `${i + 1}`)}
-          dataIndex={~~(workout_complex?.time ?? 1) - 1}
-          append={workout_complex?.time_unit?.substring(0, 1)}
-          disabled={disabled}
-          interval={1}
           name="time"
+          label="time"
+          data={Array.from({ length: Math.abs(workout_complex?.time * 2) }, (_, i) => `${i + 1}`)}
+          dataIndex={~~(workout_complex?.time ?? 1) - 1}
+          append={workout_complex?.time_unit}
+          interval={1}
+          disabled={disabled}
         />
       )}
-      { children }
     </div>
   )
 }

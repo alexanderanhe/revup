@@ -27,6 +27,7 @@ const CIRCLE_SIZE = 90;
 export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id }: WorkoutDayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
+
   const progress = Math.trunc((workout_complex.sets 
     ? (workout_complex?.sets_done ?? 0) / workout_complex.sets
     : (workout_complex?.time_done ?? 0) / workout_complex.time) * 100);
@@ -46,15 +47,17 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
         { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` }
         { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
         { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
-        <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
+        {/* <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span> */}
       </p></section>
-      <section className="flex flex-row justify-center gap-4 w-full">
-        <Metric
-          title={`${!!workout_complex?.reps ? workout_complex.reps : "NO"}`}
-          subtitle={!!workout_complex?.reps ? "reps" : ""}
-          type={!workout_complex?.reps ? "neutral" : "info"}
-          tooltip={!workout_complex?.reps ? "No aplica para este ejercicio." : undefined}
-        />
+      <section>
+      <form ref={formRef} action={formActionWorkoutItem} className="flex flex-row flex-wrap justify-center gap-4 w-full">
+        { workout_complex?.reps && (
+          <Metric
+            title={`${workout_complex.reps}`}
+            subtitle={"reps"}
+            type={"info"}
+          />
+        )}
         <Metric
           subtitle={<LockClosedIcon className="size-8" />}
           type="error"
@@ -66,19 +69,19 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
           subtitle={!!workout_complex.reps ? "sets" : workout_complex?.time_unit }
           type={completed ? "success" : ( progress > 0 ? "info" : "neutral" )}
         />
+        <input type="hidden" name="day" value={ day } />
+        <input type="hidden" name="workout_id" value={ workout_id } />
+        <input type="hidden" name="workout_complex_id" value={ slide_id } />
+        <input type="hidden" name="plan_id" value={ plan_id } />
+        <CircularSliderControls workout_complex={workout_complex} disabled={completed} />
+        <SubmitButton disabled={completed} className="btn btn-primary btn-circle btn-lg">
+          <ChevronRightIcon className="size-4" />
+        </SubmitButton>
+      </form>
       </section>
-      <section>
-        <form ref={formRef} action={formActionWorkoutItem} className="grid grid-cols-1 gap-2 w-full">
-          <input type="hidden" name="day" value={ day } />
-          <input type="hidden" name="workout_id" value={ workout_id } />
-          <input type="hidden" name="workout_complex_id" value={ slide_id } />
-          <input type="hidden" name="plan_id" value={ plan_id } />
-          <CircularSliderControls workout_complex={workout_complex} disabled={completed}>
-            <SubmitButton disabled={completed} className="btn btn-circlet btn-lg">
-              <ChevronRightIcon className="size-4" />
-            </SubmitButton>
-          </CircularSliderControls>
-          {/* <div className="join w-full">
+      {/* <section>
+        <div className="grid grid-cols-1 gap-2 w-full">
+          <div className="join w-full">
             { workout_complex.reps && (
               <div className="join-item grow grid grid-cols-2">
                 <input className="input input-bordered rounded-r-none" name="reps" placeholder="reps" type="number" pattern="[0-9]*" inputMode="numeric" disabled={completed} required />
@@ -94,9 +97,9 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
             <SubmitButton disabled={completed} className="btn join-item rounded-r-full">
               <PlusIcon className="size-4" />
             </SubmitButton>
-          </div> */}
-        </form>
-      </section>
+          </div>
+        </div>
+      </section> */}
     </>
   )
 }
@@ -110,7 +113,7 @@ type MetricProps = {
 }
 function Metric({ title, subtitle, type, progress, tooltip }: MetricProps) {
   return (
-    <div className="tooltip tooltip-bottom" data-tip={tooltip}>
+    <div className="tooltip tooltip-top" data-tip={tooltip}>
       <ProgressCircle
         progress={progress ?? 0}
         type={type}
