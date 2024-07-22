@@ -51,7 +51,7 @@ const CIRCLE_SIZE = 70;
 
 function Metric({ title, subtitle, type, progress, tooltip, className }: MetricProps) {
   return (
-    <div className={`tooltip tooltip-top ${className}`} data-tip={tooltip}>
+    <div className={clsx(!!tooltip && "tooltip tooltip-top", className)} data-tip={tooltip}>
       <ProgressCircle
         progress={progress ?? 0}
         type={type}
@@ -72,6 +72,7 @@ function Timer({ time: startTime, disabled }: { time: number, disabled?: boolean
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const handleStart = () => {
+    setTime([3, startTime ?? 60]);
     setIsRunning(true);
   };
 
@@ -97,12 +98,12 @@ function Timer({ time: startTime, disabled }: { time: number, disabled?: boolean
       title={isRunning ? `${time[0] || time[1]}` : ''}
       subtitle={disabled ? <LockClosedIcon className="size-8" /> : (
         isRunning ? "sec" :
-        <button type="button" className="btn btn-circle" onClick={handleStart}>
+        <button type="button" className="p-2 rounded-full" onClick={handleStart}>
           <ClockIcon className="size-8" />
         </button>
       )}
       type={time[0] ? "error": "info"}
-      progress={Math.trunc((startTime - time[1]) / startTime * 100)}
+      progress={isRunning ? Math.trunc((time[1]) / startTime * 100) : 0}
       tooltip={disabled ? "Solo para usuarios premium" : ""}
       className="grow"
     />
