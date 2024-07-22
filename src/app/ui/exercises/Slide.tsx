@@ -58,8 +58,8 @@ function Slide({ scrolled, submit, slideIds, workout_complex, workout_id, plan_i
   }
 
   const CompletedBackground = ({ children }: { children?: React.ReactNode }) => completed && (
-    <div className="grid place-items-center absolute inset-0 w-full h-full bg-success/10 uppercase font-semibold text-xl p-4">
-      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-lg text-base-100" /> { children }</div>
+    <div className="grid place-items-center absolute inset-0 w-full h-full uppercase font-semibold text-xl p-4">
+      <div className="flex items-center gap-2"><CheckIcon className="size-20 drop-shadow-xl text-success" /> { children }</div>
     </div>
   )
 
