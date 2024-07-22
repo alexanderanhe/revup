@@ -29,7 +29,8 @@ export default function CustomCircularSlider({ name, label, append, data, dataIn
         min={min}
         max={max}
         data={data}
-        dataIndex={dataIndex}
+        // dataIndex={dataIndex}
+        initialValue={~~value}
         width={90}
         progressSize={SIZE}
         trackSize={SIZE}
@@ -61,7 +62,7 @@ export default function CustomCircularSlider({ name, label, append, data, dataIn
       >
         <div className="w-3 h-3 bg-base-300 rounded-full"></div>
       </CircularSlider>
-      <input type="hidden" name={name} value={value} />
+      <input type="hidden" name={name} onReset={() => setValue("")} value={value} />
     </>
   )
 }

@@ -1,15 +1,18 @@
+'use client'
+
 import clsx from "clsx"
-import { LockClosedIcon } from "@heroicons/react/24/solid"
+import { ClockIcon, LockClosedIcon } from "@heroicons/react/24/solid"
 
 import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import { jersey10 } from "@/app/ui/fonts"
 import { WorkoutComplexParameters } from "@/lib/definitions"
+import { useEffect, useState } from "react"
 
 type MetricsProps = WorkoutComplexParameters & {
   completed: boolean;
 }
 
-export default function Metrics({sets, sets_done, time, time_done, reps, weight, weight_unit, time_unit, completed}: MetricsProps) {
+export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, completed}: MetricsProps) {
   const progress = Math.trunc((sets 
     ? (sets_done ?? 0) / sets
     : (time_done ?? 0) / time) * 100);
@@ -19,12 +22,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, weight,
 
   return (
     <div className="flex gap-4 w-fit">
-      <Metric
-        subtitle={<LockClosedIcon className="size-8" />}
-        type="error"
-        tooltip="Solo para usuarios premium"
-        className="grow"
-      />
+      <Timer time={rest ?? 60} />
       <Metric
         title={`${reps}`}
         subtitle={"reps"}
@@ -66,5 +64,47 @@ function Metric({ title, subtitle, type, progress, tooltip, className }: MetricP
         size={`${CIRCLE_SIZE}px`}
       />
     </div>
+  )
+}
+
+function Timer({ time: startTime, disabled }: { time: number, disabled?: boolean }) {
+  const [time, setTime] = useState<[number, number]>([3, startTime ?? 60]);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+
+  const handleStart = () => {
+    setIsRunning(true);
+  };
+
+  useEffect(() => {
+    if (isRunning) {
+      const interval = setInterval(() => {
+        setTime(([ start, custom ]) => {
+          if (start) {
+            start--;
+          } else if (custom) {
+            custom--
+          } else {
+            setIsRunning(false);
+          }
+          return [start, custom];
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [time, isRunning]);
+  return (
+    <Metric
+      title={isRunning ? `${time[0] || time[1]}` : ''}
+      subtitle={disabled ? <LockClosedIcon className="size-8" /> : (
+        isRunning ? "sec" :
+        <button type="button" className="btn btn-circle" onClick={handleStart}>
+          <ClockIcon className="size-8" />
+        </button>
+      )}
+      type={time[0] ? "error": "info"}
+      progress={Math.trunc((startTime - time[1]) / startTime * 100)}
+      tooltip={disabled ? "Solo para usuarios premium" : ""}
+      className="grow"
+    />
   )
 }

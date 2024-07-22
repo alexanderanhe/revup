@@ -302,7 +302,7 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
           SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
           FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
           WHERE tags.id = ANY((Array[w.tags])::uuid[]) AND tags_lang.language_id=${locale}
-        ) as tags, wc.reps, wc.sets, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments,
+        ) as tags, wc.reps, wc.sets, wc.rest, wc.time, wc.time_unit, wc.weight, wc.weight_unit, wc.total_minutes, wc.recommendations, wc.comments,
         CASE WHEN wc.sets IS NOT NULL THEN wc.sets <= COUNT(puwc.reps) WHEN wc.time IS NOT NULL THEN wc.time <= SUM(puwc.time) ELSE false END AS completed,
         MAX(puwc.created_at) as completed_at, COUNT(puwc.reps) as sets_done, SUM(puwc.time) as time_done
       FROM workouts_complex wc

@@ -110,6 +110,7 @@ export type WorkoutComplexParameters = {
   time_unit: string;
   weight: number;
   weight_unit: string;
+  rest: number;
   total_minutes: number;
   reps_done?: number;
   sets_done?: number;
