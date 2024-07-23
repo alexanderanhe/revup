@@ -17,6 +17,6 @@ export default async function List({ searchParams, locale }: ListProps) {
     const results = await getWorkouts(searchParams, locale) as Workout[] | null;
     return <Workouts workouts={results} userWorkoutIdsLiked={userWorkoutIdsLiked ?? []} />
   }
-  const results = await getTags('muscle', locale) as GroupsWorkout[] | null;
+  const results = await getTags('muscle', '1', locale) as GroupsWorkout[] | null;
   return <Groups groups={results} />
 }

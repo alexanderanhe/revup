@@ -141,7 +141,7 @@ export async function getStatsWeight(user_id?: string | null): Promise<WeightDat
 //   return rows.map(({ id }: { id: string }) => id);
 // }
 
-export async function getTags(type: string, locale: string): Promise<GroupsWorkout[] | null> {
+export async function getTags(type: string, value: string | null, locale: string): Promise<GroupsWorkout[] | null> {
   try {
     const { rowCount, rows: groups } = await sql<GroupsWorkout>`
       SELECT tags.id, tags.type, tl.name,
@@ -150,7 +150,7 @@ export async function getTags(type: string, locale: string): Promise<GroupsWorko
       JOIN tags_lang tld ON tags.id = tld.tag_id AND tld.language_id=(
         SELECT code FROM languages WHERE is_default=true
       )
-      WHERE tags.type=${type} AND tl.language_id=${locale};
+      WHERE tags.type=${type} AND tags.value=${value} AND tl.language_id=${locale};
     `;
     if (rowCount === 0) {
       return null
