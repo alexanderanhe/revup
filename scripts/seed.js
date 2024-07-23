@@ -10,7 +10,9 @@ const sql = {
     dropWorkoutsLang: 'DROP TABLE IF EXISTS workouts_lang;',
     dropPlansUser: 'DROP TABLE IF EXISTS plans_user;',
     dropPlansLang: 'DROP TABLE IF EXISTS plans_lang;',
+    dropPlansLang: 'DROP TABLE IF EXISTS plans_user_day;',
     dropPlans: 'DROP TABLE IF EXISTS plans;',
+    dropPlansLang: 'DROP TABLE IF EXISTS plans_user_workouts_complex;',
     dropWorkoutsComplex: 'DROP TABLE IF EXISTS workouts_complex;',
     dropWorkoutsLiked: 'DROP TABLE IF EXISTS workouts_liked;',
     dropWorkouts: 'DROP TABLE IF EXISTS workouts;',
@@ -37,10 +39,12 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS tags (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
       type tagType NOT NULL,
+      key_name VARCHAR(100) NOT NULL,
       value VARCHAR(100) DEFAULT NULL,
       parent_id UUID NULL,
       created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
+      updated_at TIMESTAMP DEFAULT NOW(),
+      UNIQUE (type, key_name)
     );`,
     createTableLanguages: `CREATE TABLE IF NOT EXISTS tags_lang (
       name VARCHAR(100) NOT NULL,
@@ -51,26 +55,105 @@ const sql = {
     insertDefault: async function (client) {
       const tags = [
         // -- Insert tags muscles
-        ['muscle', 'chest', 'pecho'],
-        ['muscle', 'back', 'espalda'],
-        ['muscle', 'legs', 'piernas'],
-        ['muscle', 'gluteus', 'glúteo'],
-        ['muscle', 'deltoids', 'deltoides'],
-        ['muscle', 'biceps', 'bíceps'],
-        ['muscle', 'triceps', 'tríceps'],
-        ['muscle', 'forearm', 'antebrazo'],
-        ['muscle', 'abs', 'abdominales'],
-        ['muscle', 'functional workout', 'entrenamiento funcional'],
-        ['muscle', 'cardio', 'cardio'],
-        ['muscle', 'stretching', 'extensión'],
+        ['muscle', 'chest', 'pecho', '1'],
+        ['muscle', 'back', 'espalda', '1', [
+          ['muscle', 'latissimus dorsi', 'dorsal ancho' ],
+          ['muscle', 'trapezius', 'trapecio' ],
+          ['muscle', 'rhomboids', 'romboides' ],
+          ['muscle', 'lower back', 'parte baja de la espalda' ],
+          ['muscle', 'lumbar', 'lumbar' ],
+          ['muscle', 'erector spinae', 'erector de la columna' ],
+          ['muscle', 'teres major', 'redondo mayor' ],
+          ['muscle', 'teres minor', 'redondo menor' ],
+          ['muscle', 'neck', 'cuello'],
+        ]],
+        ['muscle', 'legs', 'piernas', '1', [
+          ['muscle', 'quadriceps', 'cuádriceps' ],
+          ['muscle', 'hamstrings', 'isquiotibiales' ],
+          ['muscle', 'calves', 'gemelos' ],
+          ['muscle', 'anterior thigh muscles', 'músculos anteriores del muslo' ],
+          ['muscle', 'posterior thigh muscles', 'músculos posteriores del muslo' ],
+          ['muscle', 'inner thigh muscles', 'músculos internos del muslo' ],
+          ['muscle', 'outer thigh muscles', 'músculos externos del muslo' ],
+          ['muscle', 'abductores de cadera', 'hip abductors' ],
+          ['muscle', 'glutes', 'glúteo', '1'],
+        ]],
+        ['muscle', 'deltoids', 'deltoides', '1', [
+          ['muscle', 'front deltoids', 'deltoides frontales' ],
+          ['muscle', 'middle deltoids', 'deltoides medios' ],
+          ['muscle', 'rear deltoids', 'deltoides posteriores' ],
+        ]],
+        ['muscle', 'biceps', 'bíceps', '1'],
+        ['muscle', 'triceps', 'tríceps', '1'],
+        ['muscle', 'forearm', 'antebrazo', '1'],
+        ['muscle', 'abs', 'abdominales', '1', [
+          ['muscle', 'obliques', 'oblicuos' ],
+          ['muscle', 'transverse abdominis', 'transverso del abdomen' ],
+          ['muscle', 'rectus abdominis', 'recto del abdomen' ],
+          ['muscle', 'lower abs', 'abdominales inferiores' ],
+          ['muscle', 'upper abs', 'abdominales superiores' ],
+          ['muscle', 'core', 'core' ],
+          ['muscle', 'six pack', 'six pack' ],
+          ['muscle', 'v line', 'v line' ],
+        ]],
+        ['muscle', 'pelvic floor', 'suelo pélvico' ],
+        ['muscle', 'functional workout', 'entrenamiento funcional', '1'],
+        ['muscle', 'cardio', 'cardio', '1'],
+        ['muscle', 'stretching', 'estiramiento', '1'],
+        // -- Insert tags equipment
+        ['equipment', 'with equipment', 'con equipo', '1', [
+          ['equipment', 'barbell', 'barra'],
+          ['equipment', 'dumbbells', 'mancuernas'],
+          ['equipment', 'kettlebells', 'pesa rusa'],
+          ['equipment', 'medicine ball', 'balón medicinal'],
+          ['equipment', 'resistance band', 'banda de resistencia'],
+          ['equipment', 'ab wheel', 'rueda abdominal'],
+          ['equipment', 'trx', 'trx'],
+          ['equipment', 'pull-up bar', 'barra de dominadas'],
+          ['equipment', 'parallel bars', 'paralelas'],
+          ['equipment', 'cardio machine', 'maquina de cardio'],
+          ['equipment', 'treadmill', 'cinta de correr'],
+          ['equipment', 'elliptical', 'elíptica'],
+          ['equipment', 'stationary bike', 'bicicleta estática'],
+          ['equipment', 'rowing machine', 'máquina de remo'],
+          ['equipment', 'stair climber', 'escaladora'],
+          ['equipment', 'punching bag', 'saco de boxeo'],
+          ['equipment', 'jumping rope', 'cuerda para saltar'],
+          ['equipment', 'dip bar', 'barra de dips'],
+          ['equipment', 'bench', 'banco'],
+          ['equipment', 'multifunctional bench', 'banco multifuncional'],
+          ['equipment', 'cable machine', 'máquina de poleas'],
+          ['equipment', 'squat rack', 'soporte para sentadillas'],
+          ['equipment', 'smith machine', 'máquina smith'],
+          ['equipment', 'leg press machine', 'máquina de prensa de piernas'],
+          ['equipment', 'leg curl machine', 'máquina de curl de piernas'],
+          ['equipment', 'leg extension machine', 'máquina de extensión de piernas'],
+          ['equipment', 'leg abduction machine', 'máquina de abducción de piernas'],
+          ['equipment', 'stability ball', 'pelota de estabilidad'],
+          ['equipment', 'bosu ball', 'bosu'],
+          ['equipment', 'foam roller', 'rodillo de espuma'],
+          ['equipment', 'yoga mat', 'colchoneta de yoga'],
+          ['equipment', 'pilates ball', 'pelota de pilates'],
+          ['equipment', 'plyobox/platform', 'plyobox/plataforma'],
+          ['equipment', 'hack machine', 'máquina hack'],
+          ['equipment', 'gravitron', 'gravitron'],
+          ['equipment', 'crossover', 'transversal'],
+          ['equipment', 'upper block', 'bloque superior'],
+          ['equipment', 'lower block', 'bloque inferior'],
+          ['equipment', 'calf machine', 'máquina de gemelos'],
+          ['equipment', 'ankle (wrist) weights', 'pesas de tobillo (muñeca)'],
+        ]],
+        ['equipment', 'without equipment', 'sin equipo', '1', [
+          ['equipment', 'bodyweight', 'peso corporal'],
+        ]],
         // -- Insert tags place
         ['place', 'home', 'casa'],
         ['place', 'gym', 'gimnasio'],
         ['place', 'outdoor', 'aire libre'],
         // -- Insert tags goal
-        ['goal', 'general muscle building', 'ganar masa muscular'],
-        ['goal', 'weight loss', 'perder peso'],
-        ['goal', 'keeping fit', 'mantenerse en forma'],
+        ['goal', 'general muscle building', 'ganar masa muscular' ,'1'],
+        ['goal', 'weight loss', 'perder peso', '1'],
+        ['goal', 'keeping fit', 'mantenerse en forma', '1'],
         // -- Insert tags gender
         ['gender', 'men', 'hombre'],
         ['gender', 'woman', 'mujer'],
@@ -86,13 +169,25 @@ const sql = {
         ['other', 'full body', 'cuerpo completo'],
       ]
       for (const tag of tags) {
-        const [type, nameEn, nameEs, value] = tag;
-        const { rows } = await client.sql`INSERT INTO tags (type, value) VALUES (${ type }, ${ value ?? null }) RETURNING id`;
-        if (!rows.length) return;
+        const [type, nameEn, nameEs, value, children] = tag;
+        const { rows } = await client.sql`INSERT INTO tags (type, key_name, value) VALUES (${ type }, ${ nameEn }, ${ value ?? null }) RETURNING id`;
+        if (!rows.length) throw new Error('Error inserting tag');
   
         const { id: tagId } = rows[0];
         await client.sql`INSERT INTO tags_lang (name, language_id, tag_id) VALUES (${ nameEn }, \'en\', ${ tagId });`;
         await client.sql`INSERT INTO tags_lang (name, language_id, tag_id) VALUES (${ nameEs }, \'es\', ${ tagId });`;
+
+        if (children) {
+          for (const child of children) {
+            const [type, nameEn, nameEs, value] = child;
+            const { rows } = await client.sql`INSERT INTO tags (type, key_name, value, parent_id) VALUES (${ type }, ${ nameEn }, ${ value ?? null }, ${ tagId }) RETURNING id`;
+            if (!rows.length) throw new Error('Error inserting tag');
+      
+            const { id: childTagId } = rows[0];
+            await client.sql`INSERT INTO tags_lang (name, language_id, tag_id) VALUES (${ nameEn }, \'en\', ${ childTagId });`;
+            await client.sql`INSERT INTO tags_lang (name, language_id, tag_id) VALUES (${ nameEs }, \'es\', ${ childTagId });`;
+          }
+        }
       }
     }
   }, 'Created "tags" table'],
@@ -184,8 +279,8 @@ const sql = {
     );`,
     createTableUsersDay: `CREATE TABLE IF NOT EXISTS plans_user_day (
       day SMALLINT DEFAULT 1 UNIQUE,
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id),
+      plan_id UUID REFERENCES plans(id),
       name VARCHAR(100) NULL,
       percentage SMALLINT DEFAULT 0,
       started_at TIMESTAMP DEFAULT NULL,

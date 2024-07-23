@@ -13,7 +13,7 @@ import { WeightData } from "@/lib/definitions";
 export default function WeightChart({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
   const chartConfig = {
     weight: {
-      label: translate?.title ?? "-",
+      label: translate?.weight ?? "-",
       color: "oklch(var(--a))",
     },
   } satisfies ChartConfig;
