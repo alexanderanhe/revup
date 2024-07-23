@@ -1,34 +1,18 @@
-'use client'
+import { User } from "@/lib/definitions";
+import { getTranslations } from "next-intl/server";
+import WeightChart from "@/app/ui/home/WeightChart";
+import { getStatsWeight } from "@/lib/data";
 
-// import { selectAssessment } from "@/lib/features/app";
-// import { useAppSelector } from "@/lib/hooks";
-import { Link } from "@/navigation";
-import Card from "../Card";
-
-const Stats = () => {
-  // const hasAssessment = useAppSelector(selectAssessment);
-
-  const progress = 70;
-  const workoutProgressStyles = {
-    "--value": progress,
-    "--size": "3.2rem"
-  } as React.CSSProperties;
-
+export default async function Stats ({ user, locale }: { user?: User, locale: string}) {
+  if (!user) {
+    return null;
+  }
+  const t = await getTranslations("Home.stats");
+  const weightData = await getStatsWeight(user.id);
   return (
     <>
-      <Card>
-        <section className="grid grid-cols-[1fr_auto] place-items-center w-full">
-          <Link
-            href="/workout"
-            className="w-full"
-          >
-            <strong>Progreso del Ejercicios</strong>
-            <p>12 rutinas restantes</p>
-          </Link>
-          <div className="radial-progress text-sm font-semibold before:text-success" style={workoutProgressStyles} role="progressbar">70%</div>
-        </section>
-      </Card>
-      <section>
+      <WeightChart translate={ t.raw("weightChart")} data={weightData} />
+      {/* <section>
         <h2>Weekly stats</h2>
         <div className="grid grid-cols-2 grid-rows-3 w-full gap-2">
           <div className="grid grid-rows-subgrid row-span-2 shadow-md bg-blue-200/60 text-black rounded-3xl place-items-center p-4">
@@ -96,13 +80,11 @@ const Stats = () => {
                 <div className="text-xs font-bold">D</div>
               </div>
             </div>
-            {/* <div className="stat-desc">↘︎ 90 (14%)</div> */}
+            <div className="stat-desc">↘︎ 90 (14%)</div>
           </div>
           
         </div>
-      </section>
+      </section> */}
     </>
   )
 }
-
-export default Stats

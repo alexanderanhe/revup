@@ -62,6 +62,12 @@ const config: Config = {
           "secondary": "#56198b",
           "--primary-muted": "259 94% 71%",
           "--rounded-btn": "14px",
+          // charts colors
+          "--chart-1": "133 84% 64%",
+          "--chart-2": "272 82% 55%",
+          "--chart-3": "197 37% 24%",
+          "--chart-4": "43 74% 66%",
+          "--chart-5": "27 87% 67%",
         },
       },
       {
@@ -74,6 +80,12 @@ const config: Config = {
           "base-300": "#262626",
           "--primary-muted": "262 80% 30%",
           "--rounded-btn": "14px",
+          // charts colors
+          "--chart-1": "133 84% 64%",
+          "--chart-2": "272 82% 55%",
+          "--chart-3": "30 80% 55%",
+          "--chart-4": "280 65% 60%",
+          "--chart-5": "160 60% 45%",
         },
       },
       'cupcake',

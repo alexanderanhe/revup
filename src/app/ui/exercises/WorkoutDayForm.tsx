@@ -10,7 +10,6 @@ import SubmitButton from "@/app/ui/utils/SubmitButton"
 
 import { WorkoutComplexParameters } from "@/lib/definitions"
 import CircularSliderControls from "@/app/ui/exercises/CircularSliderControls"
-import Metrics from "./Metrics"
 
 type WorkoutDayFormProps = {
   workout_complex: WorkoutComplexParameters;

@@ -47,6 +47,14 @@
     "loggedBtn": "Enter"
   },
   "Home": {
+    "stats": {
+      "weightChart": {
+        "title": "My weight",
+        "description": "Weight history",
+        "weight": "Weight",
+        "date": "Date"
+      }
+    }
   },
   "Assessment": {
     "title": "Assessment",

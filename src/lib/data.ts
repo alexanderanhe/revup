@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -109,6 +109,26 @@ export async function getSession() {
   const session = await auth();
   if (!session) return null;
   return session.user;
+}
+
+export async function getStatsWeight(user_id?: string | null): Promise<WeightData[] | null> {
+  try {
+    if (!user_id) {
+      throw new Error('User session not found.');
+    }
+    const { rowCount, rows } = await sql<WeightData>`
+      SELECT assess.weight, assess.created_at as date
+      FROM assessments assess
+      WHERE assess.user_id=${user_id};
+    `;
+    if (rowCount === 0) {
+      return null
+    }
+    return rows as WeightData[];
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    return [];
+  }
 }
 
 // export async function getTagsIds(tags: string[]): Promise<string[]> {

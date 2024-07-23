@@ -47,6 +47,14 @@
     "loggedBtn": "Entrar"
   },
   "Home": {
+    "stats": {
+      "weightChart": {
+        "title": "Mi peso",
+        "description": "Historial de peso",
+        "weight": "Peso",
+        "date": "Fecha"
+      }
+    }
   },
   "Assessment": {
     "title": "Evaluación",

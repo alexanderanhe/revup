@@ -72,6 +72,11 @@ export type AuthProviders = {
   [key in Providers]: AuthProvider
 }
 
+export type WeightData = {
+  date: string;
+  weight: number;
+}
+
 export type WorkoutImageLink = {
   url: string;
 }
