@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 type ProgressCircleProps = {
   progress: number;
-  type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
+  type?: keyof typeof typeClasses;
   icon?: React.ReactNode;
   size?: string;
 }
@@ -32,4 +32,5 @@ const typeClasses = {
   error: 'bg-error/10 before:text-error',
   warning: 'bg-warning/10 before:text-warning',
   info: 'bg-info/10 before:text-info',
+  accent: 'bg-accent/10 before:text-accent',
 }

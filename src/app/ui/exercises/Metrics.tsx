@@ -24,7 +24,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
     : `${ time_done ?? 0 } / ${ time }`;
 
   return (
-    <div className="flex gap-4 w-fit">
+    <div className="flex gap-4 w-full">
       {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
       <Metric
         title={`${reps}`}
@@ -45,7 +45,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
 type MetricProps = {
   title?: string;
   subtitle?: React.ReactNode;
-  type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
+  type?: 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'accent';
   progress?: number;
   tooltip?: string;
   className?: string;
@@ -119,7 +119,7 @@ function Timer({ time: startTime, disabled, startRest, setStartRest }: { time: n
           <ClockIcon className="size-8" />
         </button>
       )}
-      type={time[0] ? "error": "info"}
+      type={time[0] ? "error": "accent"}
       progress={isRunning ? Math.trunc((time[1]) / startTime * 100) : 0}
       tooltip={disabled ? "Solo para usuarios premium" : ""}
       className="grow"
