@@ -44,6 +44,7 @@ type SlideProps = {
 };
 
 function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
+  const [startRest, setStartRest] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
@@ -80,7 +81,7 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
             <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square self-start">
               <InformationCircleIcon className="size-5" />
             </Link>
-            <Metrics {...workout_complex} completed={completed} />
+            <Metrics {...workout_complex} completed={completed} startRest={startRest} setStartRest={setStartRest} />
           </div>
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
             { slideIds?.[slide.index - 1] ? (
@@ -117,6 +118,7 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
             plan_id={plan_id}
             workout_id={workout_id}
             slide_id={slide.id}
+            setStartRest={setStartRest}
           />
         </div>
       </section>

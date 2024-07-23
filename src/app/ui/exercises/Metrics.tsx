@@ -7,12 +7,15 @@ import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import { jersey10 } from "@/app/ui/fonts"
 import { WorkoutComplexParameters } from "@/lib/definitions"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 type MetricsProps = WorkoutComplexParameters & {
   completed: boolean;
+  startRest?: boolean;
+  setStartRest?: (value: boolean) => void
 }
 
-export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, completed}: MetricsProps) {
+export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, completed, startRest, setStartRest}: MetricsProps) {
   const progress = Math.trunc((sets 
     ? (sets_done ?? 0) / sets
     : (time_done ?? 0) / time) * 100);
@@ -22,7 +25,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
 
   return (
     <div className="flex gap-4 w-fit">
-      <Timer time={rest ?? 60} />
+      {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
       <Metric
         title={`${reps}`}
         subtitle={"reps"}
@@ -67,14 +70,28 @@ function Metric({ title, subtitle, type, progress, tooltip, className }: MetricP
   )
 }
 
-function Timer({ time: startTime, disabled }: { time: number, disabled?: boolean }) {
+function Timer({ time: startTime, disabled, startRest, setStartRest }: { time: number, disabled?: boolean, startRest?: boolean, setStartRest?: (value: boolean) => void }) {
   const [time, setTime] = useState<[number, number]>([3, startTime ?? 60]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const handleStart = () => {
-    setTime([3, startTime ?? 60]);
-    setIsRunning(true);
+    toast('Esta seguro de empezar el descanso', {
+      action: {
+        label: 'Aceptar',
+        onClick: () => {
+          setTime([3, startTime ?? 60]);
+          setIsRunning(true);
+        },
+      }
+    });
   };
+
+  useEffect(() => {
+    if (startRest) {
+      handleStart();
+      setStartRest && setStartRest(false);
+    }
+  }, [startRest]);
 
   useEffect(() => {
     if (isRunning) {

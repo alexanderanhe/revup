@@ -19,11 +19,10 @@ type WorkoutDayFormProps = {
   plan_id: string;
   workout_id: string;
   slide_id: string;
+  setStartRest?: (value: boolean) => void;
 }
 
-const CIRCLE_SIZE = 90;
-
-export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id }: WorkoutDayFormProps) {
+export default function WorkoutDayForm({ workout_complex, completed, day, plan_id, workout_id, slide_id, setStartRest }: WorkoutDayFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
 
@@ -36,6 +35,7 @@ export default function WorkoutDayForm({ workout_complex, completed, day, plan_i
 
   useEffect(() => {
     if (formStateWorkoutItem === 'saved') {
+      setStartRest && setStartRest(true);
       formRef.current?.reset();
     }
   }, [formStateWorkoutItem]);
