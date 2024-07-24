@@ -32,8 +32,6 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   const progress = plan?.progress ?? 0;
   const workouts_done = plan?.workouts_done ?? 0;
 
-  console.log("CurrentPlan", plan);
-
   return (
     <>
       <Card className="collapse-title text-neutral-content bg-black overflow-hidden">
