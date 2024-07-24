@@ -37,7 +37,10 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
       intervalId = setInterval(() => setTime(diffSeconds(sDate)), 1000);
       // Reset timer back to 0 if it is more than max time
-      diffSeconds(sDate) > MAX_SEC_TIME && setTime(-1)
+      if (diffSeconds(sDate) > MAX_SEC_TIME) {
+        setTime(-1);
+        setIsRunning(false);
+      }
     }
     return () => clearInterval(intervalId);
   }, [isRunning, time]);
@@ -54,11 +57,6 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
 
     setStopwatch({ hours, minutes, seconds });
   }, [time]);
-
-  // Method to start and stop timer
-  // const startAndStop = () => {
-  //   setIsRunning(!isRunning);
-  // };
 
   useEffect(() => {
     if (formStateStartWorkoutDay?.status === "done") {
