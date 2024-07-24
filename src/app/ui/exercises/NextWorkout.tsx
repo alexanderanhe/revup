@@ -19,6 +19,7 @@ type NextWorkoutProps = {
 export default function NextWorkout({body_zones, workingDay: { day, completed, percentage, current_day}, t, noLink, ...props}: NextWorkoutProps) {
   const [body_zone] = body_zones?.[(day - 1) % body_zones.length];
   const exists = typeof completed !== 'undefined';
+  console.log('NextWorkout', { day, completed, percentage, current_day, exists, noLink });
 
   return (
     <Card {...props}>

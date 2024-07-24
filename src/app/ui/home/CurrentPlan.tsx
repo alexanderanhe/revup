@@ -82,7 +82,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
           style={{ maskImage: "linear-gradient(to left, black 200%, transparent)"}}
         />
       </Card>
-      <div className="w-full h-[50svh] overflow-y-auto space-y-1 py-2">
+      <div className="w-full overflow-y-auto space-y-1 py-2">
         <div className="font-semibold">{ t("nextTraining") }</div>
         <ul className="grid grid-cols-1 gap-2 w-full">
           { plan.workingDays?.map((workingDay) => (

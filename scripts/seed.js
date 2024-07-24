@@ -314,7 +314,7 @@ const sql = {
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
       is_current BOOLEAN DEFAULT FALSE,
-      current_day SMALLINT REFERENCES plans_user_day(day) DEFAULT NULL,
+      current_day SMALLINT REFERENCES plans_user_day(day) DEFAULT 1,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (user_id, plan_id)

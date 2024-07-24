@@ -324,19 +324,21 @@ export async function getUserPlans(user_id: string): Promise<SimplePlan[] | null
   }
 }
 
-export async function createUserPlan(user_id: string, plan_id: string): Promise<void> {
+export async function createUserPlan(user_id: string, plan_id: string, current_day?: number | null): Promise<void> {
   try {
-    await sql`
-      INSERT INTO plans_user (user_id, plan_id)
-      VALUES (${user_id}::uuid, ${plan_id}::uuid)
-      ON CONFLICT (user_id, plan_id) DO UPDATE
-      SET updated_at=NOW();
+    const { rows } = await sql`
+      INSERT INTO plans_user_day (day, user_id, plan_id)
+      VALUES (${current_day ?? 1}, ${user_id}::uuid, ${plan_id}::uuid)
+      ON CONFLICT (day, user_id, plan_id) DO UPDATE
+      SET updated_at=NOW()
+      RETURNING day;
     `;
     await sql`
-      INSERT INTO plans_user_day (day, user_id, plan_id)
-      VALUES (1, ${user_id}::uuid, ${plan_id}::uuid)
-      ON CONFLICT (day, user_id, plan_id) DO UPDATE
-      SET updated_at=NOW();
+      INSERT INTO plans_user (user_id, plan_id, current_day)
+      VALUES (${user_id}::uuid, ${plan_id}::uuid, ${rows[0].day ?? 1})
+      ON CONFLICT (user_id, plan_id) DO UPDATE
+      SET current_day=${rows[0].day ?? 1},
+          updated_at=NOW();
     `;
   } catch (error) {
     console.error('Failed to create plan:', error);
@@ -478,6 +480,12 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
     }
     const { rows, rowCount } = await sql`
       SELECT pud.*, pl.name, pl.comments,
+      ((
+        SELECT SUM(COALESCE(workouts_complex.sets, 1))
+        FROM workouts_complex
+        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.workout_complex_id=workouts_complex.id
+        WHERE plan_id=pud.plan_id AND user_id=pud.user_id AND day=pud.day
+      )) as percentage,
       CASE
         WHEN pud.day = pu.current_day THEN true
         ELSE false
