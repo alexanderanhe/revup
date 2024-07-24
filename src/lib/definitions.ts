@@ -137,17 +137,22 @@ export type PlanDay = {
   current_day?: boolean;
 }
 
-export type Plan = {
+export type SimplePlan = {
   id: UUID;
   name: string;
-  workouts_complex: string[] | WorkoutComplex[];
-  body_zones: string[][];
   tags: string[][];
   days: number;
-  workingDays?: PlanDay[];
   sets_per_week: number;
-  custom_email?: string;
+  is_current?: boolean;
   current_day?: number;
+  comments?: string;
+}
+
+export type Plan = SimplePlan & {
+  body_zones: string[][];
+  workouts_complex?: string[] | WorkoutComplex[];
+  workingDays?: PlanDay[];
+  custom_email?: string;
   progress?: number;
   workouts_done?: number;
 }

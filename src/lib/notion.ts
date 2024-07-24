@@ -1,6 +1,7 @@
 import { APIErrorCode, Client } from "@notionhq/client";
 import { VercelPoolClient, db } from '@vercel/postgres';
 import { NotionTableProperties, tableWorkoutsProperties, tableWorkoutsComplexProperties, tablePlansProperties } from "@/lib/definitions";
+import { createUserPlan, getUserPlans, setAsCurrentPlan } from "@/lib/data";
 
 // Initializing a client
 const notion = new Client({
@@ -469,18 +470,11 @@ export class NotionSync {
           if (!userId) {
             console.error("User not found", rest.custom_email);
           } else {
-            await client.query(`
-              INSERT INTO plans_user (user_id, plan_id)
-              VALUES ($1::uuid, $2::uuid)
-              ON CONFLICT (user_id, plan_id) DO UPDATE
-              SET updated_at=NOW();
-            `, [ userId, notion_id ]);
-            await client.query(`
-              INSERT INTO plans_user_day (day, user_id, plan_id)
-              VALUES (1, $1::uuid, $2::uuid)
-              ON CONFLICT (day, user_id, plan_id) DO UPDATE
-              SET updated_at=NOW();
-            `, [ userId, notion_id ]);
+            await createUserPlan(userId, notion_id);
+            const plans = await getUserPlans(userId);
+            if (!plans?.some(({ is_current }: { is_current?: boolean }) => is_current)) {
+              await setAsCurrentPlan(userId, notion_id);
+            }
             this.consoleLog(["User added to the plan", `user:${userId} notionId:${notion_id}`]);
           }
         }

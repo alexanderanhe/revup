@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID, SimplePlan } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -298,7 +298,76 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
     console.error('Failed to set workout liked:', error);
     throw new Error('Failed to set workout liked.');
   }
+}
 
+export async function getUserPlans(user_id: string): Promise<SimplePlan[] | null> {
+  try {
+    const { rows, rowCount } = await sql<SimplePlan>`
+      SELECT p.id, pl.name, pu.is_current, pu.current_day, pl.comments,
+      (
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id='en'
+      ) as tags
+      FROM plans_user pu
+      JOIN plans p ON pu.plan_id=p.id
+      JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id='en'
+      WHERE pu.user_id=${user_id};
+    `;
+    if (rowCount === 0) {
+      return null;
+    }
+    return rows as SimplePlan[];
+  } catch (error) {
+    console.error('Failed to fetch user plans:', error);
+    return null;
+  }
+}
+
+export async function createUserPlan(user_id: string, plan_id: string): Promise<void> {
+  try {
+    await sql`
+      INSERT INTO plans_user (user_id, plan_id)
+      VALUES (${user_id}::uuid, ${plan_id}::uuid)
+      ON CONFLICT (user_id, plan_id) DO UPDATE
+      SET updated_at=NOW();
+    `;
+    await sql`
+      INSERT INTO plans_user_day (day, user_id, plan_id)
+      VALUES (1, ${user_id}::uuid, ${plan_id}::uuid)
+      ON CONFLICT (day, user_id, plan_id) DO UPDATE
+      SET updated_at=NOW();
+    `;
+  } catch (error) {
+    console.error('Failed to create plan:', error);
+    throw new Error('Failed to create plan.');
+  }
+}
+
+export async function setAsCurrentPlan(user_id: string, plan_id: string): Promise<string> {
+  try {
+    if (!user_id) {
+      throw new Error('User session not found.');
+    }
+    await sql`
+      UPDATE plans_user
+      SET is_current=false
+      WHERE user_id=${user_id};
+    `;
+    await sql`
+      UPDATE plans_user
+      SET is_current=true,
+          current_day=(
+            SELECT COALESCE(MAX(DISTINCT day), 0) FROM plans_user_day
+            WHERE user_id=${user_id} AND plan_id=${plan_id} AND completed
+          ) + 1
+      WHERE user_id=${user_id} AND plan_id=${plan_id};
+    `;
+    return 'saved';
+  } catch (error) {
+    console.error('Failed to set current plan:', error);
+    return 'error';
+  }
 }
 
 export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelected?: number): Promise<Exercise[] | null> {

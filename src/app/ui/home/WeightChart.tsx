@@ -1,6 +1,6 @@
 "use client"
 
-import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
 import {
   ChartConfig,
   ChartContainer,
@@ -14,7 +14,7 @@ export default function WeightChart({ data: chartData, translate }: { data: Weig
   const chartConfig = {
     weight: {
       label: translate?.weight ?? "-",
-      color: "oklch(var(--a))",
+      color: "oklch(var(--p))",
     },
   } satisfies ChartConfig;
 
@@ -22,11 +22,10 @@ export default function WeightChart({ data: chartData, translate }: { data: Weig
     <div className="w-full overflow-y-auto space-y-1 py-2">
       <div className="font-semibold">{ translate?.title ?? "-" }</div>
       <ChartContainer config={chartConfig}>
-        <LineChart
+        <AreaChart
           accessibilityLayer
-          data={chartData ?? []}
+          data={[...chartData ?? [], { date: new Date(), weight: chartData?.at(-1)?.weight ?? 0 }]}
           margin={{
-            top: 20,
             left: 12,
             right: 12,
           }}
@@ -43,26 +42,30 @@ export default function WeightChart({ data: chartData, translate }: { data: Weig
             cursor={false}
             content={<ChartTooltipContent indicator="dot" />}
           />
-          <Line
-            dataKey="weight"
-            type="natural"
-            stroke="var(--color-weight)"
-            strokeWidth={2}
-            dot={{
-              fill: "var(--color-weight)",
-            }}
-            activeDot={{
-              r: 6,
-            }}
-          >
-            <LabelList
-              position="top"
-              offset={12}
-              className="fill-foreground"
-              fontSize={12}
+          {/* <ChartTooltip cursor={false} content={<ChartTooltipContent />} /> */}
+            <defs>
+              <linearGradient id="fillWeight" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-weight)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-weight)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              dataKey="weight"
+              type="natural"
+              fill="url(#fillWeight)"
+              fillOpacity={0.4}
+              stroke="var(--color-weight)"
+              stackId="a"
             />
-          </Line>
-        </LineChart>
+        </AreaChart>
       </ChartContainer>
     </div>
   )
