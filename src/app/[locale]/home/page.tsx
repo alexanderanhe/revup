@@ -38,6 +38,9 @@ export default async function HomePage({
       <Assessment />
       <CurrentPlan user={user} locale={locale} />
       <Stats user={user} locale={locale} />
+      <section className="grid justify-center w-full">
+        <button className="btn btn-ghost">Edit dashboard</button>
+      </section>
       {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>

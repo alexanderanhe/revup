@@ -30,7 +30,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
   const progress = plan?.progress ?? 0;
-  const workouts_done = plan?.workouts_done ?? 0;
+  const workout_days_done = plan?.workout_days_done ?? 0;
 
   return (
     <>
@@ -60,12 +60,12 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
               { " " }
               ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
             </span>
-            <span className="text-xs">{ t("workoutsDone", { workouts_done }) }</span>
+            {/* <span className="text-xs">{ t("workoutsDone", { workout_days_done }) }</span> */}
           </div>
           <ProgressCircle
             type="success"
             progress={progress}
-            icon={`${workouts_done}/${plan.days}`}
+            icon={`${workout_days_done}/${plan.days}`}
           />
         </section>
         <ImageWorkout

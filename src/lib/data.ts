@@ -478,14 +478,30 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
     if (!user) {
       return null;
     }
-    const { rows, rowCount } = await sql`
+    const { rows, rowCount } = await sql<PlanDay>`
       SELECT pud.*, pl.name, pl.comments,
-      ((
+      (
+        SELECT COUNT(plans_user_workouts_complex.id)
+        FROM workouts_complex
+        JOIN plans ON workouts_complex.id=ANY((Array[plans.workouts_complex])::uuid[])
+        LEFT JOIN plans_user ON plans_user.plan_id=plans.id
+        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.plan_id=plans.id
+          AND plans_user_workouts_complex.user_id=plans_user.user_id AND plans_user_workouts_complex.day=pud.day
+          AND plans_user_workouts_complex.workout_complex_id=workouts_complex.id
+        WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
+        AND ${plan.body_zones[((plan?.current_day ?? 1) - 1) % plan.body_zones.length][1]} = ANY((Array[workouts_complex.body_zones])::uuid[])
+      ) as workouts_done,
+      (
         SELECT SUM(COALESCE(workouts_complex.sets, 1))
         FROM workouts_complex
-        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.workout_complex_id=workouts_complex.id
-        WHERE plan_id=pud.plan_id AND user_id=pud.user_id AND day=pud.day
-      )) as percentage,
+        JOIN plans ON workouts_complex.id=ANY((Array[plans.workouts_complex])::uuid[])
+        LEFT JOIN plans_user ON plans_user.plan_id=plans.id
+        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.plan_id=plans.id
+          AND plans_user_workouts_complex.user_id=plans_user.user_id AND plans_user_workouts_complex.day=pud.day
+          AND plans_user_workouts_complex.workout_complex_id=workouts_complex.id
+        WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
+        AND ${plan.body_zones[((plan?.current_day ?? 1) - 1) % plan.body_zones.length][1]} = ANY((Array[workouts_complex.body_zones])::uuid[])
+      ) as workouts_total,
       CASE
         WHEN pud.day = pu.current_day THEN true
         ELSE false
@@ -504,7 +520,10 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
     const maxLength = (plan.body_zones.length - 1) || 1;
     const length = Math.min(rest, maxLength);
     return [
-      ...rows,
+      ...rows.map((row: PlanDay) => ({
+        ...row,
+        percentage: Math.round((row.workouts_done / row.workouts_total) * 100)
+      })),
       ...Array.from({ length }, (_, d) => ({day: d + rowCount + 1}))
     ] as PlanDay[];
   } catch (error) {

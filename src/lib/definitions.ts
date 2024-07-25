@@ -130,6 +130,8 @@ export type PlanDay = {
   plan_id: UUID;
   user_id: UUID;
   name?: string;
+  workouts_done: number;
+  workouts_total: number;
   percentage: number;
   started_at?: string;
   completed: boolean;
@@ -154,7 +156,7 @@ export type Plan = SimplePlan & {
   workingDays?: PlanDay[];
   custom_email?: string;
   progress?: number;
-  workouts_done?: number;
+  workout_days_done?: number;
 }
 
 export type Exercise = {
