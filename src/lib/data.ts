@@ -496,9 +496,6 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
         FROM workouts_complex
         JOIN plans ON workouts_complex.id=ANY((Array[plans.workouts_complex])::uuid[])
         LEFT JOIN plans_user ON plans_user.plan_id=plans.id
-        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.plan_id=plans.id
-          AND plans_user_workouts_complex.user_id=plans_user.user_id AND plans_user_workouts_complex.day=pud.day
-          AND plans_user_workouts_complex.workout_complex_id=workouts_complex.id
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
         AND ${plan.body_zones[((plan?.current_day ?? 1) - 1) % plan.body_zones.length][1]} = ANY((Array[workouts_complex.body_zones])::uuid[])
       ) as workouts_total,

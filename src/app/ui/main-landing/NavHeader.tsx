@@ -26,18 +26,18 @@ export default async function NavHeader() {
         <div className="flex items-center">
           <NavLogo />
         </div>
-        <div className="flex flex-grow justify-end lg:hidden">
+        <div className="flex justify-end grow md:grow-0 md:order-last">
           <LoginBtn />
         </div>
-        <div className="dropdown dropdown-bottom dropdown-end">
-          <div tabIndex={0} role="button" className="flex lg:hidden items-center p-1 text-white hover:text-[#7f2784] focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+        <div className="dropdown dropdown-bottom dropdown-end md:dropdown-open md:grow">
+          <div tabIndex={0} role="button" className="flex md:hidden items-center p-1 text-white hover:text-[#7f2784] focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
             <svg className="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <title>Menu</title>
               <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
             </svg>
           </div>
-          <div tabIndex={0} className="w-full flex-grow lg:flex lg:items-center min-w-80 lg:w-auto max-lg:base-200 max-lg:dropdown-content mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0" id="nav-content">
-            <ul className="list-reset lg:flex justify-end flex-1 items-center">
+          <div tabIndex={0} className="w-full grow md:flex md:justify-end min-w-80 md:!static base-200 dropdown-content mt-2 md:mt-0 bg-transparent text-black p-4 md:p-0" id="nav-content">
+            <ul className="list-reset md:flex justify-end flex-1 items-center">
               { navigationKeys.map((key) => (
                 <Nav key={key} hash={key}>{ t(`navigation.${key}`) }</Nav>
               ))}
@@ -49,9 +49,9 @@ export default async function NavHeader() {
                   { tAuth("signUp" )}
                 </OpenLoginDialog>
               </li>}
-              <li className="max-lg:hidden">
+              {/* <li className="hidden md:list-item">
                 <LoginBtn />
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

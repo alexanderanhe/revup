@@ -62,7 +62,7 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-2 tall:grid-cols-1 tall:grid-rows-[auto_auto_1fr] h-full [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className='grid grid-cols-1 justify-center relative'>
+        <div className={"grid grid-cols-1 justify-center relative"}>
           {slide.image && (
             <div className="box w-full">
               <Image
@@ -72,12 +72,10 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
               />
             </div>
           )}
-          { completed && <div className="hidden tall:grid place-items-center absolute inset-0 w-full h-full uppercase font-semibold text-xl p-4">
-            <div className="flex items-center gap-2">
-              <CheckIcon className="size-20 drop-shadow-xl text-success" />
-            </div>
+          { completed && <div className="hidden tall:grid place-items-end absolute inset-0 w-full h-full uppercase font-semibold text-xl p-5">
+            <CheckIcon className="size-20 drop-shadow-xl text-success" />
           </div>}
-          <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-center tall:place-items-end w-full h-[40svh] aspect-square p-5">
+          <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-center tall:place-items-end w-full h-full aspect-square p-5">
             <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square self-start">
               <InformationCircleIcon className="size-5" />
             </Link>
@@ -104,7 +102,9 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
             )}
           </div>
         </div>
-        <div className='content-grid space-y-4 order-first col-span-2 tall:order-none tall:col-auto'><h3 className="max-h-20 text-center line-clamp-2 z-[1]">{ slide.title }</h3></div>
+        <div className='content-grid space-y-4 order-first col-span-2 tall:order-none tall:col-auto'>
+          <h3 className="max-h-20 text-center line-clamp-2 tall:line-clamp-1 z-[1]">{ slide.title }</h3>
+        </div>
         <div className='content-grid space-y-4'>
           <section className="place-items-center"><p>
             {/* { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` } */}
