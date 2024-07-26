@@ -101,7 +101,7 @@ export default async function WorkoutItemPage({
         </ul>
       </section>
       <section className="w-full p-0">
-        <div className="flex flex-row flex-warp gap-2">
+        <div className="flex flex-warp gap-2 w-full">
           { workout?.tags.map(([tag, type]) => (
             <div key={`tag${tag}${type}`} className={clsx("badge font-semibold p-3", classNames?.[type] ?? '')}>
               <span className="[&::first-letter]:capitalize">{ tag }</span>
