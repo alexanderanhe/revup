@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Drawer } from "vaul";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from "../Card";
 import { cn } from "@/lib/utils";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Menu } from "lucide-react";
 
 type DroppableItem = {
   id: number;
@@ -21,12 +21,12 @@ export default function EditDashboard() {
     { id: 2, name: 'More widgets', onHome: false },
   ]);
   const [items, setItems] = useState<DroppableItem[]>([
-    { id: 1, name: 'item1', category: 1 },
-    { id: 2, name: 'item2', category: 1 },
-    { id: 3, name: 'item3', category: 1 },
-    { id: 4, name: 'item4', category: 2 },
-    { id: 5, name: 'item5', category: 2 },
-    { id: 6, name: 'item6', category: 2 },
+    { id: 1, name: 'Workout Schedule', category: 1 },
+    { id: 2, name: 'Recommendations', category: 1 },
+    { id: 3, name: 'My weight', category: 1 },
+    { id: 4, name: 'Rest duration', category: 2 },
+    { id: 5, name: 'Exercising muscle groups', category: 2 },
+    { id: 6, name: 'Workout duration', category: 2 },
   ]);
 
   const rearangeArr = (arr: DroppableItem[], sourceIndex: number, destIndex: number) => {
@@ -96,7 +96,7 @@ export default function EditDashboard() {
           <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[50]" />
           <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] bg-base-100 z-[50] mt-24">
             {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" /> */}
-            <div className="flex flex-col overflow-auto rounded-t-[10px] flex-1 py-5">
+            <div className="flex flex-col overflow-auto rounded-t-[10px] flex-1 border-t py-5">
                 <div className="max-w-md mx-auto space-y-4">
                   <Drawer.Title className="font-medium mb-4">
                     Edit dashboard
@@ -111,7 +111,7 @@ export default function EditDashboard() {
                               draggableId={`category-${category.id}`}
                               key={`category-${category.id}`}
                               index={index}
-                              // isDragDisabled={category.isDroppable}
+                              isDragDisabled={false}
                             >
                               {(parentProvider) => (
                                 <div
@@ -138,6 +138,7 @@ export default function EditDashboard() {
                                                 draggableId={item.id.toString()}
                                                 key={item.id}
                                                 index={index}
+                                                isDragDisabled={!category.onHome}
                                               >
                                                 {(provided) => (
                                                   <div
@@ -145,13 +146,14 @@ export default function EditDashboard() {
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                   >
-                                                    <Card className="grid-cols-[1fr_auto] p-2">
-                                                      <Item item={item} />
+                                                    <Card className="grid-cols-[auto_1fr_auto] p-2">
                                                       <button
                                                         onClick={handleClick(item.id, category.onHome ? 2 : 1)}
                                                         className={cn("btn btn-xs btn-circle", category?.onHome && "btn-error", !category?.onHome && "btn-success")}>
                                                         { category?.onHome ? <Minus size={24} /> : <Plus size={24} /> }
                                                       </button>
+                                                      <Item item={item} />
+                                                      { category.onHome && (<button className="btn btn-sm btn-ghost text-base-200"><Menu size={24} /></button>)}
                                                     </Card>
                                                   </div>
                                                 )}
@@ -174,10 +176,13 @@ export default function EditDashboard() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      console.log(items)
+                      setOpen(false)
+                    }}
                     className="rounded-md mb-6 w-full bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
                   >
-                    Click to close
+                    Save
                   </button>
                 </div>
               </div>

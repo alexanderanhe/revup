@@ -2,6 +2,8 @@ import { APIErrorCode, Client } from "@notionhq/client";
 import { VercelPoolClient, db } from '@vercel/postgres';
 import { NotionTableProperties, tableWorkoutsProperties, tableWorkoutsComplexProperties, tablePlansProperties } from "@/lib/definitions";
 import { createUserPlan, getUserPlans, setAsCurrentPlan } from "@/lib/data";
+import { translaterService } from "./services/translater";
+import { SourceLanguageCode, TargetLanguageCode } from "deepl-node";
 
 // Initializing a client
 const notion = new Client({
@@ -10,6 +12,7 @@ const notion = new Client({
 
 export class NotionSync {
   origin: string = "cron";
+  langs: string[] = ['es', 'en'];
 
   constructor(origin: string) {
     this.origin = origin;
@@ -97,6 +100,45 @@ export class NotionSync {
     }
   }
 
+  async getTranslation(text: string, target: string = 'en', source: string = 'es') {
+    const targetLanguage = target === 'en' ? 'en-US' : target as TargetLanguageCode;
+    return await translaterService(text, targetLanguage, source as SourceLanguageCode);
+  }
+  async objectTranslation(
+    currText: Record<string, string>,
+    lang: string,
+    allTexts: Record<string, string>[],
+    notion_id: string,
+    table: NotionTableProperties
+  ): Promise<Record<string, string>> {
+    let updateContents: {[key: string]: any} = {};
+    const newValues = Object.fromEntries(
+      await Promise.all(Object.keys(currText).map(async (key: string) => {
+        if (!currText[key]) {
+          const from = allTexts.find((text) => text[key]);
+          if (from && from[key]) {
+            const content = await this.getTranslation(from[key], lang, from.lang);
+            const [tableKey] = Object.entries(table).find(([_, tableValue]) => tableValue === `${key}_${lang}`)?.flat() ?? [];
+            if (tableKey) {
+              updateContents[tableKey] = {
+                type: "rich_text",
+                rich_text: [{ text: { content } }]
+              }
+            }
+            return [ key, content ];
+          }
+        }
+        return [ key, currText[key] ?? "" ];
+      }) as any[])
+    );
+    if (Object.keys(updateContents).length) {
+      await this.updatePage(notion_id, {
+        ...updateContents
+      });
+    }
+    return newValues;
+  }
+
   // TODO: Implement the function
   // async function getWorkoutPage(workout_id: string) {}
   async getWorkoutsPage(client: VercelPoolClient) {
@@ -165,26 +207,36 @@ export class NotionSync {
               image_banner=$3::jsonb,
               images=$4::jsonb;
         `, [ notion_id, tags, imageBannerJson, imagesJson ]);
+
+        const langsText = this.langs.map((lang) => ({
+          name: rest[`name_${lang}`],
+          description: rest[`description_${lang}`],
+          instructions: rest[`instructions_${lang}`],
+          warnings: rest[`warnings_${lang}`],
+          lang
+        }));
   
-        ['es', 'en'].forEach(async (lang) => {
+        langsText.forEach(async ({ lang, ...text }, _, lTexts) => {
+          const { name, description, instructions, warnings } = await this.objectTranslation(text, lang, lTexts, notion_id, tableWorkoutsProperties);
+
           const { rowCount } = await client.sql`SELECT * FROM workouts_lang WHERE workout_id=${notion_id} AND language_id=${lang}`;
           if (!rowCount) {
             await client.sql`INSERT INTO workouts_lang (name, description,instructions,warnings,language_id, workout_id)
               VALUES (
-                ${<string>rest[`name_${lang}`]},
-                ${<string>rest[`description_${lang}`]},
-                ${<string>rest[`instructions_${lang}`]},
-                ${<string>rest[`warnings_${lang}`]},
+                ${<string>name},
+                ${<string>description},
+                ${<string>instructions},
+                ${<string>warnings},
                 ${lang},
                 ${notion_id}
               );
             `;
           } else {
             await client.sql`UPDATE workouts_lang
-              SET name=${<string>rest[`name_${ lang }`]},
-                  description=${<string>rest[`description_${ lang }`]},
-                  instructions=${<string>rest[`instructions_${ lang }`]},
-                  warnings=${<string>rest[`warnings_${ lang }`]}
+              SET name=${<string>name},
+                  description=${<string>description},
+                  instructions=${<string>instructions},
+                  warnings=${<string>warnings}
               WHERE workout_id=${notion_id} AND language_id=${ lang };
             `;
           }
@@ -442,21 +494,29 @@ export class NotionSync {
               type=$8::text;
         `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, rest.custom_email, rest.type?.toLowerCase() ]);
   
-        ['es', 'en'].forEach(async (lang) => {
+        const langsText = this.langs.map((lang) => ({
+          name: rest[`name_${lang}`],
+          comments: rest[`comments_${lang}`],
+          lang
+        }));
+  
+        langsText.forEach(async ({lang, ...text}, _, lTexts) => {
+          const { name, comments } = await this.objectTranslation(text, lang, lTexts, notion_id, tableWorkoutsProperties);
+
           const { rowCount } = await client.sql`SELECT * FROM plans_lang WHERE plan_id=${notion_id} AND language_id=${lang}`;
           if (!rowCount) {
             await client.sql`INSERT INTO plans_lang (name, comments,language_id, plan_id)
               VALUES (
-                ${<string>rest[`name_${lang}`]},
-                ${<string>rest[`comments_${lang}`]},
+                ${<string>name},
+                ${<string>comments},
                 ${lang},
                 ${notion_id}
               );
             `;
           } else {
             await client.sql`UPDATE plans_lang
-              SET name=${rest[`name_${ lang }`]},
-                  comments=${rest?.[`comments_${ lang }`] ?? null}
+              SET name=${name},
+                  comments=${comments ?? null}
               WHERE plan_id=${notion_id} AND language_id=${ lang };
             `;
           }

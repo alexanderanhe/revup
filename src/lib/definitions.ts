@@ -235,6 +235,8 @@ export const tableWorkoutsComplexProperties: NotionTableProperties = {
 export const tablePlansProperties: NotionTableProperties = {
   Nombre_es: "name_es",
   Nombre_en: "name_en",
+  Comentarios_es: "comments_es",
+  Comentarios_en: "comments_en",
   "Ejercicios Complex": "workouts_complex",
   "Orden Rutina": "body_zones",
   Dias: "days",

@@ -66,7 +66,7 @@ const Day = ({ title, body_zone, progress, ...rest}: DayProps) => {
 
   return (
     <>
-      <ProgressCircle progress={progressVal} {...rest} />
+      <div><ProgressCircle progress={progressVal} {...rest} /></div>
       <div className="flex flex-col justify-center font-medium w-full">
         <span className="text-xs">{ title }</span>
         <span className="font-semibold [&::first-letter]:uppercase">
