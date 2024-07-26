@@ -7,6 +7,7 @@ import Stats from "@/app/ui/home/Stats";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
 import { APPCOOKIES, User } from "@/lib/definitions";
 import CurrentPlan from "@/app/ui/home/CurrentPlan";
+import EditDashboard from "@/app/ui/dialogs/EditDashboard";
 
 export default async function HomePage({
   params: { locale }
@@ -38,9 +39,7 @@ export default async function HomePage({
       <Assessment />
       <CurrentPlan user={user} locale={locale} />
       <Stats user={user} locale={locale} />
-      <section className="grid justify-center w-full">
-        <button className="btn btn-ghost">Edit dashboard</button>
-      </section>
+      <EditDashboard />
       {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>

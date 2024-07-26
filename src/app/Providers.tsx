@@ -9,5 +9,11 @@ export default function Providers({
 }: {
   children: React.ReactNode
 }) {
-  return <Provider store={store}><SessionProvider>{children}</SessionProvider></Provider>
+  return (
+    <Provider store={store}>
+      <SessionProvider>
+        {children}
+      </SessionProvider>
+    </Provider>
+  )
 }
