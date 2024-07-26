@@ -7,7 +7,7 @@ import Stats from "@/app/ui/home/Stats";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
 import { APPCOOKIES, User } from "@/lib/definitions";
 import CurrentPlan from "@/app/ui/home/CurrentPlan";
-import EditDashboard from "@/app/ui/dialogs/EditDashboard";
+import EditDashboard from "@/app/ui/home/EditDashboard";
 
 export default async function HomePage({
   params: { locale }

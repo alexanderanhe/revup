@@ -1,6 +1,6 @@
 "use client"
 
-import { Area, AreaChart, CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, ComposedChart, LabelList, Line, LineChart, XAxis } from "recharts"
 import {
   ChartConfig,
   ChartContainer,
@@ -9,22 +9,47 @@ import {
 } from "@/app/ui/utils/shadcn-ui/chart"
 
 import { WeightData } from "@/lib/definitions";
+import { cn } from "@/lib/utils";
 
 export default function WeightChart({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
+  if (!chartData) return null;
+
   const chartConfig = {
     weight: {
       label: translate?.weight ?? "-",
       color: "oklch(var(--p))",
     },
+    weightLine: {
+      label: translate?.weight ?? "-",
+      color: "oklch(var(--p))",
+    },
   } satisfies ChartConfig;
+  const lastWeight = chartData?.at(-1)?.weight ?? 0;
+  const totalLoss = chartData[0]?.weight - lastWeight;
+  const lastLoss = (chartData.at(-2)?.weight ?? 0) - lastWeight;
+  const data = [...chartData, { date: new Date(), weight: lastWeight }]
+    .map((d) => ({ ...d, weightLine: d.weight }));
 
   return (
     <div className="w-full overflow-y-auto space-y-1 py-2">
       <div className="font-semibold">{ translate?.title ?? "-" }</div>
+      <div className="grid grid-cols-3 justify-between">
+        <span>{ translate?.currWeight }: { chartData.at(-1)?.weight } kg</span>
+        {chartData.length > 1 && (
+          <div className="tooltip" data-tip={translate?.totalLossTooltip}>
+            <span className={cn(totalLoss>0 ? "text-success" : "text-error")}>{ totalLoss }</span>
+          </div>
+        )}
+        {chartData.length > 1 && (
+          <div className="tooltip" data-tip={translate?.lastLossTooltip}>
+            <span className={cn(lastLoss>0 ? "text-success" : "text-error")}>{ lastLoss }</span>
+          </div>
+        )}
+      </div>
       <ChartContainer config={chartConfig}>
-        <AreaChart
+        <ComposedChart
           accessibilityLayer
-          data={[...chartData ?? [], { date: new Date(), weight: chartData?.at(-1)?.weight ?? 0 }]}
+          data={data}
           margin={{
             left: 12,
             right: 12,
@@ -65,7 +90,26 @@ export default function WeightChart({ data: chartData, translate }: { data: Weig
               stroke="var(--color-weight)"
               stackId="a"
             />
-        </AreaChart>
+            <Line
+              dataKey="weightLine"
+              type="natural"
+              stroke="var(--color-weight)"
+              strokeWidth={2}
+              dot={{
+                fill: "var(--color-weight)",
+                stroke: "var(--color-weight)",
+                strokeWidth: 2,
+              }}
+              activeDot={{ r: 6 }}
+            >
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Line>
+        </ComposedChart>
       </ChartContainer>
     </div>
   )

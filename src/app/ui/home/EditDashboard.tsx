@@ -4,18 +4,21 @@ import { useState } from "react";
 import { Drawer } from "vaul";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Card from "../Card";
+import { cn } from "@/lib/utils";
+import { Plus, Minus } from "lucide-react";
 
 type DroppableItem = {
   id: number;
   name: string;
   category?: number;
+  onHome?: boolean;
 };
 
 export default function EditDashboard() {
   const [open, setOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<DroppableItem[]>([
-    { id: 1, name: 'Catergory 1' },
-    { id: 2, name: 'Category 2' },
+    { id: 1, name: 'You can change the order of widgets on the Dashboard by pulling the icon on the right', onHome: true },
+    { id: 2, name: 'More widgets', onHome: false },
   ]);
   const [items, setItems] = useState<DroppableItem[]>([
     { id: 1, name: 'item1', category: 1 },
@@ -65,9 +68,23 @@ export default function EditDashboard() {
     }
   };
 
+  const handleClick = (itemId: number, newCategory: number) => () => {
+    setItems(
+      items.map((i) =>
+        i.id === itemId
+          ? {
+              ...i,
+              category: newCategory,
+            }
+          : i
+      )
+    )
+  }
+
   return (
     <section className="grid justify-center w-full">
       <DragDropContext onDragEnd={onDragEnd}>
+        
         <Drawer.Root
           dismissible={false}
           open={open} 
@@ -82,18 +99,19 @@ export default function EditDashboard() {
             <div className="flex flex-col overflow-auto rounded-t-[10px] flex-1 py-5">
                 <div className="max-w-md mx-auto space-y-4">
                   <Drawer.Title className="font-medium mb-4">
-                    Unstyled drawer for React.
+                    Edit dashboard
                   </Drawer.Title>
                   <div>
                     {/* type="droppable" is very important here. Look at the docs. */}
                     <Droppable droppableId="Categories" type="droppableItem">
                       {(provided) => (
-                        <div ref={provided.innerRef}>
+                        <div ref={provided.innerRef} className="space-y-4">
                           {categories.map((category, index) => (
                             <Draggable
                               draggableId={`category-${category.id}`}
                               key={`category-${category.id}`}
                               index={index}
+                              // isDragDisabled={category.isDroppable}
                             >
                               {(parentProvider) => (
                                 <div
@@ -129,8 +147,10 @@ export default function EditDashboard() {
                                                   >
                                                     <Card className="grid-cols-[1fr_auto] p-2">
                                                       <Item item={item} />
-                                                      <button className="btn btn-square">
-                                                        ...
+                                                      <button
+                                                        onClick={handleClick(item.id, category.onHome ? 2 : 1)}
+                                                        className={cn("btn btn-xs btn-circle", category?.onHome && "btn-error", !category?.onHome && "btn-success")}>
+                                                        { category?.onHome ? <Minus size={24} /> : <Plus size={24} /> }
                                                       </button>
                                                     </Card>
                                                   </div>

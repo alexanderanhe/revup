@@ -51,6 +51,9 @@
       "weightChart": {
         "title": "Mi peso",
         "description": "Historial de peso",
+        "currWeight": "Peso actual",
+        "totalLossTooltip": "El valor actual muestra la variación de los datos a lo largo de todo el tiempo, frente a la primera medición.",
+        "lastLossTooltip": "El valor actual muestra la variación de los datos a lo largo de todo el tiempo, frente a la última medición.",
         "weight": "Peso",
         "date": "Fecha"
       }
