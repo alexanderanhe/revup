@@ -25,27 +25,28 @@ export type UserInfo = {
 }
 
 export type Question = {
-  key: string,
-  title?: string,
-  shortTitle?: string,
-  description?: string,
-  options?: string[]
+  key: string;
+  title?: string;
+  shortTitle?: string;
+  description?: string;
+  options?: string[];
   inputs?: {
-    name: string,
-    type: string,
-    placeholder: string,
-    pattern?: string,
-    inputmode?: string,
-    optional: boolean
+    name: string;
+    type: string;
+    placeholder: string;
+    pattern?: string;
+    inputmode?: string;
+    optional: boolean;
   }[]
   multiple?: [string, boolean][]
 }
 
 export type MenuNavLinks = {
-  name: string,
-  href: string,
-  current: string[],
-  Icon?: any
+  name: string;
+  href: string;
+  current: string[];
+  Icon?: any;
+  animate?: string;
 }
 
 export type CalendarContent = {

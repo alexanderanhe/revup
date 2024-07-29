@@ -4,6 +4,7 @@ import { Link, usePathname } from "@/navigation";
 import { MenuNavLinks } from "@/lib/definitions"
 import { menuNavLinks } from "@/lib/nav"
 import { clsx } from "clsx"
+import { cn } from "@/lib/utils";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function Footer() {
             gridCols > 1 && colStartClasses[gridCols - 1],
           )
         }>
-          { navLinks.map(({name, href, Icon}: MenuNavLinks) => (
+          { navLinks.map(({name, href, Icon, animate}: MenuNavLinks) => (
             <Link
               href={href}
               key={`navLinkFooter${href}`}
@@ -28,7 +29,7 @@ export default function Footer() {
                 !pathname.startsWith(href) && "btn-ghost [&>span]:hidden p-3",
               )}
             >
-              <Icon className="size-5" />
+              <Icon className={cn("size-5", pathname.startsWith(href) && animate)} />
               <span className="text-xs whitespace-nowrap">{name}</span>
             </Link>
           ))}

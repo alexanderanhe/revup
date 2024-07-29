@@ -33,8 +33,11 @@ export default function WeightChart({ data: chartData, translate }: { data: Weig
   return (
     <div className="w-full overflow-y-auto space-y-1 py-2">
       <div className="font-semibold">{ translate?.title ?? "-" }</div>
-      <div className="grid grid-cols-3 justify-between">
-        <span>{ translate?.currWeight }: { chartData.at(-1)?.weight } kg</span>
+      <div className={cn(
+        "grid justify-between",
+        chartData.length > 1 && "grid-cols-3",
+      )}>
+        <div>{ translate?.currWeight }: { chartData.at(-1)?.weight } kg</div>
         {chartData.length > 1 && (
           <div className="tooltip" data-tip={translate?.totalLossTooltip}>
             <span className={cn(totalLoss>0 ? "text-success" : "text-error")}>{ totalLoss }</span>
