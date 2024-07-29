@@ -7,27 +7,30 @@ import Card from "../Card";
 import { cn } from "@/lib/utils";
 import { Plus, Minus, Menu } from "lucide-react";
 
-type DroppableItem = {
+export type DroppableItem = {
   id: number;
   name: string;
   category?: number;
   onHome?: boolean;
 };
 
-export default function EditDashboard() {
+export default function EditDashboard({ dashboardItems }: { dashboardItems: DroppableItem[] }) {
   const [open, setOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<DroppableItem[]>([
     { id: 1, name: 'You can change the order of widgets on the Dashboard by pulling the icon on the right', onHome: true },
     { id: 2, name: 'More widgets', onHome: false },
   ]);
-  const [items, setItems] = useState<DroppableItem[]>([
-    { id: 1, name: 'Workout Schedule', category: 1 },
-    { id: 2, name: 'Recommendations', category: 1 },
-    { id: 3, name: 'My weight', category: 1 },
-    { id: 4, name: 'Rest duration', category: 2 },
-    { id: 5, name: 'Exercising muscle groups', category: 2 },
-    { id: 6, name: 'Workout duration', category: 2 },
-  ]);
+  const [items, setItems] = useState<DroppableItem[]>(
+    dashboardItems
+  //   [
+  //   { id: 1, name: 'Workout Schedule', category: 1 },
+  //   { id: 2, name: 'Recommendations', category: 1 },
+  //   { id: 3, name: 'My weight', category: 1 },
+  //   { id: 4, name: 'Rest duration', category: 2 },
+  //   { id: 5, name: 'Exercising muscle groups', category: 2 },
+  //   { id: 6, name: 'Workout duration', category: 2 },
+  // ]
+);
 
   const rearangeArr = (arr: DroppableItem[], sourceIndex: number, destIndex: number) => {
     const arrCopy = [...arr];

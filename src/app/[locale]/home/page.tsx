@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { auth } from "@/auth";
 
-import Stats from "@/app/ui/home/Stats";
+import Dashboard from "@/app/ui/home/Dashboard";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
 import { APPCOOKIES, User } from "@/lib/definitions";
 import CurrentPlan from "@/app/ui/home/CurrentPlan";
@@ -37,7 +37,7 @@ export default async function HomePage({
     <>
       <Assessment />
       <CurrentPlan user={user} locale={locale} />
-      <Stats user={user} locale={locale} />
+      <Dashboard user={user} locale={locale} />
       {/* <section className="grid grid-cols-autofit">
         <div className="card shadow-xl image-full">
           <figure>

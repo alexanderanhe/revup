@@ -21,6 +21,7 @@ const config: Config = {
         'l10': 'l10 3s infinite;',
         'l11': 'l11 0.5s ease-in;',
         'shake': 'shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite',
+        'infinite-scroll': 'infinite-scroll 25s linear infinite',
       },
       keyframes: {
         l10: {
@@ -42,6 +43,10 @@ const config: Config = {
           '40%, 60%': {
               transform: 'translate3d(4px, 0, 0)'
           }
+        },
+        'infinite-scroll': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-100%)' },
         }
       },
       colors: {

@@ -47,8 +47,19 @@
     "loggedBtn": "Enter"
   },
   "Home": {
-    "stats": {
-      "weightChart": {
+    "dashboard": {
+      "WorkoutSchedule": {
+        "title": "My workout schedule",
+        "description": "Track your progress and plan your workouts",
+        "nextWorkout": "Next workout",
+        "noWorkouts": "No workouts scheduled"
+      },
+      "Recommendations": {
+        "title": "Recommendations",
+        "description": "Workouts recommended for you",
+        "noRecommendations": "No recommendations at this time"
+      },
+      "MyWeight": {
         "title": "My weight",
         "description": "Weight history",
         "currWeight": "Current weight",
@@ -56,6 +67,20 @@
         "lastLossTooltip": "The current value shows the variation of the data over time, compared to the last measurement.",
         "weight": "Weight",
         "date": "Date"
+      },
+      "RestDuration": {
+        "title": "Rest duration",
+        "description": "Track your rest time between sets",
+        "restDuration": "Rest duration",
+        "restDuration:unit": "s"
+      },
+      "ExercisingMuscleGroups": {
+        "title": "Exercising muscle groups",
+        "description": "Select the muscle groups you want to work on in your routine."
+      },
+      "WorkoutDuration": {
+        "title": "Workout duration",
+        "description": "Set the duration of your workout."
       }
     }
   },

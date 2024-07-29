@@ -79,15 +79,20 @@ export async function getUser(email: string): Promise<any> {
 
 export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   try {
-    const userInfo = await sql<User>`
+    type UserInfoMod = Omit<UserInfo, 'dashboard'> & { dashboard: string | null }
+    const { rows, rowCount } = await sql<UserInfoMod>`
       SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment,
         CASE WHEN ua.gender = 'M' THEN 'male' WHEN ua.gender = 'F' THEN 'female' ELSE 'other' END AS gender,
         TO_CHAR(ua.birthdate, 'yyyy-mm-dd') as birthdate, ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
       FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${user_id}`;
-    if (userInfo.rowCount === 0) {
+    if (rowCount === 0) {
       return null
     }
-    return userInfo.rows[0] as UserInfo;
+    const userInfo = rows[0];
+    return {
+      ...userInfo,
+      dashboard: userInfo.dashboard?.split(';') ?? ['MyWeight', 'Recommendations']
+    } as UserInfo;
   } catch (error) {
     console.error('Failed to fetch user:', error);
     return null;
@@ -111,8 +116,10 @@ export async function getSession() {
   return session.user;
 }
 
-export async function getStatsWeight(user_id?: string | null): Promise<WeightData[] | null> {
+export async function getStatsWeight(): Promise<WeightData[] | null> {
   try {
+    const session = await auth();
+    const user_id = session?.user?.id;
     if (!user_id) {
       throw new Error('User session not found.');
     }

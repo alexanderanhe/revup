@@ -47,8 +47,19 @@
     "loggedBtn": "Entrar"
   },
   "Home": {
-    "stats": {
-      "weightChart": {
+    "dashboard": {
+      "WorkoutSchedule": {
+        "title": "Mi horario de entrenamiento",
+        "description": "Sigue tu progreso y planifica tus entrenamientos",
+        "nextWorkout": "Próximo entrenamiento",
+        "noWorkouts": "No hay entrenamientos programados"
+      },
+      "Recommendations": {
+        "title": "Recomendaciones",
+        "description": "Entrenamientos recomendados para ti",
+        "noRecommendations": "No hay recomendaciones en este momento"
+      },
+      "MyWeight": {
         "title": "Mi peso",
         "description": "Historial de peso",
         "currWeight": "Peso actual",
@@ -56,6 +67,20 @@
         "lastLossTooltip": "El valor actual muestra la variación de los datos a lo largo de todo el tiempo, frente a la última medición.",
         "weight": "Peso",
         "date": "Fecha"
+      },
+      "RestDuration": {
+        "title": "Duración de descanso",
+        "description": "Establezca la duración de los descansos entre series y ejercicios.",
+        "restDuration": "Duración de descanso",
+        "restDuration:unit": "s"
+      },
+      "ExercisingMuscleGroups": {
+        "title": "Grupos musculares en ejercicio",
+        "description": "Seleccione los grupos musculares que desea trabajar en su rutina."
+      },
+      "WorkoutDuration": {
+        "title": "Duración del entrenamiento",
+        "description": "Establezca la duración de su entrenamiento."
       }
     }
   },

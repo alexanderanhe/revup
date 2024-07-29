@@ -11,7 +11,7 @@ import {
 import { WeightData } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
 
-export default function WeightChart({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
+export default function MyWeight({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
   if (!chartData) return null;
 
   const chartConfig = {
