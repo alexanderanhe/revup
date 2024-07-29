@@ -2,6 +2,7 @@ import { User } from "@/lib/definitions";
 import { getTranslations } from "next-intl/server";
 import WeightChart from "@/app/ui/home/WeightChart";
 import { getStatsWeight } from "@/lib/data";
+import EditDashboard from "@/app/ui/home/EditDashboard";
 
 export default async function Stats ({ user, locale }: { user?: User, locale: string}) {
   if (!user) {
@@ -12,6 +13,7 @@ export default async function Stats ({ user, locale }: { user?: User, locale: st
   return (
     <>
       <WeightChart translate={ t.raw("weightChart")} data={weightData} />
+      <EditDashboard />
       {/* <section>
         <h2>Weekly stats</h2>
         <div className="grid grid-cols-2 grid-rows-3 w-full gap-2">
