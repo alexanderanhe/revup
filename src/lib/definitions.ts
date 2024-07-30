@@ -186,6 +186,11 @@ export type FilterSearchParams = {
   tags?: string[];
 }
 
+export type FormState = {
+  form: Record<string, any>;
+  handleForm: (name: string, value: string | number) => () => void;
+}
+
 export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
 export const APPCOOKIES = {
   PWA: 'app.installpwa',

@@ -14,7 +14,6 @@ import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { UUID, WorkoutComplexParameters } from '@/lib/definitions';
 import { Link, useRouter } from '@/navigation';
 import { PAGES } from '@/lib/routes';
-import CheckIcon from '@/components/utils/icons/CheckIcon';
 import WorkoutDayForm from '@/app/ui/exercises/WorkoutDayForm';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import Metrics from './Metrics';
@@ -45,9 +44,19 @@ type SlideProps = {
 
 function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, ...slide }: SlideProps) {
   const [startRest, setStartRest] = useState<boolean>(false);
+  const [form, setForm] = useState<Record<string, any>>({
+    day,
+    workout_id: workout_id,
+    workout_complex_id: slide.id,
+    plan_id: plan_id,
+  });
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch()
   const setExercise = (state: UUID) => dispatch(set_exercise(state));
+
+  const handleForm = (name: string, value: string | number) => () => {
+    !completed && setForm({ ...form, [name]: value });
+  }
 
   const handleClick = (WorkoutHash: string | undefined) => (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -72,14 +81,17 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
               />
             </div>
           )}
-          { completed && <div className="hidden tall:grid place-items-end absolute inset-0 w-full h-full uppercase font-semibold text-xl p-5">
-            <CheckIcon className="size-20 drop-shadow-xl text-success" />
-          </div>}
           <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-center tall:place-items-end w-full h-full aspect-square p-5">
             <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square self-start">
               <InformationCircleIcon className="size-5" />
             </Link>
-            <Metrics {...workout_complex} completed={completed} startRest={startRest} setStartRest={setStartRest} />
+            <Metrics
+              {...workout_complex}
+              completed={completed}
+              startRest={startRest}
+              setStartRest={setStartRest}
+              handleForm={handleForm}
+            />
           </div>
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
             { slideIds?.[slide.index - 1] ? (
@@ -103,12 +115,12 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
           </div>
         </div>
         <div className='content-grid space-y-4 order-first col-span-2 tall:order-none tall:col-auto'>
-          <h3 className="max-h-20 text-center line-clamp-2 tall:line-clamp-1 z-[1]">{ slide.title }</h3>
+          <h3 className="max-h-20 text-center line-clamp-2 z-[1]">{ slide.title }</h3>
         </div>
         <div className='content-grid space-y-4'>
           <section className="place-items-center"><p>
             {/* { !!workout_complex.time && `${workout_complex.time} ${workout_complex.time_unit}` } */}
-            { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` }
+            {/* { !!workout_complex.weight && `${workout_complex.weight} ${workout_complex.weight_unit}` } */}
             { !!workout_complex.recommendations && ` - ${workout_complex.recommendations}` }
           </p></section>
           <WorkoutDayForm
@@ -119,6 +131,8 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
             workout_id={workout_id}
             slide_id={slide.id}
             setStartRest={setStartRest}
+            form={form}
+            handleForm={handleForm}
           />
         </div>
       </section>

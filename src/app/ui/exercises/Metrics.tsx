@@ -1,21 +1,22 @@
 'use client'
 
-import clsx from "clsx"
+import { cn } from "@/lib/utils"
 import { ClockIcon, LockClosedIcon } from "@heroicons/react/24/solid"
+import { toast } from "sonner"
+import CheckIcon from '@/components/utils/icons/CheckIcon';
 
 import ProgressCircle from "@/app/ui/utils/ProgressCircle"
 import { jersey10 } from "@/app/ui/fonts"
-import { WorkoutComplexParameters } from "@/lib/definitions"
+import { FormState, WorkoutComplexParameters } from "@/lib/definitions"
 import { useEffect, useState } from "react"
-import { toast } from "sonner"
 
 type MetricsProps = WorkoutComplexParameters & {
   completed: boolean;
   startRest?: boolean;
-  setStartRest?: (value: boolean) => void
-}
+  setStartRest?: (value: boolean) => void;
+} & Omit<FormState, 'form'>
 
-export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, completed, startRest, setStartRest}: MetricsProps) {
+export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, weight, weight_unit, completed, startRest, setStartRest, handleForm}: MetricsProps) {
   const progress = Math.trunc((sets 
     ? (sets_done ?? 0) / sets
     : (time_done ?? 0) / time) * 100);
@@ -24,20 +25,43 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
     : `${ time_done ?? 0 } / ${ time }`;
 
   return (
-    <div className="flex gap-4 w-full">
+    <div
+      style={{ gridColumn: 'full-width' } as React.CSSProperties}
+      className="flex flex-wrap xs:gap-2 w-full bg-gradient-to-t from-base-100 max-w-screen-sm mx-auto"
+    >
       {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
-      <Metric
-        title={`${reps}`}
-        subtitle={"reps"}
-        type={"info"}
-        className={clsx(!reps && "hidden")}
-      />
+      <button
+        disabled={completed}
+        onClick={handleForm('reps', reps)}
+        className={cn("btn btn-ghost size-[70px] rounded-full p-0", !reps && "hidden")}
+      >
+        <Metric
+          title={`${reps}`}
+          subtitle={"reps"}
+          type={"info"}
+          className={cn(!reps && "hidden")}
+        />
+      </button>
+      <button
+        disabled={completed}
+        onClick={handleForm('weight', weight)}
+        className={cn("btn btn-ghost size-[70px] rounded-full p-0", !weight && "hidden")}
+      >
+        <Metric
+          title={`${weight}`}
+          subtitle={weight_unit}
+          type={"info"}
+        />
+      </button>
       <Metric
         title={progressText}
         progress={progress}
         subtitle={!!reps ? "sets" : time_unit }
         type={completed ? "neutral" : ( progress > 0 ? "info" : "neutral" )}
       />
+      { completed && <div className="flex grow justify-end size-[70px] rounded-full">
+        <CheckIcon className="size-20 drop-shadow-xl text-success" />
+      </div>}
   </div>
   )
 }
@@ -54,7 +78,7 @@ const CIRCLE_SIZE = 70;
 
 function Metric({ title, subtitle, type, progress, tooltip, className }: MetricProps) {
   return (
-    <div className={clsx(!!tooltip && "tooltip tooltip-top", className)} data-tip={tooltip}>
+    <div className={cn(!!tooltip && "tooltip tooltip-top", className)} data-tip={tooltip}>
       <ProgressCircle
         progress={progress ?? 0}
         type={type}
@@ -88,7 +112,8 @@ function Timer({ time: startTime, disabled, startRest, setStartRest }: { time: n
 
   useEffect(() => {
     if (startRest) {
-      handleStart();
+      setTime([0, startTime ?? 60]);
+      setIsRunning(true);
       setStartRest && setStartRest(false);
     }
   }, [startRest]);

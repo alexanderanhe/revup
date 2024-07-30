@@ -225,6 +225,7 @@ export async function handleDashboard(
     const { dashboard } = Object.fromEntries(Array.from(formData.entries()));
     if (dashboard) {
       console.log(dashboard);
+      revalidatePath('/home');
       return 'saved';
     }
     return 'error';
