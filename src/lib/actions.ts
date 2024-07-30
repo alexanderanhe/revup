@@ -217,6 +217,21 @@ export async function handleFinishWorkoutDay(
   }
 }
 
+export async function handleDashboard(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    const { dashboard } = Object.fromEntries(Array.from(formData.entries()));
+    if (dashboard) {
+      console.log(dashboard);
+      return 'saved';
+    }
+    return 'error';
+  } catch (error) {
+    return 'error';
+  }
+}
 export async function handleHidePWABanner(
   prevState: string | null,
   formData: FormData

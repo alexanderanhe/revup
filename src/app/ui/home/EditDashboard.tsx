@@ -1,15 +1,19 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Drawer } from "vaul";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from "../Card";
 import { cn } from "@/lib/utils";
 import { Plus, Minus, Menu } from "lucide-react";
+import { useFormState } from "react-dom";
+import { handleDashboard } from "@/lib/actions";
+import SubmitButton from "../utils/SubmitButton";
 
 export type DroppableItem = {
-  id: number;
+  id: number | string;
   name: string;
+  key?: string;
   category?: number;
   onHome?: boolean;
 };
@@ -20,17 +24,8 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     { id: 1, name: 'You can change the order of widgets on the Dashboard by pulling the icon on the right', onHome: true },
     { id: 2, name: 'More widgets', onHome: false },
   ]);
-  const [items, setItems] = useState<DroppableItem[]>(
-    dashboardItems
-  //   [
-  //   { id: 1, name: 'Workout Schedule', category: 1 },
-  //   { id: 2, name: 'Recommendations', category: 1 },
-  //   { id: 3, name: 'My weight', category: 1 },
-  //   { id: 4, name: 'Rest duration', category: 2 },
-  //   { id: 5, name: 'Exercising muscle groups', category: 2 },
-  //   { id: 6, name: 'Workout duration', category: 2 },
-  // ]
-);
+  const [items, setItems] = useState<DroppableItem[]>(dashboardItems);
+  const [ formState, formAction ] = useFormState(handleDashboard, null);
 
   const rearangeArr = (arr: DroppableItem[], sourceIndex: number, destIndex: number) => {
     const arrCopy = [...arr];
@@ -71,7 +66,7 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     }
   };
 
-  const handleClick = (itemId: number, newCategory: number) => () => {
+  const handleClick = (itemId: number | string, newCategory: number) => () => {
     setItems(
       items.map((i) =>
         i.id === itemId
@@ -83,6 +78,12 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
       )
     )
   }
+
+  useEffect(() => {
+    if (formState === 'saved') {
+      setOpen(false);
+    }
+  }, [formState]);
 
   return (
     <section className="grid justify-center w-full">
@@ -156,7 +157,7 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
                                                         { category?.onHome ? <Minus size={24} /> : <Plus size={24} /> }
                                                       </button>
                                                       <Item item={item} />
-                                                      { category.onHome && (<button className="btn btn-sm btn-ghost text-base-200"><Menu size={24} /></button>)}
+                                                      { category.onHome && (<button className="btn btn-sm btn-ghost text-base-300"><Menu size={24} /></button>)}
                                                     </Card>
                                                   </div>
                                                 )}
@@ -177,16 +178,13 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
                       )}
                     </Droppable>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      console.log(items)
-                      setOpen(false)
-                    }}
-                    className="rounded-md mb-6 w-full bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                  >
-                    Save
-                  </button>
+                  <form action={formAction}>
+                    <input type="hidden" name="dashboard" value={items.filter(i => i.category === 1).map(i => i.id).join(";")}/>
+                    <SubmitButton className="rounded-md mb-6 w-full bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
+                      Save
+                    </SubmitButton>
+                    { formState === "error" && <p className="text-error">An error occured. Please try again.</p> }
+                  </form>
                 </div>
               </div>
             </Drawer.Content>
@@ -199,15 +197,15 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
 
 type ItemProps = {
   item: {
-    id: number;
+    id: number | string;
     name: string;
   };
 };
 
 function Item({ item }: ItemProps) {
   return (
-    <div>
-      {item.id} {item.name}
+    <div data-key={item.id}>
+      {item.name}
     </div>
   );
 }

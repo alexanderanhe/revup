@@ -30,14 +30,12 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
         return null;
       }
     }));
-
-    console.log(dashboardItems)
   return (
     <>
       { dashboardItems.filter((di) => di.category === 1).map(async ({ id, Component, fetchData }) => (
           <Component key={id} translate={ t_dashboard[id] } data={await fetchData()} />
       ))}
-      <EditDashboard dashboardItems={dashboardItems.map(({id, name, category}: {id: string, name: any, category: string | number}) => ({id: parseInt(id), name, category: parseInt(`${category}`)}))} />
+      <EditDashboard dashboardItems={dashboardItems.map(({id, name, category}: {id: string, name: any, category: string | number}) => ({id, name, category: parseInt(`${category}`)}))} />
     </>
   )
 }

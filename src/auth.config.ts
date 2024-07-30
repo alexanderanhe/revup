@@ -16,7 +16,6 @@ export const authConfig = {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       (session.user as User).info = await getUserInfo(user.id);
-      // console.log({ user });
       return session
     }
   },
