@@ -10,13 +10,14 @@ type SelectControlsProps = {
 } & FormState
 
 export default function SelectControls({ workout_complex, disabled, ...form }: SelectControlsProps) {
-  const hasReps = workout_complex.reps && workout_complex.weight;
+  const hasReps = workout_complex.reps;
+  const hasWeight = workout_complex.weight;
   const hasTime = workout_complex.time;
 
   return (
     <div className={cn(
       "grid place-items-center w-full",
-      hasReps && !hasTime && "grid-cols-2 gap-3",
+      hasReps && hasWeight && !hasTime && "grid-cols-2 gap-3",
     )}>
       { hasReps && (
         <RepsControl
@@ -54,13 +55,15 @@ function RepsControl({ reps, weight, weight_unit, disabled, ...formState }: { re
         disabled={disabled}
         {...formState}
       />
-      <Select
-        name="weight"
-        data={dataWeight}
-        unit={weight_unit}
-        disabled={disabled}
-        {...formState}
-      />
+      { weight && (
+        <Select
+          name="weight"
+          data={dataWeight}
+          unit={weight_unit}
+          disabled={disabled}
+          {...formState}
+        />
+      )}
     </>
   )
 }
