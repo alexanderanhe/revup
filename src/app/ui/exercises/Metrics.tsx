@@ -25,44 +25,43 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
     : `${ time_done ?? 0 } / ${ time }`;
 
   return (
-    <div
-      style={{ gridColumn: 'full-width' } as React.CSSProperties}
-      className="flex flex-wrap xs:gap-2 w-full bg-gradient-to-t from-base-100 max-w-screen-sm mx-auto"
-    >
-      {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
-      <button
-        disabled={completed}
-        onClick={handleForm('reps', reps)}
-        className={cn("btn btn-ghost size-[70px] rounded-full p-0", !reps && "hidden")}
-      >
+    <div className="full-width bg-gradient-to-t from-base-100 w-full">
+      <div className="flex flex-wrap xs:gap-2 w-full max-w-screen-sm mx-auto">
+        {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
+        <button
+          disabled={completed}
+          onClick={handleForm('reps', reps)}
+          className={cn("btn btn-ghost size-[70px] rounded-full p-0", !reps && "hidden")}
+        >
+          <Metric
+            title={`${reps}`}
+            subtitle={"reps"}
+            type={"info"}
+            className={cn(!reps && "hidden")}
+          />
+        </button>
+        <button
+          disabled={completed}
+          onClick={handleForm('weight', weight)}
+          className={cn("btn btn-ghost size-[70px] rounded-full p-0", !weight && "hidden")}
+        >
+          <Metric
+            title={`${weight}`}
+            subtitle={weight_unit}
+            type={"info"}
+          />
+        </button>
         <Metric
-          title={`${reps}`}
-          subtitle={"reps"}
-          type={"info"}
-          className={cn(!reps && "hidden")}
+          title={progressText}
+          progress={progress}
+          subtitle={!!reps ? "sets" : time_unit }
+          type={completed ? "neutral" : ( progress > 0 ? "info" : "neutral" )}
         />
-      </button>
-      <button
-        disabled={completed}
-        onClick={handleForm('weight', weight)}
-        className={cn("btn btn-ghost size-[70px] rounded-full p-0", !weight && "hidden")}
-      >
-        <Metric
-          title={`${weight}`}
-          subtitle={weight_unit}
-          type={"info"}
-        />
-      </button>
-      <Metric
-        title={progressText}
-        progress={progress}
-        subtitle={!!reps ? "sets" : time_unit }
-        type={completed ? "neutral" : ( progress > 0 ? "info" : "neutral" )}
-      />
-      { completed && <div className="flex grow justify-end size-[70px] rounded-full">
-        <CheckIcon className="size-20 drop-shadow-xl text-success" />
-      </div>}
-  </div>
+        { completed && <div className="flex grow justify-end size-[70px] rounded-full">
+          <CheckIcon className="size-20 drop-shadow-xl text-success" />
+        </div>}
+      </div>
+    </div>
   )
 }
 

@@ -39,7 +39,7 @@ export default async function ExercisesRunPage({
       className: clsx(
         "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg",
         completed && "blur-sm",
-        !completed && "blur-sm tall:blur-none",
+        // !completed && "blur-sm tall:blur-none",
       ),
     },
     buttonClass: `btn w-full`,

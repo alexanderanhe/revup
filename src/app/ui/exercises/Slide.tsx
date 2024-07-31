@@ -81,7 +81,7 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
               />
             </div>
           )}
-          <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-center tall:place-items-end w-full h-full aspect-square p-5">
+          <div className="absolute top-0 left-[50%] -translate-x-1/2 content-grid place-items-center tall:place-items-end w-full h-full aspect-square">
             <Link href={`${PAGES.WORKOUT}/${workout_id}`} className="btn btn-ghost btn-square self-start">
               <InformationCircleIcon className="size-5" />
             </Link>
