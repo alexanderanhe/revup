@@ -1,12 +1,13 @@
 'use client'
 
-import { usePathname } from "@/navigation";
+import { usePathname, useRouter } from "@/navigation";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import SubmitButton from "../utils/SubmitButton";
 import { useFormState } from "react-dom";
-import { handleFinishWorkoutDay, handleStartWorkoutDay } from "@/lib/actions";
+import { handleFinishWorkoutDay, handleSetWorkoutCloseDay, handleStartWorkoutDay } from "@/lib/actions";
+import { PAGES } from "@/lib/routes";
 
 const MAX_SEC_TIME = 6 * 60 * 60; // 6 hours
 
@@ -27,6 +28,7 @@ type Stopwatch = {
 export default function ExerciseStopwatch({ startDate, translate }: ExerciseStopwatchProps) {
   const [ sDate, setSDate ] = useState<string | null | undefined>(startDate);
   const [ formStateStartWorkoutDay, formActionStartWorkoutDay ] = useFormState(handleStartWorkoutDay, null);
+  const [ formStateWorkoutCloseDay, formActionWorkoutCloseDay ] = useFormState(handleSetWorkoutCloseDay, { status: 'idle' });
   const [ formStateFinishWorkoutDay, formActionFinishWorkoutDay ] = useFormState(handleFinishWorkoutDay, null);
   const [ showSkip, setShowSkip ] = useState<boolean>(false);
   // state to store time
@@ -34,6 +36,7 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
   const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? -1 : secondsStarted);
   const [stopwatch, setStopwatch] = useState<Stopwatch>({ hours: 0, minutes: 0, seconds: 0 });
   const pathname = usePathname();
+  const router = useRouter();
 
   // state to check stopwatch running or not
   const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : !!secondsStarted);
@@ -79,12 +82,18 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
   }, [ formStateFinishWorkoutDay ]);
 
   useEffect(() => {
+    if (formStateWorkoutCloseDay?.status === "success") {
+      router.push(PAGES.HOME);
+    }
+  }, [ formStateWorkoutCloseDay ]);
+
+  useEffect(() => {
     setShowSkip(pathname !== "/exercises/run");
   }, [ pathname ]);
 
   return (
-    showSkip ? (
-      <form action={formActionStartWorkoutDay}>
+    showSkip && !isRunning ? (
+      <form action={formActionWorkoutCloseDay}>
         <SubmitButton className="btn btn-ghost underline">
           { translate.skip }
         </SubmitButton>

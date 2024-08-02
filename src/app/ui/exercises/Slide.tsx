@@ -182,7 +182,7 @@ function FooterItem({ carouselRef, slides }: FooterItemProps) {
   const NextButton = () => submit ? (
     <form action={formActionWorkoutCloseDay}>
       <SubmitButton
-        disabled={slides.find(({ completed }) => !completed)}
+        // disabled={slides.find(({ completed }) => !completed)}
         className={ slide.buttonNextClass }
       >
         { slide.buttonNextText }
