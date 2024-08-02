@@ -18,6 +18,7 @@ export default function PullToRefresh() {
   */
   const [startPoint, setStartPoint] = useState<number>(0);
   const [startWindowPoint, setStartWindowPoint] = useState<number>(0);
+  const [startOtherPoints, setStartOtherPoints] = useState<number>(0);
   /**
    * 
     state to hold the change in the start point and current point
@@ -45,12 +46,15 @@ export default function PullToRefresh() {
     const { screenY } = e.targetTouches[0];
     setStartWindowPoint(window.scrollY);
     setStartPoint(screenY);
+    const $scrollableParent: Element = e.target.closest('[data-scrollable="true"]');
+    const scrollableScroll = $scrollableParent?.scrollTop ?? 0;
+    setStartOtherPoints(scrollableScroll);
   };
 
   const pull = (e: any) => {
     const bodyVaulActive = document.body.getAttribute("data-scroll-locked");
 
-    if (bodyVaulActive || startWindowPoint) return;
+    if (bodyVaulActive || startWindowPoint || startOtherPoints) return;
     /**
      * get the current user touch event data
      */

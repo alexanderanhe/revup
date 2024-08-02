@@ -498,7 +498,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
           AND plans_user_workouts_complex.user_id=plans_user.user_id AND plans_user_workouts_complex.day=pud.day
           AND plans_user_workouts_complex.workout_complex_id=workouts_complex.id
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
-        AND ${plan.body_zones[((plan?.current_day ?? 1) - 1) % plan.body_zones.length][1]} = ANY((Array[workouts_complex.body_zones])::uuid[])
+        AND p.body_zones[1][((pud.day - 1) % ARRAY_LENGTH(p.body_zones, 2)) + 1] = ANY((Array[workouts_complex.body_zones])::uuid[])
       ) as workouts_done,
       (
         SELECT SUM(COALESCE(workouts_complex.sets, 1))
@@ -506,7 +506,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
         JOIN plans ON workouts_complex.id=ANY((Array[plans.workouts_complex])::uuid[])
         LEFT JOIN plans_user ON plans_user.plan_id=plans.id
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
-        AND ${plan.body_zones[((plan?.current_day ?? 1) - 1) % plan.body_zones.length][1]} = ANY((Array[workouts_complex.body_zones])::uuid[])
+        AND p.body_zones[1][((pud.day - 1) % ARRAY_LENGTH(p.body_zones, 2)) + 1] = ANY((Array[workouts_complex.body_zones])::uuid[])
       ) as workouts_total,
       CASE
         WHEN pud.day = pu.current_day THEN true
@@ -523,7 +523,8 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
       return null;
     }
     const rest = plan.days - rowCount;
-    const maxLength = (plan.body_zones.length - 1) || 1;
+    const maxLength = rowCount < plan.body_zones.length
+      ? (plan.body_zones.length - rowCount) || 1 : 1;
     const length = Math.min(rest, maxLength);
     return [
       ...rows.map((row: PlanDay) => ({
