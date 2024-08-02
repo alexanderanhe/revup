@@ -50,7 +50,7 @@ export default function PullToRefresh() {
   const pull = (e: any) => {
     const bodyVaulActive = document.body.getAttribute("data-scroll-locked");
 
-    if (bodyVaulActive || window.scrollY) return;
+    if (bodyVaulActive || startWindowPoint) return;
     /**
      * get the current user touch event data
      */

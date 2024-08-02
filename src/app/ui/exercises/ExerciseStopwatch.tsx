@@ -39,7 +39,7 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
   const router = useRouter();
 
   // state to check stopwatch running or not
-  const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : !!secondsStarted);
+  const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : secondsStarted >= 0);
 
   useEffect(() => {
     let intervalId: string | number | NodeJS.Timeout | undefined;
@@ -88,8 +88,12 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
   }, [ formStateWorkoutCloseDay ]);
 
   useEffect(() => {
-    setShowSkip(pathname !== "/exercises/run");
+    setShowSkip(pathname !== `${PAGES.EXERCISES}/run`);
   }, [ pathname ]);
+
+  if (pathname.startsWith(`${PAGES.EXERCISES}/`)) {
+    return null;
+  }
 
   return (
     showSkip && !isRunning ? (
