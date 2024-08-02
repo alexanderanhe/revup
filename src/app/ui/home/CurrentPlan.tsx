@@ -99,7 +99,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
               t={t}
               className={cn(
                 "indicator w-full",
-                typeof workingDay.completed !== 'undefined' && 'border-2 border-primary/50',
+                workingDay.day === plan.current_day && 'border-2 border-primary/50',
                 typeof workingDay.completed === 'undefined' && 'opacity-40 cursor-not-allowed scale-95',
               )}
             />

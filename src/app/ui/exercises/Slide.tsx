@@ -72,7 +72,7 @@ function Slide({slideIds, workout_complex, workout_id, plan_id, day, completed, 
       style={{ gridColumn: 'full-width'}}
     >
       <section className="grid grid-cols-2 tall:grid-cols-1 tall:grid-rows-[auto_auto_1fr] h-full [&>p]:text-center [&>p]:text-lg overflow-auto pt-20" style={{ gridColumn: 'full-width'}}>
-        <div className={"grid grid-cols-1 justify-center relative"}>
+        <div className="grid grid-cols-1 justify-center relative">
           {slide.image && (
             <div className="box w-full">
               { errorImage || !slide.image?.src ? (

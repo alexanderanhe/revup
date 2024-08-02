@@ -8,7 +8,7 @@ import { auth, signIn, signOut } from '@/auth';
 import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt } from '@/lib/data';
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
-import { m } from 'framer-motion';
+import { PAGES } from '@/lib/routes';
  
 // ...
  
@@ -173,7 +173,7 @@ export async function handleSetWorkoutLiked(
 ) {
   try {
     const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
-    revalidatePath(`/workout/${workoutId}`)
+    revalidatePath(`${PAGES.WORKOUT}${workoutId}`);
     return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
   } catch (error) {
     return 'error';
@@ -185,7 +185,9 @@ export async function handleSetWorkoutCloseDay(
 ): Promise<ActionFormState> {
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
-    return await setWorkoutCloseDay(form);
+    const state = await setWorkoutCloseDay(form);
+    revalidatePath(PAGES.HOME);
+    return state;
   } catch (error) {
     return { status: 'error', message: 'Error saving data' };
   }
@@ -292,6 +294,7 @@ export async function handleSetTheme(
   try {
     const {theme, user_id} = await saveTheme(formData);
     !user_id && cookies().set(APPCOOKIES.THEME, theme, { httpOnly: true });
+    revalidatePath(PAGES.ROOT, "layout");
     return 'saved';
   } catch (error) {
     return 'error';

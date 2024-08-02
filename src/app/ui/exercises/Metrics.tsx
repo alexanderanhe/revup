@@ -11,10 +11,10 @@ import { FormState, WorkoutComplexParameters } from "@/lib/definitions"
 import { useEffect, useState } from "react"
 
 type MetricsProps = WorkoutComplexParameters & {
-  completed: boolean;
+  completed?: boolean;
   startRest?: boolean;
   setStartRest?: (value: boolean) => void;
-} & Omit<FormState, 'form'>
+} & Partial<Omit<FormState, 'form'>>
 
 export default function Metrics({sets, sets_done, time, time_done, reps, rest, time_unit, weight, weight_unit, completed, startRest, setStartRest, handleForm}: MetricsProps) {
   const progress = Math.trunc((sets 
@@ -30,7 +30,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
         {!completed && <Timer time={rest ?? 60} startRest={startRest} setStartRest={setStartRest} />}
         <button
           disabled={completed}
-          onClick={handleForm('reps', reps)}
+          onClick={handleForm && handleForm('reps', reps)}
           className={cn("btn btn-ghost size-[70px] rounded-full p-0", !reps && "hidden")}
         >
           <Metric
@@ -42,7 +42,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
         </button>
         <button
           disabled={completed}
-          onClick={handleForm('weight', weight)}
+          onClick={handleForm && handleForm('weight', weight)}
           className={cn("btn btn-ghost size-[70px] rounded-full p-0", !weight && "hidden")}
         >
           <Metric
@@ -53,7 +53,7 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
         </button>
         <button
           disabled={completed}
-          onClick={handleForm('time', time)}
+          onClick={handleForm && handleForm('time', time)}
           className={cn("btn btn-ghost size-[70px] rounded-full p-0", !time && "hidden")}
         >
           <Metric

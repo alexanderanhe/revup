@@ -197,7 +197,7 @@ export type ActionFormState = {
   message?: string;
 }
 
-export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
+export const THEMES = ['', 'light', 'dark', 'pastel', 'cmyk'];
 export const APPCOOKIES = {
   PWA: 'app.installpwa',
   ONBOARDING: 'app.onboarding',

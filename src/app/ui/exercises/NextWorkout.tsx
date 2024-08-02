@@ -27,7 +27,7 @@ export default function NextWorkout({body_zones, workingDay: { day, completed, p
           href={`/exercises${!current_day ? '/' + day : ''}`}
           className={clsx(
             "flex gap-3 w-full",
-            !current_day && 'opacity-40'
+            !current_day && 'opacity-80'
           )}
         >
           <Day

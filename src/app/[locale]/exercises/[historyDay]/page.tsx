@@ -7,18 +7,20 @@ import Card from "@/app/ui/Card";
 import NextWorkout from "@/app/ui/exercises/NextWorkout";
 import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 import CheckIcon from "@/components/utils/icons/CheckIcon";
-import ExerciseButton from "@/app/ui/exercises/ExerciseButton";
+import HistoryButton from "@/app/ui/exercises/HistoryButton";
 
-import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
+import { Plan, PlanDay, WorkoutImage, WorkoutImageLink } from "@/lib/definitions";
 import StartButton from "@/app/ui/exercises/StartButton";
+import HistoryTable from "@/app/ui/exercises/HistoryTable";
 
 const stretchingTags = ['stretching', 'estiramiento'];
 
 export default async function ExercisesPage({
-  params: { locale }
+  params: { locale, historyDay }
 }: {
   params: {
     locale: string;
+    historyDay: string;
   };
 }) {
   const t = await getTranslations("Workout");
@@ -29,9 +31,11 @@ export default async function ExercisesPage({
     return <div>NO HAY NADA</div>;
   }
 
-  const workingDayData= plan.workingDays?.find(({ current_day }) => current_day) as PlanDay;
-  const workingDaySelected = plan.current_day ?? 1;
-
+  const workingDayData= plan.workingDays?.find(({ day }) => day === parseInt(historyDay)) as PlanDay;
+  if (!workingDayData) {
+    return <div>NO HAY NADA</div>;
+  }
+  const workingDaySelected = workingDayData.day;
   const exercises = await getUserCurrentPlanWorkouts(locale, workingDaySelected);
   
   if (!exercises) {
@@ -49,7 +53,7 @@ export default async function ExercisesPage({
         noLink
       />
       <ul className="timeline timeline-snap-icon timeline-compact timeline-vertical w-full">
-        { exercises?.map(({ id, name, image_banner, tags, sets, reps, weight, weight_unit, time, time_unit, completed, completed_at }, i, exercises) => {
+        { exercises?.map(({ id, workout_id, plan_id, day, name, description, images, tags, image_banner, completed, completed_at, ...workout_complex }, i, exercises) => {
           const isStretchtingTag = tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
           const isPrevStretchtingTag = exercises?.[i - 1]?.tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
           const isNextStretchtingTag = exercises?.[i + 1]?.tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
@@ -67,15 +71,21 @@ export default async function ExercisesPage({
                 ) : <RocketLaunchIcon className="size-5 text-neutral" />}
               </div>
               <Card className="relative w-full min-h-24 timeline-end mb-3 overflow-hidden">
-                <ExerciseButton
+                <HistoryButton
                   name={name}
-                  sets={sets}
-                  reps={reps}
-                  weight={weight}
-                  weight_unit={weight_unit}
-                  time={time}
-                  time_unit={time_unit}
+                  {...workout_complex}
+                  completed={completed}
                   id={id}
+                  workout_id={workout_id}
+                  workout_complex={workout_complex}
+                  history={<HistoryTable workout_id={workout_id} />}
+                  image={{
+                    src: ((images?.[0] as { external: WorkoutImageLink }).external?.url
+                      ?? (images?.[0] as { file: WorkoutImageLink }).file?.url),
+                    alt: name,
+                    style: { maskImage: "linear-gradient(to bottom, black 60%, transparent)"},
+                    className: "w-full h-[40svh] aspect-[3/4] md:aspect-square object-cover md:object-contain shadow-lg",
+                  }}
                 />
                 <ImageWorkout
                   image={image_banner?.[0] as WorkoutImage}
@@ -94,9 +104,11 @@ export default async function ExercisesPage({
           )
         })}
       </ul>
-      <StartButton exercises={exercises} translate={{
-        start: tExercises("startBtn")
-      }} />
+      { plan.current_day === workingDaySelected && (
+        <StartButton exercises={exercises} translate={{
+          start: tExercises("startBtn")
+        }} />
+      )}
       <div />
     </>
   )

@@ -91,7 +91,9 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
     setShowSkip(pathname !== `${PAGES.EXERCISES}/run`);
   }, [ pathname ]);
 
-  if (pathname.startsWith(`${PAGES.EXERCISES}/`)) {
+  if (pathname.startsWith(`${PAGES.EXERCISES}/`)
+    && pathname !== `${PAGES.EXERCISES}/run`
+  ) {
     return null;
   }
 

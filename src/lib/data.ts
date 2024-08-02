@@ -508,10 +508,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
         AND p.body_zones[1][((pud.day - 1) % ARRAY_LENGTH(p.body_zones, 2)) + 1] = ANY((Array[workouts_complex.body_zones])::uuid[])
       ) as workouts_total,
-      CASE
-        WHEN pud.day = pu.current_day THEN true
-        ELSE false
-      END as current_day
+      CASE WHEN pud.day = pu.current_day THEN true ELSE false END as current_day
       FROM plans_user_day pud
       JOIN plans_user pu ON pud.plan_id = pu.plan_id AND pud.user_id = pu.user_id
       JOIN plans p ON pud.plan_id = p.id
