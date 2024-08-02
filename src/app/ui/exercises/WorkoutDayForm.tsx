@@ -8,8 +8,10 @@ import clsx from "clsx"
 import { handleSetWorkoutItem } from "@/lib/actions"
 import SubmitButton from "@/app/ui/utils/SubmitButton"
 
-import { FormState, WorkoutComplexParameters } from "@/lib/definitions"
+import { FormState, UUID, WorkoutComplexParameters } from "@/lib/definitions"
 import SelectControls from "./SelectControls"
+import { useAppDispatch } from "@/lib/hooks"
+import { set_exercise } from "@/lib/features/app"
 
 type WorkoutDayFormProps = {
   workout_complex: WorkoutComplexParameters;
@@ -19,23 +21,31 @@ type WorkoutDayFormProps = {
   workout_id: string;
   slide_id: string;
   setStartRest?: (value: boolean) => void;
+  nextExercise: UUID | null;
 } & FormState;
 
-export default function WorkoutDayForm({ workout_complex, completed, setStartRest, form, handleForm }: WorkoutDayFormProps) {
-  const formRef = useRef<HTMLFormElement>(null);
+export default function WorkoutDayForm({ workout_complex, completed, setStartRest, form, handleForm, setForm, nextExercise }: WorkoutDayFormProps) {
   const [ formStateWorkoutItem, formActionWorkoutItem ] = useFormState(handleSetWorkoutItem, null);
+  const dispatch = useAppDispatch()
+  const setExercise = (state: UUID) => dispatch(set_exercise(state));
 
   useEffect(() => {
     if (formStateWorkoutItem === 'saved') {
-      setStartRest && setStartRest(true);
-      formRef.current?.reset();
+      if (completed) {
+        setExercise(nextExercise as UUID);
+      } else {
+        setStartRest && setStartRest(true);
+      }
+      if (setForm) {
+        setForm((prev) => ({...prev, reps: '', weight: '', time: ''}));
+      }
     }
   }, [formStateWorkoutItem]);
 
   return (
     <section style={{ margin: 0 }}>
       <span className="font-medium text-error">{ formStateWorkoutItem === 'error' && ' - Error saving data' }</span>
-      <form ref={formRef} action={formActionWorkoutItem} className="flex flex-row flex-wrap items-center justify-center gap-4 w-full">
+      <form action={formActionWorkoutItem} className="flex flex-row flex-wrap items-center justify-center gap-4 w-full">
 
         { Object.entries(form).filter(([name]) => !['reps', 'weight', 'time'].includes(name))
           .map(([name, value]) => (

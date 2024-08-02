@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from "@/navigation";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
@@ -10,7 +11,11 @@ import { handleFinishWorkoutDay, handleStartWorkoutDay } from "@/lib/actions";
 const MAX_SEC_TIME = 6 * 60 * 60; // 6 hours
 
 type ExerciseStopwatchProps = {
-  startDate?: string | null
+  startDate?: string | null;
+  translate: {
+    start?: string;
+    skip?: string;
+  };
 }
 
 type Stopwatch = {
@@ -19,14 +24,16 @@ type Stopwatch = {
   seconds: number;
 }
 
-export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps) {
+export default function ExerciseStopwatch({ startDate, translate }: ExerciseStopwatchProps) {
   const [ sDate, setSDate ] = useState<string | null | undefined>(startDate);
   const [ formStateStartWorkoutDay, formActionStartWorkoutDay ] = useFormState(handleStartWorkoutDay, null);
   const [ formStateFinishWorkoutDay, formActionFinishWorkoutDay ] = useFormState(handleFinishWorkoutDay, null);
+  const [ showSkip, setShowSkip ] = useState<boolean>(false);
   // state to store time
   const secondsStarted = diffSeconds(sDate);
   const [time, setTime] = useState<number>(secondsStarted > MAX_SEC_TIME ? -1 : secondsStarted);
   const [stopwatch, setStopwatch] = useState<Stopwatch>({ hours: 0, minutes: 0, seconds: 0 });
+  const pathname = usePathname();
 
   // state to check stopwatch running or not
   const [isRunning, setIsRunning] = useState<boolean>(secondsStarted > MAX_SEC_TIME ? false : !!secondsStarted);
@@ -71,35 +78,47 @@ export default function ExerciseStopwatch({ startDate }: ExerciseStopwatchProps)
     }
   }, [ formStateFinishWorkoutDay ]);
 
+  useEffect(() => {
+    setShowSkip(pathname !== "/exercises/run");
+  }, [ pathname ]);
+
   return (
-    time >= 0 ? (
-      <form action={formActionFinishWorkoutDay} className="relative group grid place-items-center">
-        <SubmitButton className="btn btn-xs btn-ghost gap-1">
-          <span className="font-medium font-mono countdown">
-            { !!stopwatch.hours && (
-              <><span style={{
-                  "--value": stopwatch.hours,
-                } as React.CSSProperties}
-              ></span>:</>
-            )}
-            <span style={{
-                "--value": stopwatch.minutes,
-              } as React.CSSProperties}
-            ></span>:
-            <span style={{
-                "--value": stopwatch.seconds,
-              } as React.CSSProperties}
-            ></span>
-          </span>
-          <ClockIcon className="size-4" />
+    showSkip ? (
+      <form action={formActionStartWorkoutDay}>
+        <SubmitButton className="btn btn-ghost underline">
+          { translate.skip }
         </SubmitButton>
       </form>
     ) : (
-      <form action={formActionStartWorkoutDay}>
-        <SubmitButton className="btn">
-          Begin <PlayIcon className="size-5" />
-        </SubmitButton>
-      </form>
+      time >= 0 ? (
+        <form action={formActionFinishWorkoutDay} className="relative group grid place-items-center">
+          <SubmitButton className="btn btn-xs btn-ghost gap-1">
+            <span className="font-medium font-mono countdown">
+              { !!stopwatch.hours && (
+                <><span style={{
+                    "--value": stopwatch.hours,
+                  } as React.CSSProperties}
+                ></span>:</>
+              )}
+              <span style={{
+                  "--value": stopwatch.minutes,
+                } as React.CSSProperties}
+              ></span>:
+              <span style={{
+                  "--value": stopwatch.seconds,
+                } as React.CSSProperties}
+              ></span>
+            </span>
+            <ClockIcon className="size-4" />
+          </SubmitButton>
+        </form>
+      ) : (
+        <form action={formActionStartWorkoutDay}>
+          <SubmitButton className="btn">
+          { translate.start } <PlayIcon className="size-5" />
+          </SubmitButton>
+        </form>
+      )
     )
   )
 }

@@ -17,6 +17,7 @@ export default function PullToRefresh() {
     state to hold the start point
   */
   const [startPoint, setStartPoint] = useState<number>(0);
+  const [startWindowPoint, setStartWindowPoint] = useState<number>(0);
   /**
    * 
     state to hold the change in the start point and current point
@@ -42,12 +43,14 @@ export default function PullToRefresh() {
 
   const pullStart = (e: any) => {
     const { screenY } = e.targetTouches[0];
+    setStartWindowPoint(window.scrollY);
     setStartPoint(screenY);
   };
 
   const pull = (e: any) => {
     const bodyVaulActive = document.body.getAttribute("data-scroll-locked");
-    if (bodyVaulActive) return;
+
+    if (bodyVaulActive || window.scrollY) return;
     /**
      * get the current user touch event data
      */
@@ -63,9 +66,10 @@ export default function PullToRefresh() {
      *
      * This tells us how much the user has pulled
      */
-    let pullLength: number = startPoint < screenY ? Math.abs((screenY - startPoint) * SENSIVILITY) : 0;
+    let pullLength: number = startPoint - startWindowPoint < screenY ? Math.abs((screenY - startPoint - startWindowPoint) * SENSIVILITY) : 0;
+
     setPullChange(pullLength);
-    // console.log({ screenY, startPoint, pullLength, pullChange });
+    // console.log({ screenY, startPoint, startWindowPoint, pullLength, pullChange });
   };
 
   const endPull = () => {

@@ -39,28 +39,33 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
         <section className="grid grid-cols-[1fr_auto] place-items-center w-full z-[1]">
           <div className="grid grid-rows-auto gap-1 place-items-start w-full [&>strong]:uppercase">
             <strong>{ plan.name }</strong>
-            <div className="flex flex-wrap gap-4 text-xs max-sm:gap-1 uppercase">
-              <div className="flex gap-2">
-                <HomeModernIcon className="size-3" />
-                <span>{ t("forPlace", { place }) }</span>
+            <div className="flex flex-col gap-1 text-xs max-sm:gap-1 uppercase">
+              <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
+                  <HomeModernIcon className="size-3" />
+                  <span>{ t("forPlace", { place }) }</span>
+                </div>
+                <div className="flex gap-2">
+                  <RatingStar
+                    name={plan.id}
+                    stars={~~difficultyValue}
+                    size="xs"
+                    color="neutral-content"
+                    // disabled
+                  />
+                  <span>{ difficulty}</span>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <RatingStar
-                  name={plan.id}
-                  stars={~~difficultyValue}
-                  size="xs"
-                  color="neutral-content"
-                  // disabled
-                />
-                <span>{ difficulty}</span>
+              <div className="flex flex-wrap gap-1">
+                <span className="text-primary font-medium text-xs">
+                  { t("planDetailsDays", { days: plan.days }) }
+                </span>
+                <span className="text-primary font-medium text-xs">
+                  ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
+                </span>
               </div>
+              {/* <span className="text-xs">{ t("workoutsDone", { workout_days_done }) }</span> */}
             </div>
-            <span className="text-primary font-medium text-xs">
-              { t("planDetailsDays", { days: plan.days }) }
-              { " " }
-              ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
-            </span>
-            {/* <span className="text-xs">{ t("workoutsDone", { workout_days_done }) }</span> */}
           </div>
           <ProgressCircle
             type="success"

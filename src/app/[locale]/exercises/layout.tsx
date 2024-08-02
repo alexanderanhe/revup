@@ -23,7 +23,10 @@ export default async function ExercisesLayout({ params: { locale }, children }: 
   return (
     <LayoutContent
       title={<Title titles={titles} defaultTitle={ t("title") } />}
-      pageMenu={<ExerciseStopwatch startDate={await getUserPlanStartedAt()} />}
+      pageMenu={<ExerciseStopwatch startDate={await getUserPlanStartedAt()} translate={{
+        skip: t("skipBtn"),
+        start: t("startBtn")
+      }} />}
       titleFixed
     >
       { children }

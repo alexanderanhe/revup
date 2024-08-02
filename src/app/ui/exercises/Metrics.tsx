@@ -51,6 +51,17 @@ export default function Metrics({sets, sets_done, time, time_done, reps, rest, t
             type={"info"}
           />
         </button>
+        <button
+          disabled={completed}
+          onClick={handleForm('time', time)}
+          className={cn("btn btn-ghost size-[70px] rounded-full p-0", !time && "hidden")}
+        >
+          <Metric
+            title={`${time}`}
+            subtitle={time_unit}
+            type={"info"}
+          />
+        </button>
         <Metric
           title={progressText}
           progress={progress}

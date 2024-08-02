@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID, SimplePlan } from "@/lib/definitions";
+import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID, SimplePlan, ActionFormState } from "@/lib/definitions";
 import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
 import { User } from "next-auth";
@@ -393,9 +393,9 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
     const workingDay = plan.workingDays?.find(({ day, current_day }) => workingDaySelected ? day === workingDaySelected : current_day) as PlanDay;
     const [_, body_zone_id] = plan?.body_zones?.[(workingDay.day - 1) % plan.body_zones.length];
     
-    type ExerciseMod = Omit<Exercise, 'tags'> & { tags: string}
+    type ExerciseMod = Omit<Exercise, 'tags'> & { tags: string, workouts_complex_ids: string[][]}
     const { rows, rowCount } = await sql<ExerciseMod>`
-      SELECT w.id as workout_id, p.id as plan_id, ${workingDay.day} as day, wc.id, w.image_banner, w.images, wl.name, wl.description,
+      SELECT w.id as workout_id, p.id as plan_id, p.workouts_complex as workouts_complex_ids, ${workingDay.day} as day, wc.id, w.image_banner, w.images, wl.name, wl.description,
         (
           SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type), ','  order by tags_lang.name)
           FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
@@ -419,7 +419,9 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
     if (rowCount === 0) {
       return null;
     }
-    return rows.map(({ tags, ...exercise}: ExerciseMod) => ({
+    const [workoutsComplexIds] = rows[0].workouts_complex_ids;
+    const orderedRows = workoutsComplexIds.map((id: string) => rows.find((row: ExerciseMod) => row.id === id)).filter(wc => wc) as ExerciseMod[];
+    return orderedRows.map(({ tags, ...exercise}: ExerciseMod) => ({
       ...exercise,
       tags: tags?.split(',').map((tag) => tag.split(':'))
     })) as Exercise[];
@@ -605,7 +607,7 @@ export async function getWorkoutItems(workout_id: string): Promise<WorkoutComple
 
 }
 
-export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;}): Promise<string> {
+export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;}): Promise<ActionFormState> {
   try {
     const session = await auth();
     const user = session?.user;
@@ -613,30 +615,47 @@ export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;
       throw new Error('User session not found.');
     }
 
-    const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
-      SELECT p.* FROM plans p
-      JOIN plans_user pu ON pu.plan_id=p.id
-      WHERE p.id=${<string>form.plan_id}
-    `;
-    if (planRowsCount === 0) {
-      throw new Error('Workout complex not found.');
+    const plan = await getUserCurrentPlan('en');
+    if (!plan) {
+      throw new Error('Current Plan not found.');
     }
-    const plan = planRows[0];
 
-    // TO DO: CALCULATE PERCENTAGE
+    const workingDayData= plan.workingDays?.find(({ current_day }) => current_day) as PlanDay;
+    if (!workingDayData) {
+      throw new Error('Workouts complex not found.');
+    }
+
     await sql`UPDATE plans_user_day
       SET completed=true,
           completed_at=NOW(),
-          percentage=100,
+          percentage=${workingDayData.percentage},
           updated_at=NOW()
-      WHERE day=${<string>form.day} AND plan_id=${plan.id} AND user_id=${user.id}
+      WHERE day=${plan.current_day} AND plan_id=${plan.id} AND user_id=${user.id}
     `;
+
+    const new_current_day = (plan.current_day ?? 1) + 1;
+    const {rows, rowCount } = await sql`UPDATE plans_user
+      SET current_day=${new_current_day},
+          updated_at=NOW()
+      WHERE plan_id=${plan.id} AND user_id=${user.id}
+      RETURNING current_day
+    `;
+
+    if (rowCount === 0) {
+      throw new Error('Something wrong happen.');
+    }
+
     await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at)
-      VALUES (${parseInt(<string>form.day) + 1}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW())
+      VALUES (${rows[0].current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW())
+      ON CONFLICT (day, plan_id, user_id) DO UPDATE
+      SET updated_at = NOW()
     ;`
-    return 'saved';
-  } catch (error) {
-    return 'error';
+    return { status: 'success'};
+  } catch (error: any) {
+    return {
+      status: 'error',
+      message: `Error on close day: ${error?.message}`
+    };
   }
 }
 

@@ -6,8 +6,9 @@ import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
 import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt } from '@/lib/data';
-import { APPCOOKIES, User } from '@/lib/definitions';
+import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
+import { m } from 'framer-motion';
  
 // ...
  
@@ -179,14 +180,14 @@ export async function handleSetWorkoutLiked(
   }
 }
 export async function handleSetWorkoutCloseDay(
-  prevState: string | null,
+  prevState: ActionFormState | null,
   formData: FormData
-) {
+): Promise<ActionFormState> {
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
     return await setWorkoutCloseDay(form);
   } catch (error) {
-    return 'error';
+    return { status: 'error', message: 'Error saving data' };
   }
 }
 export async function handleStartWorkoutDay(

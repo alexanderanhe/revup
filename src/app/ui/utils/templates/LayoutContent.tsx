@@ -20,10 +20,10 @@ type Props = {
 
 export default function LayoutContent({ title, titleFixed, pageMenu, bg, children, className, head, footer, showBackButton, pullToRefresh }: Props) {
   return (
-    <div className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
+    <main className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
       { head && <Header pullToRefresh={!title && pullToRefresh} />}
-      <main className={clsx(
+      <div className={clsx(
         "content-grid grid-flow-row auto-rows-max place-items-start space-y-6",
         className
       )}>
@@ -36,8 +36,8 @@ export default function LayoutContent({ title, titleFixed, pageMenu, bg, childre
           pullToRefresh={pullToRefresh}
         />
         { children }
-      </main>
+      </div>
       { footer && <Footer />}
-    </div>
+    </main>
   )
 }

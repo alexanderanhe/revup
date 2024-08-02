@@ -205,7 +205,9 @@
     "setParametersBtn": "Establecer parámetros",
     "historyBtn": "Historial",
     "nextBtn": "Siguiente",
-    "finishBtn": "Finalizar"
+    "finishBtn": "Finalizar",
+    "startBtn": "Empezar",
+    "skipBtn": "Saltar"
   },
   "auth": {
     "login": "Log in",

@@ -189,6 +189,12 @@ export type FilterSearchParams = {
 export type FormState = {
   form: Record<string, any>;
   handleForm: (name: string, value: string | number) => () => void;
+  setForm?: (value: Record<string, any> | ((prev: any) => void)) => void;
+}
+
+export type ActionFormState = {
+  status: 'idle' | 'loading' | 'error' | 'success';
+  message?: string;
 }
 
 export const THEMES = ['default', 'light', 'dark', 'pastel', 'cmyk'];
