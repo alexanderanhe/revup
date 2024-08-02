@@ -1,8 +1,5 @@
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
-import ThemeToggle from "@/app/ui/profile/ThemeToggle"
 import Card from "@/app/ui/Card"
-import Logout from "@/app/ui/profile/Logout"
-import DeleteAllCookies from "@/app/ui/profile/DeleteAllCookies"
 
 const ProfileEditPage = () => {
   return (

@@ -37,7 +37,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
     <>
       <Card className="collapse-title text-neutral-content bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary z-[1] opacity-40"></div>
-        <section className="grid grid-cols-[1fr_auto] place-items-center w-full z-[1]">
+        <section className="grid grid-cols-[1fr_auto] gap-1 place-items-center w-full z-[1]">
           <div className="grid grid-rows-auto gap-1 place-items-start w-full [&>strong]:uppercase">
             <strong>{ plan.name }</strong>
             <div className="flex flex-col gap-1 text-xs max-sm:gap-1">
@@ -57,14 +57,6 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
                   <span>{ difficulty}</span>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-1">
-                <span className="text-primary font-medium text-xs">
-                  { t("planDetailsDays", { days: plan.days }) }
-                </span>
-                <span className="text-primary font-medium text-xs">
-                  ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
-                </span>
-              </div>
               {/* <span className="text-xs">{ t("workoutsDone", { workout_days_done }) }</span> */}
             </div>
           </div>
@@ -73,6 +65,14 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
             progress={progress}
             icon={`${workout_days_done}/${plan.days}`}
           />
+          <div className="col-span-2 flex flex-wrap w-full gap-1">
+            <span className="text-primary font-medium text-xs">
+              { t("planDetailsDays", { days: plan.days }) }
+            </span>
+            <span className="text-primary font-medium text-xs">
+              ({ t("planDetailsSets", { sets: plan.sets_per_week }) })
+            </span>
+          </div>
         </section>
         <ImageWorkout
           image={{

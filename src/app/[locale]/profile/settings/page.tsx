@@ -1,7 +1,6 @@
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
 import ThemeToggle from "@/app/ui/profile/ThemeToggle"
 import Card from "@/app/ui/Card"
-import Logout from "@/app/ui/profile/Logout"
 import DeleteAllCookies from "@/app/ui/profile/DeleteAllCookies"
 import { getTranslations } from "next-intl/server"
 import Language from "@/app/ui/profile/Language"

@@ -453,7 +453,11 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
       (
         SELECT COUNT(DISTINCT day)
         FROM plans_user_day WHERE plan_id=p.id AND user_id=${user.id} AND completed
-      ) as workouts_done
+      ) as workouts_done,
+      (
+        SELECT COUNT(DISTINCT day)
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user.id}
+      ) as workout_days_done
       FROM plans_user pu
       JOIN plans p ON pu.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
