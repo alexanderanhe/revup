@@ -112,7 +112,7 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
             <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[50]" />
             <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] bg-base-100 z-[50] mt-24">
               {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" /> */}
-              <div className="content-grid grid-rows-[auto_1fr_auto] rounded-t-[10px] flex-1 border-t py-5">
+              <div className="content-grid grid-rows-[auto_1fr_auto] rounded-t-[10px] flex-1 border-t pt-5 pb-10">
                 <Drawer.Title className="font-medium mb-4">
                   { t("editDashboardBtn") }
                 </Drawer.Title>
@@ -189,9 +189,9 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
                     )}
                   </Droppable>
                 </div>
-                <div className="grid grid-rows-auto gap-2 pb-10">
+                <div className="grid grid-cols-2 gap-2">
                   { formState.status === "error" && (
-                    <div role="alert" className="alert alert-error place-items-center">
+                    <div role="alert" className="alert bg-error/15 text-error font-medium col-span-2">
                       <CircleAlertIcon className="size-6" />
                       <span>{ formState.message }</span>
                     </div>
