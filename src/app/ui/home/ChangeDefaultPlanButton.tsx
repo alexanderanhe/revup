@@ -36,8 +36,8 @@ export default function ChangeDefaultPlanButton({ plans }: ChangeDefaultPlanButt
                   }
                 </button>
                 <div className="flex flex-wrap gap-1 w-full">
-                  { tags?.map(([name, type]) => (
-                    <div className="badge badge-secondary">{`${ name }:${ type }`}</div>
+                  { tags?.map(([name, type], i) => (
+                    <div key={`${i}${name}${type}`} className="badge badge-secondary">{`${ name }:${ type }`}</div>
                   ))}
                 </div>
               </Card>
