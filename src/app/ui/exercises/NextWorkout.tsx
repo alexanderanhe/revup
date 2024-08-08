@@ -19,6 +19,7 @@ type NextWorkoutProps = {
 export default function NextWorkout({body_zones, workingDay: { day, completed, percentage, workouts_done, workouts_total, current_day}, t, noLink, ...props}: NextWorkoutProps) {
   const [body_zone] = body_zones?.[(day - 1) % body_zones.length];
   const exists = typeof completed !== 'undefined';
+  const typeColor = exists && percentage > 80 ? 'success' : percentage > 40 ? 'info' : 'neutral';
 
   return (
     <Card {...props}>
@@ -32,7 +33,7 @@ export default function NextWorkout({body_zones, workingDay: { day, completed, p
         >
           <Day
             title={t("planDetailsDay", { day })}
-            type={ percentage > 80 ? 'success' : 'error' }
+            type={ typeColor }
             body_zone={body_zone}
             progress={percentage}
           />
@@ -41,8 +42,8 @@ export default function NextWorkout({body_zones, workingDay: { day, completed, p
       ) : (
         <div className="flex gap-3">
           <Day
-          title={t("planDetailsDay", { day })}
-          type={exists && percentage > 80 ? 'success' : 'error'}
+          title={ t("planDetailsDay", { day }) }
+          type={ typeColor }
           body_zone={body_zone}
           progress={percentage}
           icon={!exists ? <LockClosedIcon className="size-5" /> : null}
@@ -57,7 +58,7 @@ type DayProps = {
   title: string;
   body_zone?: string;
   progress?: number;
-  type?: 'success' | 'error' | 'warning' | 'info';
+  type?: 'success' | 'error' | 'warning' | 'info' | 'accent' | 'neutral';
   icon?: React.ReactNode;
 }
 const Day = ({ title, body_zone, progress, ...rest}: DayProps) => {

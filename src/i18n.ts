@@ -6,8 +6,10 @@ export const locales: string[] = ['en', 'de', 'es'];
 
 export default getRequestConfig(async ({ locale }) => {
   if (!locales.includes(locale as any)) notFound();
+  const timeZone = process.env.TIME_ZONE ?? 'America/Mexico_City';
 
   return {
+    timeZone,
     messages: (await import(`../content/${locale}.json`)).default
   };
 });

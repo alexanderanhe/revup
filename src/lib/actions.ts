@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt } from '@/lib/data';
+import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt, saveDashboard } from '@/lib/data';
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
 import { PAGES } from '@/lib/routes';
@@ -155,7 +155,7 @@ export async function handleSetWorkoutItem(
   try {
     const form = Object.fromEntries(Array.from(formData.entries()));
     const status = await setWorkoutItem(form);
-    revalidatePath('/exercises/run');
+    revalidatePath(`${PAGES.EXERCISES}/run`);
     return status;
   } catch (error) {
     return 'error';
@@ -167,7 +167,7 @@ export async function handleSetWorkoutLiked(
 ) {
   try {
     const { workoutId, enabled } = Object.fromEntries(Array.from(formData.entries()));
-    revalidatePath(`${PAGES.WORKOUT}${workoutId}`);
+    revalidatePath(`${PAGES.WORKOUT}/${workoutId}`);
     return await setWorkoutsUserLiked(<string>workoutId, enabled === '1' );
   } catch (error) {
     return 'error';
@@ -215,19 +215,19 @@ export async function handleFinishWorkoutDay(
 }
 
 export async function handleDashboard(
-  prevState: string | null,
+  prevState: ActionFormState | null,
   formData: FormData
-) {
+): Promise<ActionFormState> {
   try {
     const { dashboard } = Object.fromEntries(Array.from(formData.entries()));
     if (dashboard) {
-      console.log(dashboard);
-      revalidatePath('/home');
-      return 'saved';
+      const state = await saveDashboard(dashboard as string);
+      revalidatePath(PAGES.HOME);
+      return state;
     }
-    return 'error';
-  } catch (error) {
-    return 'error';
+    return { status: 'error', message: 'Error saving data' };
+  } catch (error: any) {
+    return { status: 'error', message: error?.message ?? 'Error saving data' };
   }
 }
 export async function handleHidePWABanner(

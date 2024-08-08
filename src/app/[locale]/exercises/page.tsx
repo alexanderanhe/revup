@@ -11,6 +11,7 @@ import ExerciseButton from "@/app/ui/exercises/ExerciseButton";
 
 import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 import StartButton from "@/app/ui/exercises/StartButton";
+import { DumbbellIcon } from "lucide-react";
 
 const stretchingTags = ['stretching', 'estiramiento'];
 
@@ -52,19 +53,30 @@ export default async function ExercisesPage({
         { exercises?.map(({ id, name, image_banner, tags, sets, reps, weight, weight_unit, time, time_unit, completed, completed_at }, i, exercises) => {
           const isStretchtingTag = tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
           const isPrevStretchtingTag = exercises?.[i - 1]?.tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
+          const isPrevCompleted = exercises?.[i - 1]?.completed;
           const isNextStretchtingTag = exercises?.[i + 1]?.tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
           return (
             <li key={`exercise${id}`} style={{'--timeline-row-start': 'calc(50% - 1.25rem / 2)'} as React.CSSProperties }>
               <hr className={cn(
-                exercises?.[i - 1] && isStretchtingTag && 'bg-primary',
-                (!i || !isPrevStretchtingTag || !isStretchtingTag) && 'hidden',
+                exercises?.[i - 1] && isStretchtingTag && 'bg-secondary',
+                (!isPrevStretchtingTag || !isStretchtingTag) && !isPrevCompleted && 'bg-base-300',
+                (!isPrevStretchtingTag || !isStretchtingTag) && isPrevCompleted && 'bg-success',
+                !i && "hidden"
               )} />
               <div className="timeline-middle">
                 {completed ? (
                   <div className="tooltip tooltip-right z-[2]" data-tip={completed_at}>
-                    <CheckCircleIcon className="size-5 text-success" />
+                    <CheckCircleIcon className="size-7 text-success" />
                   </div>
-                ) : <RocketLaunchIcon className="size-5 text-neutral" />}
+                ) : (
+                  <div className={cn(
+                    "grid place-items-center rounded-full size-7",
+                    !isStretchtingTag && 'bg-base-300 text-base-300-content',
+                    isStretchtingTag && 'bg-secondary text-secondary-content',
+                  )}>
+                    <DumbbellIcon className="size-3" />
+                  </div>
+                )}
               </div>
               <Card className="relative w-full min-h-24 timeline-end mb-3 overflow-hidden">
                 <ExerciseButton
@@ -87,8 +99,10 @@ export default async function ExercisesPage({
                 { completed && <CheckIcon className="size-10 text-success absolute top-1/2 -translate-y-1/2 right-4" />}
               </Card>
               <hr className={cn(
-                exercises?.[i + 1] && isStretchtingTag && 'bg-primary',
-                (exercises.length - 1 === i || !isNextStretchtingTag || !isStretchtingTag) && 'hidden'
+                exercises?.[i + 1] && isStretchtingTag && 'bg-secondary',
+                (!isNextStretchtingTag || !isStretchtingTag) && !completed && 'bg-base-300',
+                (!isNextStretchtingTag || !isStretchtingTag) && completed && 'bg-success',
+                exercises.length - 1 === i && "hidden"
               )} />
             </li>
           )
