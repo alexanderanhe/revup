@@ -56,7 +56,6 @@ export default function PlanItem({ plan }: PlanItemProps) {
                   stars={~~difficultyValue}
                   size="xs"
                   color="neutral-content"
-                  // disabled
                 />
                 <span className="[&::first-letter]:capitalize">{ difficulty }</span>
               </div>
@@ -69,7 +68,9 @@ export default function PlanItem({ plan }: PlanItemProps) {
               <span>({ t("planDetailsSets", { sets: plan.sets_per_week }) })</span>
             </div>
           )}
-          <span>{ t("workoutsDone", { workout_days_done }) }</span>
+          { plan?.workouts_done && plan?.workouts_done > 0 && (
+            <span>{ t("workoutsDone", { workout_days_done: plan?.workouts_done ?? 1 }) }</span>
+          )}
         </div>
       </section>
       <ImageWorkout

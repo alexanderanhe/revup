@@ -308,17 +308,30 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
   }
 }
 
-export async function getUserPlans(locale: string, user_id?: string | null): Promise<SimplePlan[] | null> {
+export async function getUserPlans(locale: string, user_id?: string | null): Promise<Plan[] | null> {
   if (!user_id) return null;
   try {
-    type planMod = Omit<SimplePlan, 'tags'> & { tags: string }
+    type planMod = Omit<Omit<Plan, 'tags'>, 'body_zones'> & { tags: string, body_zones: string, workouts_done: number, workout_days_done: number }
     const { rows, rowCount } = await sql<planMod>`
       SELECT p.id, pl.name, pu.is_current, pu.current_day, pl.comments,
+      (
+        SELECT string_agg(CONCAT(tags_lang.name, ':', tags.id), ',')
+        FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
+        WHERE tags.id = ANY((Array[p.body_zones])::uuid[]) AND tags_lang.language_id=${locale}
+      ) as body_zones,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
         WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id=${locale}
-      ) as tags
+      ) as tags,
+      (
+        SELECT COUNT(DISTINCT day)
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user_id} AND completed
+      ) as workouts_done,
+      (
+        SELECT COUNT(DISTINCT day)
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user_id}
+      ) as workout_days_done
       FROM plans_user pu
       JOIN plans p ON pu.plan_id=p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
@@ -329,8 +342,10 @@ export async function getUserPlans(locale: string, user_id?: string | null): Pro
     }
     return rows.map((plan) => ({
       ...plan,
+      progress: Math.round((rows[0].workouts_done / rows[0].days) * 100),
+      body_zones: rows[0].body_zones?.split(',').map((tag: string) => tag.split(':')),
       tags: plan.tags?.split(',').map((tag) => tag.split(':'))
-    })) as SimplePlan[];
+    })) as Plan[];
   } catch (error) {
     console.error('Failed to fetch user plans:', error);
     return null;

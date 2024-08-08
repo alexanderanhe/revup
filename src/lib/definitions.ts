@@ -159,6 +159,7 @@ export type Plan = SimplePlan & {
   workingDays?: PlanDay[];
   custom_emails?: string[];
   progress?: number;
+  workouts_done?: number;
   workout_days_done?: number;
 }
 
