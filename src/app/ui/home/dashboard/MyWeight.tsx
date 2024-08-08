@@ -35,20 +35,22 @@ export default function MyWeight({ data: chartData, translate }: { data: WeightD
     <div className="w-full space-y-1 py-2">
       <div className="font-semibold">{ translate?.title ?? "-" }</div>
       <div className={cn(
-        "grid justify-between",
-        chartData.length > 1 && "grid-cols-[auto_1fr_1fr]",
+        "grid",
+        chartData.length > 1 && "grid-cols-[auto_1fr]",
       )}>
         <div>{ translate?.currWeight }: { chartData.at(-1)?.weight } { weight_unit }</div>
-        {chartData.length > 1 && (
-          <div className="tooltip" data-tip={translate?.totalLossTooltip}>
-            <span className={cn("font-medium underline decoration-dotted", totalLoss > 0 ? "text-success" : totalLoss < 0 ? "text-error" : "text-neutral")}>{ totalLoss } { weight_unit }</span>
-          </div>
-        )}
-        {chartData.length > 1 && (
-          <div className="tooltip" data-tip={translate?.lastLossTooltip}>
-            <span className={cn("font-medium underline decoration-dotted", lastLoss > 0 ? "text-success" : lastLoss < 0 ? "text-error": "text-neutral")}>{ lastLoss } { weight_unit }</span>
-          </div>
-        )}
+        <div className="grid grid-cols-2">
+          {chartData.length > 1 && (
+            <div className="tooltip tooltip-top" data-tip={translate?.totalLossTooltip}>
+              <span className={cn("font-medium underline decoration-dotted", totalLoss > 0 ? "text-success" : totalLoss < 0 ? "text-error" : "text-neutral")}>{ totalLoss } { weight_unit }</span>
+            </div>
+          )}
+          {chartData.length > 1 && (
+            <div className="tooltip tooltip-top before:left-auto before:right-0 before:translate-x-0" data-tip={translate?.lastLossTooltip}>
+              <span className={cn("font-medium underline decoration-dotted", lastLoss > 0 ? "text-success" : lastLoss < 0 ? "text-error": "text-neutral")}>{ lastLoss } { weight_unit }</span>
+            </div>
+          )}
+        </div>
       </div>
       <ChartContainer config={chartConfig}>
         <ComposedChart
@@ -65,7 +67,7 @@ export default function MyWeight({ data: chartData, translate }: { data: WeightD
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickFormatter={(value) => value.toLocaleDateString()}
+            tickFormatter={(value: Date) => value.toLocaleDateString()}
           />
           <ChartTooltip
             cursor={false}
