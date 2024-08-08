@@ -1,80 +1,90 @@
-import { Link } from "@/navigation";
+'use client'
+
+import { useTranslations } from 'next-intl';
+import { HouseIcon, DumbbellIcon, TreeDeciduousIcon } from "lucide-react";
 
 import Card from "@/app/ui/Card";
 import ProgressCircle from "@/app/ui/utils/ProgressCircle";
+import RatingStar from "@/app/ui/utils/RatingStar";
+import ImageWorkout from "@/app/ui/utils/ImageWorkout";
 
-import { Plan } from "@/lib/definitions";
-import RatingStar from "../utils/RatingStar";
-import { HomeModernIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
+import { Plan, WorkoutImage } from "@/lib/definitions";
+import { cn } from '@/lib/utils';
+
 type PlanItemProps = {
   plan: Plan;
-  index: number;
-  t: any;
 };
 
-export default async function PlanItem({ plan, index, t }: PlanItemProps) {
+const Icons = {
+  home: HouseIcon,
+  gym: DumbbellIcon,
+  outdoor: TreeDeciduousIcon
+};
+
+export default function PlanItem({ plan }: PlanItemProps) {
+  const t = useTranslations('Workout');
   const [ difficulty, _, difficultyValue ] = plan.tags?.find(([_, type]) => type === 'difficulty') ?? ['-', '', '0'];
   const [ place ] = plan.tags?.find(([_, type]) => type === 'place') ?? ['-'];
-  console.log({difficultyValue, val: ~~difficultyValue})
+  const progress = plan?.progress ?? 0;
+  const workout_days_done = plan?.workout_days_done ?? 0;
 
   return (
-    <div className="collapse collapse-arrow join-item">
-      <input type="radio" name="my-accordion-4" defaultChecked={!index} />
-      <Card className="collapse-title">
-        <section className="grid grid-cols-[1fr_auto] place-items-center w-full pr-4">
-          <div className="grid grid-rows-auto gap-1 place-items-start w-full">
-            <strong>{ plan.name }</strong>
-            <div className="flex gap-2 text-xs max-sm:gap-1 uppercase">
-              <HomeModernIcon className="size-3 text-primary" />
-              <span>{ place }</span>
-              <RatingStar
-                name={plan.id}
-                stars={~~difficultyValue}
-                size="xs"
-                // disabled
-              />
-              <span>{ difficulty}</span>
+    <Card className="collapse-title text-neutral-content bg-black overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-primary z-[1] opacity-40"></div>
+      <section className="grid grid-cols-[1fr_auto] grid-rows-auto items-center justify-start gap-1 [&>strong]:uppercase [&>strong]:line-clamp-2 w-full z-[1]">
+        <strong className={cn(
+          "col-span-2",
+          !!plan.days && "sml:col-span-1"
+        )}>{ plan.name }</strong>
+        { !!plan.days && <ProgressCircle
+          type="success"
+          progress={progress}
+          icon={`${workout_days_done}/${plan.days}`}
+          className="hidden sml:block sm:row-span-2"
+        />}
+        <div className="grid col-span-2 sm:col-span-1 grid-rows-auto gap-1 place-items-start text-xs font-medium w-full">
+          <div className="flex flex-col gap-1 max-sml:gap-1">
+            <div className="flex flex-wrap gap-2">
+              <div className="flex gap-1">
+                <Icons.home className="size-3" />
+                <span className="hidden sml:block [&::first-letter]:capitalize">{ t("forPlace", { place }) }</span>
+                <span className="sml:hidden [&::first-letter]:capitalize">{ place }</span>
+              </div>
+              <div className="flex gap-1">
+                <RatingStar
+                  name={plan.id}
+                  stars={~~difficultyValue}
+                  size="xs"
+                  color="neutral-content"
+                  // disabled
+                />
+                <span className="[&::first-letter]:capitalize">{ difficulty }</span>
+              </div>
             </div>
-            <span className="text-xs">{ t("planDetailsDays", { days: plan.days }) }</span>
-            <span className="text-xs">({ t("planDetailsSets", { sets: plan.sets_per_week }) })</span>
           </div>
-          <ProgressCircle type="success" progress={Math.round(Math.random() * 100)} />
-        </section>
-      </Card>
-      <div className="collapse-content h-[50svh] overflow-y-auto space-y-1 px-0 py-2">
-        <h4>{ t("nextTraining") }</h4>
-        <ul className="grid grid-cols-1 gap-2 w-full">
-          { Array.from({ length: plan.days }).map((_, index) => (
-            <Card key={`day${index}`} className="w-full">
-              { !index ? (
-                <Link
-                  href={`/workout`}
-                  className="flex gap-3 w-full"
-                >
-                  <div className="flex flex-col justify-center font-medium w-full">
-                    <span className="text-xs">{ t("planDetailsDay", { day: index + 1 }) }</span>
-                    <span className="font-semibold [&::first-letter]:uppercase">
-                      { plan.body_zones?.[index % plan.body_zones.length] ?? '-'}
-                    </span>
-                  </div>
-                  <ProgressCircle type={0 > 80 ? 'success' : 'error'} progress={0} />
-                </Link>
-              ) : (
-                <div className="flex gap-3 opacity-40 cursor-not-allowed">
-                  <div className="flex flex-col justify-center font-medium w-full">
-                    <span className="text-xs">{ t("planDetailsDay", { day: index + 1 }) }</span>
-                    <span className="font-semibold [&::first-letter]:uppercase">
-                      { plan.body_zones?.[index % plan.body_zones.length] ?? '-'}
-                    </span>
-                  </div>
-                  <ProgressCircle progress={0} icon={<LockClosedIcon className="size-5" />} />
-                </div>
-              )}
-            </Card>
-          ))}
-        </ul>
-      </div>
-    </div>
+          { !!plan.days && (
+            <div className="flex flex-wrap text-[0.7rem] text-primary w-full gap-1">
+              <span className="hidden sml:block">{ t("planDetailsDays", { days: plan.days }) }</span>
+              <span className="sml:hidden">{ t("days", { days: plan.days }) }</span>
+              <span>({ t("planDetailsSets", { sets: plan.sets_per_week }) })</span>
+            </div>
+          )}
+          <span>{ t("workoutsDone", { workout_days_done }) }</span>
+        </div>
+      </section>
+      <ImageWorkout
+        image={{
+          name: plan.name,
+          type: "external",
+          external: {
+            url: "/images/plan.webp"
+          }
+        } as WorkoutImage}
+        width={600}
+        height={150}
+        className="absolute inset-0 w-full h-full object-cover object-right rounded-lg z-[0]"
+        style={{ maskImage: "linear-gradient(to left, black 200%, transparent)"}}
+      />
+    </Card>
   )
 }

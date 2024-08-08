@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { cookies } from 'next/headers';
 
 import "./globals.css";
-import Providers from "../Providers";
+import Providers from "@/app/Providers";
 import LogInDialog from "@/app/ui/dialogs/LogIn";
 import { locales } from "@/i18n";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
@@ -10,6 +10,7 @@ import Banners from "@/components/utils/Banners";
 import { auth } from "@/auth";
 import { poppins } from "@/app/ui/fonts";
 import { APPCOOKIES, User } from "@/lib/definitions";
+import { getMessages } from 'next-intl/server';
 import { Toaster } from "sonner";
 
 export async function generateMetadata() {
@@ -53,11 +54,15 @@ export default async function LocaleLayout({
   unstable_setRequestLocale(locale);
   const theme = await checkTheme();
 
+  // Receive messages provided in `i18n.ts`
+  const messages = await getMessages();
+  const timeZone = process.env.TIME_ZONE ?? 'America/Mexico_City';
+
   return (
     <html lang={locale} data-theme={theme}>
       <body className={`${poppins.className} antialiased`}>
         <Banners />
-        <Providers>
+        <Providers messages={messages} timeZone={timeZone}>
           {children}
           <LogInDialog />
         </Providers>

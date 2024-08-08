@@ -47,6 +47,9 @@
     "loggedBtn": "Enter"
   },
   "Home": {
+    "editDashboardBtn": "Edit dashboard",
+    "saveBtn": "Save",
+    "closeBtn": "Close",
     "dashboard": {
       "WorkoutSchedule": {
         "title": "My workout schedule",
@@ -197,7 +200,8 @@
     "planDetailsDays": "{days} working days",
     "planDetailsDay": "{day}. Working day",
     "planDetailsSets": "{sets} sessions per week",
-    "workoutsDone": "{workouts_done} workouts done."
+    "workoutsDone": "{workout_days_done} workouts done.",
+    "days": "{days} days"
   },
   "Exercises": {
     "title": "Exercises",

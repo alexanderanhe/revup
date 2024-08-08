@@ -47,6 +47,9 @@
     "loggedBtn": "Entrar"
   },
   "Home": {
+    "editDashboardBtn": "Editar panel",
+    "saveBtn": "Guardar",
+    "closeBtn": "Cerrar",
     "dashboard": {
       "WorkoutSchedule": {
         "title": "Mi horario de entrenamiento",
@@ -198,7 +201,8 @@
     "planDetailsDays": "{days} días de entrenamiento",
     "planDetailsDay": "{day}. Día de entrenamiento",
     "planDetailsSets": "{sets} sesiones por semana",
-    "workoutsDone": "{workouts_done} entrenamientos completados."
+    "workoutsDone": "{workout_days_done} entrenamientos completados.",
+    "days": "{days} días"
   },
   "Exercises": {
     "title": "Ejercicios",

@@ -81,7 +81,7 @@ export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   try {
     type UserInfoMod = Omit<UserInfo, 'dashboard'> & { dashboard: string | null }
     const { rows, rowCount } = await sql<UserInfoMod>`
-      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment,
+      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment, ui.dashboard,
         CASE WHEN ua.gender = 'M' THEN 'male' WHEN ua.gender = 'F' THEN 'female' ELSE 'other' END AS gender,
         TO_CHAR(ua.birthdate, 'yyyy-mm-dd') as birthdate, ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
       FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${user_id}`;
@@ -125,8 +125,8 @@ export async function getStatsWeight(): Promise<WeightData[] | null> {
       throw new Error('User session not found.');
     }
     const { rowCount, rows } = await sql<WeightData>`
-      SELECT assess.weight, assess.created_at as date
-      FROM assessments assess
+      SELECT assess.weight, ui.weight_unit, assess.created_at as date
+      FROM assessments assess JOIN users_info ui ON assess.user_id=ui.user_id
       WHERE assess.user_id=${user_id};
     `;
     if (rowCount === 0) {
@@ -784,6 +784,21 @@ export async function saveAssessmentById(assessmentCookie: RequestCookie | undef
   }
 }
 
+export async function saveDashboard(dashboard?: string): Promise<ActionFormState>{
+  const session = await auth();
+  const user = session?.user;
+  try {
+    if (dashboard && user) {
+      await sql`UPDATE users_info
+        SET dashboard=${dashboard}
+        WHERE user_id=${user.id}`;
+    }
+    return { status: 'success' };
+  } catch (error) {
+    console.error('Failed to update user dashboard:', error);
+    throw new Error('Failed to update user dashboard.');
+  }
+}
 export async function saveTheme(formData: FormData): Promise<{theme: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));
   const session = await auth();

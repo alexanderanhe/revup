@@ -77,6 +77,7 @@ export type AuthProviders = {
 export type WeightData = {
   date: string;
   weight: number;
+  weight_unit: number;
 }
 
 export type WorkoutImageLink = {

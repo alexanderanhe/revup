@@ -54,6 +54,8 @@ const config: Config = {
       },
       screens: {
         'xs': '375px',
+        'sml': '425px',
+        'max-sml': { 'raw': '(max-width: 425px)' },
         'tall': { 'raw': '(min-height: 700px)' },
         // => @media (min-height: 800px) { ... }
       }

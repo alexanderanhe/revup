@@ -5,10 +5,13 @@ import { Drawer } from "vaul";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Card from "../Card";
 import { cn } from "@/lib/utils";
-import { Plus, Minus, Menu } from "lucide-react";
+import { Plus, Minus, Menu, CircleAlertIcon } from "lucide-react";
 import { useFormState } from "react-dom";
 import { handleDashboard } from "@/lib/actions";
 import SubmitButton from "../utils/SubmitButton";
+import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { User } from "@/lib/definitions";
 
 export type DroppableItem = {
   id: number | string;
@@ -25,7 +28,10 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     { id: 2, name: 'More widgets', onHome: false },
   ]);
   const [items, setItems] = useState<DroppableItem[]>(dashboardItems);
-  const [ formState, formAction ] = useFormState(handleDashboard, null);
+  const [ formState, formAction ] = useFormState(handleDashboard, { status: "idle" });
+  const t = useTranslations('Home');
+  const { data: session, update } = useSession();
+  const user = session?.user as User;
 
   const rearangeArr = (arr: DroppableItem[], sourceIndex: number, destIndex: number) => {
     const arrCopy = [...arr];
@@ -36,7 +42,7 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
   };
 
   const onDragEnd = (result: any) => {
-    console.log(result);
+    // console.log(result);
     // object destructuring - https://www.w3schools.com/react/react_es6_destructuring.asp
     const { source, destination } = result;
 
@@ -79,109 +85,124 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     )
   }
 
+  const updateDashboard = async () => {
+    await update({
+      info: {
+        ...user?.info,
+        dashboard: items.filter(i => i.category === 1).map(i => i.id).join(";"),
+      },
+    });
+    setOpen(false);
+  }
+
   useEffect(() => {
-    if (formState === 'saved') {
-      setOpen(false);
+    if (formState.status === 'success') {
+      updateDashboard();
     }
   }, [formState]);
 
   return (
     <section className="grid justify-center w-full">
       <DragDropContext onDragEnd={onDragEnd}>
-        
-        <Drawer.Root open={open} shouldScaleBackground>
+        <Drawer.Root dismissible={false} open={open} shouldScaleBackground>
           <Drawer.Trigger asChild onClick={() => setOpen(true)}>
-            <button className="btn btn-ghost">Edit dashboard</button>
+            <button className="btn btn-ghost">{ t("editDashboardBtn") }</button>
           </Drawer.Trigger>
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[50]" />
             <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] bg-base-100 z-[50] mt-24">
-              <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" />
-              <div className="content-grid overflow-auto rounded-t-[10px] flex-1">
-                <div className="max-w-md mx-auto space-y-4">
-                  <Drawer.Title className="font-medium mb-4">
-                    Edit dashboard
-                  </Drawer.Title>
-                  <div>
-                    {/* type="droppable" is very important here. Look at the docs. */}
-                    <Droppable droppableId="Categories" type="droppableItem">
-                      {(provided) => (
-                        <div ref={provided.innerRef} className="space-y-4">
-                          {categories.map((category, index) => (
-                            <Draggable
-                              draggableId={`category-${category.id}`}
-                              key={`category-${category.id}`}
-                              index={index}
-                              isDragDisabled={false}
-                            >
-                              {(parentProvider) => (
-                                <div
-                                  ref={parentProvider.innerRef}
-                                  {...parentProvider.draggableProps}
-                                >
-                                  <Droppable droppableId={category.id.toString()}>
-                                    {(provided) => (
-                                      <div ref={provided.innerRef}>
-                                        <ul className="space-y-2">
-                                          {/* Category title is the drag handle for a category */}
-                                          <h6
-                                            className="mb-3"
-                                            {...parentProvider.dragHandleProps}
-                                          >
-                                            {category.name}
-                                          </h6>
-                                          {items
-                                            .filter(
-                                              (item) => item.category === category.id
-                                            )
-                                            .map((item, index) => (
-                                              <Draggable
-                                                draggableId={item.id.toString()}
-                                                key={item.id}
-                                                index={index}
-                                                isDragDisabled={!category.onHome}
-                                              >
-                                                {(provided) => (
-                                                  <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                  >
-                                                    <Card className="grid-cols-[auto_1fr_auto] p-2">
-                                                      <button
-                                                        onClick={handleClick(item.id, category.onHome ? 2 : 1)}
-                                                        className={cn("btn btn-xs btn-circle", category?.onHome && "btn-error", !category?.onHome && "btn-success")}>
-                                                        { category?.onHome ? <Minus size={24} /> : <Plus size={24} /> }
-                                                      </button>
-                                                      <Item item={item} />
-                                                      { category.onHome && (<button className="btn btn-sm btn-ghost text-base-300"><Menu size={24} /></button>)}
-                                                    </Card>
-                                                  </div>
-                                                )}
-                                              </Draggable>
-                                            ))}
-                                          {provided.placeholder}
-                                        </ul>
-                                      </div>
-                                    )}
-                                  </Droppable>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
+              {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" /> */}
+              <div className="content-grid grid-rows-[auto_1fr_auto] rounded-t-[10px] flex-1 border-t py-5">
+                <Drawer.Title className="font-medium mb-4">
+                  { t("editDashboardBtn") }
+                </Drawer.Title>
+                <div className="overflow-y-auto max-h-full">
+                  {/* type="droppable" is very important here. Look at the docs. */}
+                  <Droppable droppableId="Categories" type="droppableItem">
+                    {(provided) => (
+                      <div ref={provided.innerRef} className="space-y-4">
+                        {categories.map((category: Omit<DroppableItem, 'category'>, index) => (
+                          <Draggable
+                            draggableId={`category-${category.id}`}
+                            key={`category-${category.id}`}
+                            index={index}
+                            isDragDisabled={false}
+                          >
+                            {(parentProvider) => (
+                              <div
+                                ref={parentProvider.innerRef}
+                                {...parentProvider.draggableProps}
+                              >
+                                <Droppable droppableId={category.id.toString()}>
+                                  {(provided) => (
+                                    <div ref={provided.innerRef}>
+                                      <ul className="space-y-2">
+                                        {/* Category title is the drag handle for a category */}
+                                        <h6
+                                          className="mb-3"
+                                          {...parentProvider.dragHandleProps}
+                                        >
+                                          {category.name}
+                                        </h6>
+                                        {items
+                                          .filter(
+                                            (item) => item.category === category.id
+                                          )
+                                          .map((item, index) => (
+                                            <Draggable
+                                              draggableId={item.id.toString()}
+                                              key={item.id}
+                                              index={index}
+                                              isDragDisabled={!category.onHome}
+                                            >
+                                              {(provided) => (
+                                                <div
+                                                  ref={provided.innerRef}
+                                                  {...provided.draggableProps}
+                                                  {...provided.dragHandleProps}
+                                                >
+                                                  <Card className="grid-cols-[auto_1fr_auto] p-2">
+                                                    <button
+                                                      onClick={handleClick(item.id, category.onHome ? 2 : 1)}
+                                                      className={cn("btn btn-xs btn-circle", category?.onHome && "btn-error", !category?.onHome && "btn-success")}>
+                                                      { category?.onHome ? <Minus size={24} /> : <Plus size={24} /> }
+                                                    </button>
+                                                    <Item item={item} />
+                                                    { category.onHome && (<button className="btn btn-sm btn-ghost text-base-300"><Menu size={24} /></button>)}
+                                                  </Card>
+                                                </div>
+                                              )}
+                                            </Draggable>
+                                          ))}
+                                        {provided.placeholder}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </Droppable>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
 
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+                <div className="grid grid-rows-auto gap-2 pb-10">
+                  { formState.status === "error" && (
+                    <div role="alert" className="alert alert-error place-items-center">
+                      <CircleAlertIcon className="size-6" />
+                      <span>{ formState.message }</span>
+                    </div>
+                  )}
                   <form action={formAction}>
                     <input type="hidden" name="dashboard" value={items.filter(i => i.category === 1).map(i => i.id).join(";")}/>
-                    <SubmitButton className="rounded-md mb-6 w-full bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
-                      Save
+                    <SubmitButton className="btn btn-neutral w-full">
+                    { t("saveBtn") }
                     </SubmitButton>
-                    { formState === "error" && <p className="text-error">An error occured. Please try again.</p> }
                   </form>
+                  <button type="button" className="btn btn-ghost w-full" onClick={() => setOpen(false)}>{ t("closeBtn") }</button>
                 </div>
               </div>
             </Drawer.Content>

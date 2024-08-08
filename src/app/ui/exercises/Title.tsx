@@ -38,7 +38,7 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
     <>
       { countingTitle }
       { " " }
-      <span className="[&::first-letter]:uppercase ml-1">{ title }</span>
+      <span className="[&::first-letter]:capitalize ml-1">{ title }</span>
     </>
   )
 }

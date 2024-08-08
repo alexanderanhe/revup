@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 export default function MyWeight({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
   if (!chartData) return null;
+  const weight_unit = chartData[0]?.weight_unit ?? "kg";
 
   const chartConfig = {
     weight: {
@@ -31,21 +32,21 @@ export default function MyWeight({ data: chartData, translate }: { data: WeightD
     .map((d) => ({ ...d, weightLine: d.weight }));
 
   return (
-    <div className="w-full overflow-y-auto space-y-1 py-2">
+    <div className="w-full space-y-1 py-2">
       <div className="font-semibold">{ translate?.title ?? "-" }</div>
       <div className={cn(
         "grid justify-between",
-        chartData.length > 1 && "grid-cols-3",
+        chartData.length > 1 && "grid-cols-[auto_1fr_1fr]",
       )}>
-        <div>{ translate?.currWeight }: { chartData.at(-1)?.weight } kg</div>
+        <div>{ translate?.currWeight }: { chartData.at(-1)?.weight } { weight_unit }</div>
         {chartData.length > 1 && (
           <div className="tooltip" data-tip={translate?.totalLossTooltip}>
-            <span className={cn(totalLoss>0 ? "text-success" : "text-error")}>{ totalLoss }</span>
+            <span className={cn("font-medium underline decoration-dotted", totalLoss > 0 ? "text-success" : totalLoss < 0 ? "text-error" : "text-neutral")}>{ totalLoss } { weight_unit }</span>
           </div>
         )}
         {chartData.length > 1 && (
           <div className="tooltip" data-tip={translate?.lastLossTooltip}>
-            <span className={cn(lastLoss>0 ? "text-success" : "text-error")}>{ lastLoss }</span>
+            <span className={cn("font-medium underline decoration-dotted", lastLoss > 0 ? "text-success" : lastLoss < 0 ? "text-error": "text-neutral")}>{ lastLoss } { weight_unit }</span>
           </div>
         )}
       </div>

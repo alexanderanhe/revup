@@ -7,9 +7,10 @@ type ProgressCircleProps = {
   type?: keyof typeof typeClasses;
   icon?: React.ReactNode;
   size?: string;
+  className?: string;
 }
 
-export default function ProgressCircle({ progress, type, icon, size }: ProgressCircleProps) {
+export default function ProgressCircle({ progress, type, icon, size, className }: ProgressCircleProps) {
   const workoutProgressStyles = {
     "--value": progress,
     "--size": size ?? "3.2rem"
@@ -20,6 +21,7 @@ export default function ProgressCircle({ progress, type, icon, size }: ProgressC
       typeClasses[type ?? 'neutral'],
       progress === 100 && 'after:hidden',
       !progress && 'before:hidden after:hidden',
+      className,
     )} style={workoutProgressStyles} role="progressbar">
       { icon ?? `${progress}%` }
     </div>
