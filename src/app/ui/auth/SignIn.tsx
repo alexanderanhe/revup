@@ -27,7 +27,7 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
   const [ form, setForm ] = useState<Form>(globalForm);
   const [ error, setError ] = useState<string>('');
   const [ showPassword, setShowPassword] = useState<boolean>(false);
-  const [ formState, formAction ] = useFormState(authenticate, undefined);
+  const [ formState, formAction ] = useFormState(authenticate, { status: 'idle' });
   const searchParams = useSearchParams();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +37,7 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
   };
 
   useEffect(() => {
-    if (formState === 'done') {
+    if (formState.status === 'success') {
       setGlobalForm(form);
       setModal('signIn');
       setForm(FORM_INIT);
@@ -76,11 +76,10 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
           <p className="text-sm text-center">
             <button type='button' onClick={() => setModal('Forgot')} className="underline text-gray-400">Reset your password?</button>
           </p>
-          {error ? <div className="label">
-            <span className="label-text-alt text-error font-semibold">Error: { error }</span>
+          {error || formState?.status === "error" ? <div className="label">
+            <span className="label-text-alt text-error font-semibold">Error: { error || formState?.message }</span>
             <span className="label-text-alt"></span>
           </div> : null}
-          { formState ?? ''}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4">

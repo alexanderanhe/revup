@@ -481,18 +481,20 @@ export class NotionSync {
         }
         
         // Update the workout in the database
+        const custom_emails = rest.custom_emails?.split(";").map((email: string) => email.trim()).filter((email: string) => email);
+        const custom_emails_json = custom_emails.length ? JSON.stringify(custom_emails) : null;
         await client.query(`
-          INSERT INTO plans (id, tags, workouts_complex, body_zones, days, sets_per_week, custom_email, type)
-          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], Array[$4::uuid[]], $5, $6, $7::text, $8::text)
+          INSERT INTO plans (id, tags, workouts_complex, body_zones, days, sets_per_week, custom_emails, type)
+          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], Array[$4::uuid[]], $5, $6, $7::jsonb, $8::text)
           ON CONFLICT (id) DO UPDATE
           SET tags = Array[$2::uuid[]],
               workouts_complex=Array[$3::uuid[]],
               body_zones=Array[$4::uuid[]],
               days=$5,
               sets_per_week=$6,
-              custom_email=$7::text,
+              custom_emails=$7::jsonb,
               type=$8::text;
-        `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, rest.custom_email, rest.type?.toLowerCase() ]);
+        `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, custom_emails_json, rest.type?.toLowerCase() ]);
   
         const langsText = this.langs.map((lang) => ({
           name: rest[`name_${lang}`],
@@ -522,21 +524,23 @@ export class NotionSync {
           }
         });
 
-        if (rest.custom_email) {
-          const result = await client.query(`
-            SELECT id FROM users WHERE email=$1
-          `, [ rest.custom_email.trim() ]);
-          const userId = result.rowCount === 0 ? null : result.rows[0].id;
-          if (!userId) {
-            console.error("User not found", rest.custom_email);
-          } else {
-            await createUserPlan(userId, notion_id);
-            const plans = await getUserPlans(userId);
-            if (!plans?.some(({ is_current }: { is_current?: boolean }) => is_current)) {
-              await setAsCurrentPlan(userId, notion_id);
+        if (custom_emails.length) {
+          custom_emails.forEach(async (email: string) => {
+            const result = await client.query(`
+              SELECT id FROM users WHERE email=$1
+            `, [ email ]);
+            const userId = result.rowCount === 0 ? null : result.rows[0].id;
+            if (!userId) {
+              console.error("User not found", email);
+            } else {
+              await createUserPlan(userId, notion_id);
+              const plans = await getUserPlans('en', userId);
+              if (!plans?.some(({ is_current }: { is_current?: boolean }) => is_current)) {
+                await setAsCurrentPlan(userId, notion_id);
+              }
+              this.consoleLog(["User added to the plan", `user:${userId} notionId:${notion_id}`]);
             }
-            this.consoleLog(["User added to the plan", `user:${userId} notionId:${notion_id}`]);
-          }
+          })
         }
         
         // Update the status of the page

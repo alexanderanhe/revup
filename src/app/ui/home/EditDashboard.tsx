@@ -89,18 +89,15 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     <section className="grid justify-center w-full">
       <DragDropContext onDragEnd={onDragEnd}>
         
-        <Drawer.Root
-          dismissible={false}
-          open={open} 
-          shouldScaleBackground>
+        <Drawer.Root open={open} shouldScaleBackground>
           <Drawer.Trigger asChild onClick={() => setOpen(true)}>
             <button className="btn btn-ghost">Edit dashboard</button>
           </Drawer.Trigger>
           <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[50]" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] bg-base-100 z-[50] mt-24">
-            {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" /> */}
-            <div className="content-grid overflow-auto rounded-t-[10px] flex-1 border-t py-5">
+            <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[50]" />
+            <Drawer.Content className="fixed bottom-0 left-0 right-0 flex flex-col rounded-t-[10px] h-[96%] bg-base-100 z-[50] mt-24">
+              <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-8 mt-4" />
+              <div className="content-grid overflow-auto rounded-t-[10px] flex-1">
                 <div className="max-w-md mx-auto space-y-4">
                   <Drawer.Title className="font-medium mb-4">
                     Edit dashboard

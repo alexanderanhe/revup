@@ -90,7 +90,7 @@ export default async function CurrentPlan({ user, locale }: { user?: User, local
       </Card>
       <div className="w-full space-y-1 py-2">
         <div className="font-semibold">{ t("nextTraining") }</div>
-        <ul id="currentPlanWorkingDays" data-scrollable="true" className="grid grid-cols-1 gap-2 w-full max-h-72 overflow-y-auto">
+        <ul id="currentPlanWorkingDays" data-scrollable="true" className="grid grid-cols-1 gap-2 w-full max-h-80 overflow-y-auto">
           { plan.workingDays?.map((workingDay) => (
             <NextWorkout
               key={`day${workingDay.day}`}

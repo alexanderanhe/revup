@@ -9,6 +9,10 @@ export const authConfig = {
     signOut: '/',
   },
   callbacks: {
+    async signIn({ profile }) {
+      // return profile?.email?.endsWith("@yourdomain.com")
+      return true;
+    },
     authorized({ auth, request: { nextUrl, cookies } }) {
       const isAuthenticated = !!auth?.user;
       return isAuthenticated;

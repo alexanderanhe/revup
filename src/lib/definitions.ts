@@ -156,7 +156,7 @@ export type Plan = SimplePlan & {
   body_zones: string[][];
   workouts_complex?: string[] | WorkoutComplex[];
   workingDays?: PlanDay[];
-  custom_email?: string;
+  custom_emails?: string[];
   progress?: number;
   workout_days_done?: number;
 }
@@ -255,7 +255,7 @@ export const tablePlansProperties: NotionTableProperties = {
   Dias: "days",
   "Sesiones por semana": "sets_per_week",
   Etiquetas: "tags",
-  Personalizado: "custom_email",
+  Personalizado: "custom_emails",
   Tipo: "type",
   Estatus: "status",
   Bot: "bot",

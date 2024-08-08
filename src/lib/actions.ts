@@ -13,22 +13,16 @@ import { PAGES } from '@/lib/routes';
 // ...
  
 export async function authenticate(
-  prevState: string | undefined,
+  prevState: ActionFormState | undefined,
   formData: FormData,
-) {
+): Promise<ActionFormState> {
   try {
-    await signIn('credentials', formData);
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
+    const response = await signIn('credentials', formData);
+    console.log(response);
+    return { status: 'success' };
+  } catch (error: any) {
+    let message = error?.message;
+    return { status: 'error', message };
   }
 }
 

@@ -7,7 +7,7 @@ import Resend from "next-auth/providers/resend"
 import Credentials from 'next-auth/providers/credentials';
 import vercelPostgresAdapter from "@/lib/vercelPostgresAdapter";
 import { z } from 'zod';
-import { getUser } from "@/lib/data";
+import { findUserByEmail } from "@/lib/data";
 import bcrypt from 'bcryptjs'; 
 
 export const {
@@ -20,25 +20,22 @@ export const {
   ...authConfig,
   providers: [Google, Facebook, GitHub,
     Credentials({
-      async authorize(credentials) {
+      authorize: async (credentials) => {
         const parsedCredentials = z
-          .object({
-            email: z.string().email(),
-            password: z.string().min(6)
-          })
-          .safeParse(credentials);
-
+        .object({
+          email: z.string().email(),
+          password: z.string().min(8).max(32),
+        })
+        .safeParse(credentials);
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user?.password ?? '');
-
-          if (passwordsMatch) return user;
-          return user;
+          const user = await findUserByEmail({ email, includePassword: true });
+          if (user) {
+            const passwordsMatch = await bcrypt.compare(password, user?.password ?? '');
+            console.log({passwordsMatch, user});
+            if (passwordsMatch) return user;
+          };
         }
-
-        console.log('Invalid credentials');
         return null;
       },
     }),

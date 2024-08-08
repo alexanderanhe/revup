@@ -11,6 +11,7 @@ import { PencilIcon } from "@heroicons/react/24/solid"
 import Logout from "@/app/ui/profile/Logout"
 import { PAGES } from "@/lib/routes"
 import PopUpNotification from "@/app/ui/profile/PopUpNotification"
+import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -20,23 +21,12 @@ export default async function ProfilePage() {
 
   return (
     <LayoutContent title={t("title")} footer>
-      <section className="grid grid-cols-[auto_1fr_auto] gap-4">
-        <div className="avatar">
-          <div className="w-14 rounded-full">
-            <ProfileImage user={user} />
-          </div>
-        </div>
-        <div className="grid grid-rows-2 gap-2">
-          <h2 className="text-xl font-bold truncate overflow-hidden w-full">
-            { user?.name }
-          </h2>
-          <p>{ tAssessmentOpts(`goal:${user?.info?.goal}`) }</p>
-        </div>
+      <ProfileNavImage user={user} subtitle={ tAssessmentOpts(`goal:${user?.info?.goal}`) }>
         <Link href="/profile/edit" className="btn btn-sm btn-primary">
           <PencilIcon className="size-4" />
           Edit
         </Link>
-      </section>
+      </ProfileNavImage>
       <section className="grid grid-cols-3">
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
           <strong>{ user?.info?.height }{ " " }{ t("height:unit") }</strong>

@@ -222,5 +222,13 @@
     "message": "We use cookies for essential website functions and to better understand how you use our site, so we can create the best possible experience for you.",
     "accept": "Got it",
     "privacy": "Privacy Policy"
+  },
+  "nav": {
+    "greetings": {
+      "welcome": "Welcome 🙋‍♂️",
+      "welcomeBack": "Welcome back 💪",
+      "goodMorning": "Good Morning 👋",
+      "goodEvening": "Good Evening 😊"
+    }
   }
 }

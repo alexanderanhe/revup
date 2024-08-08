@@ -67,7 +67,7 @@ export async function fetchEvents(date: Date) {
 //   return password === hash;
 // }
 
-export async function getUser(email: string): Promise<any> {
+export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}): Promise<any> {
   try {
     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
     return user.rows[0];
@@ -101,7 +101,8 @@ export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
 
 export async function createUser({name, email, password}: LocalUser): Promise<User> {
   try {
-    const passwordEncrypt = password ? bcrypt.hashSync(password, 10) : '';
+    const salt = bcrypt.genSaltSync(10);
+    const passwordEncrypt = password ? bcrypt.hashSync(password, salt) : '';
     const result = await sql<User>`INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${passwordEncrypt}) RETURNING *`;
     return result.rows[0] as User;
   } catch (error) {
@@ -307,24 +308,29 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
   }
 }
 
-export async function getUserPlans(user_id: string): Promise<SimplePlan[] | null> {
+export async function getUserPlans(locale: string, user_id?: string | null): Promise<SimplePlan[] | null> {
+  if (!user_id) return null;
   try {
-    const { rows, rowCount } = await sql<SimplePlan>`
+    type planMod = Omit<SimplePlan, 'tags'> & { tags: string }
+    const { rows, rowCount } = await sql<planMod>`
       SELECT p.id, pl.name, pu.is_current, pu.current_day, pl.comments,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.type, ':', tags.value), ','  order by tags_lang.name)
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
-        WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id='en'
+        WHERE tags.id = ANY((Array[p.tags])::uuid[]) AND tags_lang.language_id=${locale}
       ) as tags
       FROM plans_user pu
       JOIN plans p ON pu.plan_id=p.id
-      JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id='en'
+      JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
       WHERE pu.user_id=${user_id};
     `;
     if (rowCount === 0) {
       return null;
     }
-    return rows as SimplePlan[];
+    return rows.map((plan) => ({
+      ...plan,
+      tags: plan.tags?.split(',').map((tag) => tag.split(':'))
+    })) as SimplePlan[];
   } catch (error) {
     console.error('Failed to fetch user plans:', error);
     return null;

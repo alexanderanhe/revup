@@ -10,9 +10,9 @@ const sql = {
     dropWorkoutsLang: 'DROP TABLE IF EXISTS workouts_lang;',
     dropPlansUser: 'DROP TABLE IF EXISTS plans_user;',
     dropPlansLang: 'DROP TABLE IF EXISTS plans_lang;',
-    dropPlansLang: 'DROP TABLE IF EXISTS plans_user_day;',
+    dropPlansUserWC: 'DROP TABLE IF EXISTS plans_user_workouts_complex;',
+    dropPlansUserDay: 'DROP TABLE IF EXISTS plans_user_day;',
     dropPlans: 'DROP TABLE IF EXISTS plans;',
-    dropPlansLang: 'DROP TABLE IF EXISTS plans_user_workouts_complex;',
     dropWorkoutsComplex: 'DROP TABLE IF EXISTS workouts_complex;',
     dropWorkoutsLiked: 'DROP TABLE IF EXISTS workouts_liked;',
     dropWorkouts: 'DROP TABLE IF EXISTS workouts;',
@@ -21,7 +21,7 @@ const sql = {
     dropUsers: 'DROP TABLE IF EXISTS users;',
     dropLanguages: 'DROP TABLE IF EXISTS languages;',
     dropTypeGender: 'DROP TYPE IF EXISTS gender;',
-    dropTypeTag: 'DROP TYPE IF EXISTS tagType;'
+    dropTypeTag: 'DROP TYPE IF EXISTS tagType;',
   }, 'Dropped all types and tables'],
   seedTypes: [{
     createGenderType: 'CREATE TYPE gender AS ENUM (\'M\', \'F\', \'O\');',
@@ -265,7 +265,7 @@ const sql = {
       workouts_complex UUID[] DEFAULT NULL,
       days SMALLINT DEFAULT NULL,
       sets_per_week SMALLINT DEFAULT NULL,
-      custom_email VARCHAR(255) NULL,
+      custom_emails JSONB NULL,
       type CHAR(10) DEFAULT 'public',
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
@@ -379,13 +379,18 @@ async function seed(client, procedure) {
     const queriesKeys = Object.keys(queries);
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`; // Enable uuid generation
 
-    const result = await Promise.all(queriesKeys.map((queryKey) => {
+    const result = []
+    for (queryKey of queriesKeys) {
       const query = queries[queryKey];
       currentTable = queryKey;
       if (typeof query === 'function') return query(client);
-      return client.query(`${query}`);
-    }));
-    console.log(successMessage);
+      result.push(client.query(`${query}`));
+    }
+    Promise.all(result).then(() => {
+      console.log(successMessage);
+    }).catch((error) => {
+      throw error;
+    });
     return result;
   } catch (error) {
     console.error(`Error seeding ${procedure} on table ${currentTable}:`, error);
@@ -396,12 +401,19 @@ async function seed(client, procedure) {
 async function main() {
   const client = await db.connect();
   const allSeeds = Object.keys(sql);
-
-  for await (const seedName of allSeeds) {
-    await seed(client, seedName);
+  const result = []
+  for (const seedName of allSeeds) {
+    result.push(seed(client, seedName));
   }
 
-  await client.end();
+  Promise.all(result)
+  .catch((err) => {
+    throw err;
+  })
+  .finally(() => {
+    client.end();
+    console.log("FINISHED!");
+  })
 }
 
 main().catch((err) => {

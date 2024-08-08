@@ -223,5 +223,13 @@
     "message": "Utilizamos cookies para funciones esenciales del sitio web y para comprender mejor cómo utiliza nuestro sitio, de modo que podamos crear la mejor experiencia posible para usted.",
     "accept": "Entiendo",
     "privacy": "Política de Privacidad"
+  },
+  "nav": {
+    "greetings": {
+      "welcome": "Bienvenido 🙋‍♂️",
+      "welcomeBack": "Bienvenido de vuelta 💪",
+      "goodMorning": "Buenos días 👋",
+      "goodEvening": "Buenas tardes 😊"
+    }
   }
 }
