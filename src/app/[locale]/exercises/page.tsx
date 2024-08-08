@@ -56,7 +56,7 @@ export default async function ExercisesPage({
           const isPrevCompleted = exercises?.[i - 1]?.completed;
           const isNextStretchtingTag = exercises?.[i + 1]?.tags.some(([name, type]) => stretchingTags.includes(name) && type === 'muscle');
           return (
-            <li key={`exercise${id}`} style={{'--timeline-row-start': 'calc(50% - 1.25rem / 2)'} as React.CSSProperties }>
+            <li key={`exercise${id}`} className="group" style={{'--timeline-row-start': 'calc(50% - 1.25rem / 2)'} as React.CSSProperties }>
               <hr className={cn(
                 exercises?.[i - 1] && isStretchtingTag && 'bg-secondary',
                 (!isPrevStretchtingTag || !isStretchtingTag) && !isPrevCompleted && 'bg-base-300',
@@ -70,7 +70,7 @@ export default async function ExercisesPage({
                   </div>
                 ) : (
                   <div className={cn(
-                    "grid place-items-center rounded-full size-7",
+                    "grid place-items-center rounded-full group-hover:animate-spin size-7",
                     !isStretchtingTag && 'bg-base-300 text-base-300-content',
                     isStretchtingTag && 'bg-secondary text-secondary-content',
                   )}>
@@ -78,7 +78,7 @@ export default async function ExercisesPage({
                   </div>
                 )}
               </div>
-              <Card className="relative w-full min-h-24 timeline-end mb-3 overflow-hidden">
+              <Card className="relative w-full min-h-24 group-hover:bg-primary/40 timeline-end mb-3 overflow-hidden">
                 <ExerciseButton
                   name={name}
                   sets={sets}
