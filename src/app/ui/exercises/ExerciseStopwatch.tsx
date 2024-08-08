@@ -129,7 +129,7 @@ export default function ExerciseStopwatch({ startDate, translate }: ExerciseStop
         </form>
       ) : (
         <form action={formActionStartWorkoutDay}>
-          <SubmitButton className="btn">
+          <SubmitButton className="btn flex-nowrap">
           { translate.start } <PlayIcon className="size-5" />
           </SubmitButton>
         </form>

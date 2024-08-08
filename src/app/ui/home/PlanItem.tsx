@@ -68,9 +68,7 @@ export default function PlanItem({ plan }: PlanItemProps) {
               <span>({ t("planDetailsSets", { sets: plan.sets_per_week }) })</span>
             </div>
           )}
-          { plan?.workouts_done && plan?.workouts_done > 0 && (
-            <span>{ t("workoutsDone", { workout_days_done: plan?.workouts_done ?? 1 }) }</span>
-          )}
+          <span>{ t("workoutsDone", { workout_days_done: plan?.workouts_done ?? 1 }) }</span>
         </div>
       </section>
       <ImageWorkout

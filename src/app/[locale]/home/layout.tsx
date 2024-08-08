@@ -36,7 +36,13 @@ export default async function HomeLayout({ children, params: { locale } }: HomeL
   const plans = await getUserPlans(locale, user?.id);
 
   return (
-    <LayoutContent title="" head footer pullToRefresh headerButton={<ChangeDefaultPlanButton plans={plans} />}>
+    <LayoutContent
+      title=""
+      headerButton={<ChangeDefaultPlanButton plans={plans} />}
+      head
+      footer
+      pullToRefresh
+    >
       { children }
     </LayoutContent>
   );

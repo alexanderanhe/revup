@@ -342,6 +342,7 @@ export async function getUserPlans(locale: string, user_id?: string | null): Pro
     }
     return rows.map((plan) => ({
       ...plan,
+      workouts_done: ~~rows[0].workouts_done,
       progress: Math.round((rows[0].workouts_done / rows[0].days) * 100),
       body_zones: rows[0].body_zones?.split(',').map((tag: string) => tag.split(':')),
       tags: plan.tags?.split(',').map((tag) => tag.split(':'))
