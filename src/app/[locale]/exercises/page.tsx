@@ -12,6 +12,8 @@ import ExerciseButton from "@/app/ui/exercises/ExerciseButton";
 import { Plan, PlanDay, WorkoutImage } from "@/lib/definitions";
 import StartButton from "@/app/ui/exercises/StartButton";
 import { DumbbellIcon } from "lucide-react";
+import SubmitButton from "@/app/ui/utils/SubmitButton";
+import FinishButton from "@/app/ui/exercises/FinishButton";
 
 const stretchingTags = ['stretching', 'estiramiento'];
 
@@ -78,7 +80,13 @@ export default async function ExercisesPage({
                   </div>
                 )}
               </div>
-              <Card className="relative w-full min-h-24 group-hover:bg-primary/40 timeline-end mb-3 overflow-hidden">
+              <Card className={cn(
+                "relative w-full transition-colors min-h-24 timeline-end mb-3 overflow-hidden",
+                !isStretchtingTag && !completed && 'group-hover:bg-primary/40',
+                isStretchtingTag && !completed && 'group-hover:bg-secondary/40',
+                completed && !isStretchtingTag && 'bg-success/15',
+                completed && isStretchtingTag && 'bg-secondary/15',
+              )}>
                 <ExerciseButton
                   name={name}
                   sets={sets}
@@ -108,9 +116,13 @@ export default async function ExercisesPage({
           )
         })}
       </ul>
-      <StartButton exercises={exercises} translate={{
-        start: tExercises("startBtn")
-      }} />
+      { exercises?.some(({ completed }) => !completed) ? (
+        <StartButton exercises={exercises} translate={{
+          start: tExercises("startBtn")
+        }} />
+      ) : (
+        <FinishButton text={tExercises("finishBtn")} />
+      )}
       <div />
     </>
   )

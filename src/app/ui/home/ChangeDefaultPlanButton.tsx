@@ -18,7 +18,7 @@ export default function ChangeDefaultPlanButton({ plans }: ChangeDefaultPlanButt
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/80 z-[50]" />
-        <Drawer.Content className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-[50]">
+        <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-[50]">
           <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" />
           <div className="content-grid grid-rows-[auto_1fr_auto] h-full">
             <Drawer.Title className="font-medium mb-4">
