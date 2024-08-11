@@ -1,4 +1,4 @@
-export const tags = [
+const tags = [
   // -- Insert tags muscles
   ['muscle', 'chest', 'pecho', '1'],
   ['muscle', 'back', 'espalda', '1', [
@@ -113,3 +113,5 @@ export const tags = [
   ['other', 'legs+shoulders', 'piernas+hombros'],
   ['other', 'full body', 'cuerpo completo'],
 ];
+
+module.exports = { tags };

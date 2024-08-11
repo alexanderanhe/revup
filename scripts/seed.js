@@ -1,5 +1,6 @@
 const { db } = require('@vercel/postgres');
 const { tags } = require('./data');
+// const { NotionSync } = require('../src/lib/notion');
 
 const sql = {
   dropAll: [{ // TODO: Add drop tables for plans
@@ -177,7 +178,8 @@ const sql = {
       completed_at TIMESTAMP DEFAULT NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
-      PRIMARY KEY (user_id, plan_id, day)
+      PRIMARY KEY (user_id, plan_id, day),
+      UNIQUE (day, plan_id, user_id)
     );`,
     createTableUserWorkoutsComplex: `
     CREATE TABLE IF NOT EXISTS plans_user_workouts_complex (
@@ -300,8 +302,11 @@ async function main() {
   .catch((err) => {
     throw err;
   })
-  .finally(() => {
+  .finally(async () => {
     client.end();
+    // const notionPages = new NotionSync("seed");
+    // notionPages.database_filter = undefined;
+    // const sync = await notionPages.sync();
     console.log("FINISHED!");
   })
 }

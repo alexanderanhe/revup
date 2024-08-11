@@ -13,6 +13,13 @@ const notion = new Client({
 export class NotionSync {
   origin: string = "cron";
   langs: string[] = ['es', 'en'];
+  database_filter = {
+    type: "last_edited_by",
+    property: "Last edited by",
+    last_edited_by: {
+      does_not_contain: process.env.NOTION_BOT_USER_ID
+    }
+  }
 
   constructor(origin: string) {
     this.origin = origin;
@@ -145,13 +152,7 @@ export class NotionSync {
     const database_id = process.env.NOTION_WORKOUTS_DATABASE_ID;
     if (!database_id) return;
 
-    const { results } = await this.getDatabase( database_id, {
-      type: "last_edited_by",
-      property: "Last edited by",
-      last_edited_by: {
-        does_not_contain: process.env.NOTION_BOT_USER_ID
-      }
-    });
+    const { results } = await this.getDatabase( database_id, this.database_filter);
 
     if (!results.length) {
       console.error("No results found");
@@ -281,13 +282,7 @@ export class NotionSync {
     const database_id = process.env.NOTION_WORKOUTSCOMPLEX_DATABASE_ID;
     if (!database_id) return;
 
-    const { results } = await this.getDatabase( database_id, {
-      type: "last_edited_by",
-      property: "Last edited by",
-      last_edited_by: {
-        does_not_contain: process.env.NOTION_BOT_USER_ID
-      }
-    });
+    const { results } = await this.getDatabase( database_id, this.database_filter);
 
     if (!results.length) {
       console.error("No results found");
@@ -400,13 +395,7 @@ export class NotionSync {
     const database_id = process.env.NOTION_PLANS_DATABASE_ID;
     if (!database_id) return;
 
-    const { results } = await this.getDatabase( database_id, {
-      type: "last_edited_by",
-      property: "Last edited by",
-      last_edited_by: {
-        does_not_contain: process.env.NOTION_BOT_USER_ID
-      }
-    });
+    const { results } = await this.getDatabase( database_id, this.database_filter);
 
     if (!results.length) {
       console.error("No results found");
