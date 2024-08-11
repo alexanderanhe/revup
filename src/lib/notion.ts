@@ -256,7 +256,7 @@ export class NotionSync {
           created_time, last_edited_time, created_by, last_edited_by
         };
       } catch (error: any) {
-        this.consoleLog(error.message, "error", "Error processing row");
+        this.consoleLog([error.message], "error", "Error processing row");
         // Update the id and status of the page
         await this.updatePage(notion_id, {
           Bot: {
@@ -377,7 +377,7 @@ export class NotionSync {
           created_time, last_edited_time, created_by, last_edited_by
         };
       } catch (error: any) {
-        this.consoleLog(error.message, "error", "Error processing row");
+        this.consoleLog([error.message], "error", "Error processing row");
         // Update the id and status of the page
         await this.updatePage(notion_id, {
           Bot: {

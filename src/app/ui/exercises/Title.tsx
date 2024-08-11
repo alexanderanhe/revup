@@ -14,6 +14,7 @@ type TitleProps = {
 export default function Title({ titles, defaultTitle }: TitleProps) {
   const [ title, setTitle ] = useState<string>("")
   const [ countingTitle, setCountingTitle ] = useState<string>("")
+  const capitalize = <T extends string>(s: T) => (s[0].toUpperCase() + s.slice(1)) as Capitalize<typeof s>;
   const pathname = usePathname();
   const ids = Object.keys(titles);
   const total = ids.length;
@@ -23,10 +24,10 @@ export default function Title({ titles, defaultTitle }: TitleProps) {
     setTitle(() => {
       if (pathname !== PAGES.EXERCISES && currExercise && titles?.[currExercise]) {
         setCountingTitle(`${ids.indexOf(currExercise) + 1}/${total}`);
-        return titles?.[currExercise];
+        return capitalize(titles?.[currExercise]);
       }
       setCountingTitle(defaultTitle ? "" : `1/${total}`);
-      return defaultTitle ?? titles?.[ids[0]];
+      return capitalize(defaultTitle ?? titles?.[ids[0]]);
     });
   }, [currExercise, ids, total, pathname]);
 

@@ -20,7 +20,7 @@ export const tags = [
     ['muscle', 'posterior thigh muscles', 'músculos posteriores del muslo' ],
     ['muscle', 'inner thigh muscles', 'músculos internos del muslo' ],
     ['muscle', 'outer thigh muscles', 'músculos externos del muslo' ],
-    ['muscle', 'abductores de cadera', 'hip abductors' ],
+    ['muscle', 'hip abductors', 'abductores de cadera' ],
     ['muscle', 'glutes', 'glúteo', '1'],
   ]],
   ['muscle', 'deltoids', 'deltoides', '1', [
