@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from 'next-auth';
 import { User } from '@/lib/definitions';
-import { getUserInfo } from '@/lib/data';
+import { checkUserPlanExists, getUserInfo } from '@/lib/data';
  
 export const authConfig = {
   pages: {
@@ -20,6 +20,7 @@ export const authConfig = {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
       (session.user as User).info = await getUserInfo(user.id);
+      await checkUserPlanExists(user.id);
       return session
     }
   },

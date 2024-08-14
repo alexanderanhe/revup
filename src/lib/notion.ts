@@ -13,7 +13,7 @@ const notion = new Client({
 export class NotionSync {
   origin: string = "cron";
   langs: string[] = ['es', 'en'];
-  database_filter = {
+  database_filter: any = {
     type: "last_edited_by",
     property: "Last edited by",
     last_edited_by: {
@@ -471,19 +471,18 @@ export class NotionSync {
         
         // Update the workout in the database
         const custom_emails = rest.custom_emails?.split(";").map((email: string) => email.trim()).filter((email: string) => email);
-        const custom_emails_json = custom_emails.length ? JSON.stringify(custom_emails) : null;
         await client.query(`
           INSERT INTO plans (id, tags, workouts_complex, body_zones, days, sets_per_week, custom_emails, type)
-          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], Array[$4::uuid[]], $5, $6, $7::jsonb, $8::text)
+          VALUES ($1::uuid, Array[$2::uuid[]], Array[$3::uuid[]], Array[$4::uuid[]], $5, $6, $7::text[], $8::text)
           ON CONFLICT (id) DO UPDATE
           SET tags = Array[$2::uuid[]],
               workouts_complex=Array[$3::uuid[]],
               body_zones=Array[$4::uuid[]],
               days=$5,
               sets_per_week=$6,
-              custom_emails=$7::jsonb,
+              custom_emails=$7::text[],
               type=$8::text;
-        `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, custom_emails_json, rest.type?.toLowerCase() ]);
+        `, [ notion_id, tags, rest.workouts_complex, body_zones, rest.days, rest.sets_per_week, custom_emails, rest.type?.toLowerCase() ]);
   
         const langsText = this.langs.map((lang) => ({
           name: rest[`name_${lang}`],

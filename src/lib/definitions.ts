@@ -129,6 +129,7 @@ export type WorkoutComplexParameters = {
   created_at?: Date;
 }
 export type PlanDay = {
+  id: UUID;
   day: number;
   plan_id: UUID;
   user_id: UUID;

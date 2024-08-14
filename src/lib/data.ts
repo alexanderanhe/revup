@@ -51,22 +51,6 @@ export async function fetchEvents(date: Date) {
   ];
 }
 
-// export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}) {
-//   await wait(2000);
-
-//   return {
-//     _id: '629924078f28b719d95f61af',
-//     email: 'alex.angulo@gmail.com',
-//     password: '123456'
-//   }
-// }
-
-// export async function comparePassword(password: string, hash: string) {
-//   await wait(2000);
-
-//   return password === hash;
-// }
-
 export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}): Promise<any> {
   try {
     const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
@@ -96,6 +80,32 @@ export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     return null;
+  }
+}
+
+// TODO: MAKE THIS FUNCTION WORK
+export async function checkUserPlanExists(userId: string): Promise<void> {
+  try {
+    const user = await sql<User>`SELECT email FROM users WHERE id=${userId}`;
+    if (!user.rowCount) return;
+    const email = user.rows[0].email;
+    const current_plans = (await getUserPlans('en', userId) ?? []).map(({ id }: { id: string }) => id);
+    const { rowCount, rows} = await sql<Plan>`
+      SELECT id FROM plans WHERE ${email} = ANY(custom_emails::text[])
+    `;
+    if (rowCount === 0) return;
+    const new_plans = rows.filter(({ id }: { id: string }) => !current_plans.includes(id));
+    if (!new_plans.length) return;
+    for (const { id: planId } of new_plans) {
+      await createUserPlan(userId, planId);
+    };
+    const plans = await getUserPlans('en', userId) ?? [];
+    const last_one = plans.at(-1);
+    if (last_one && !plans?.some(({ is_current }: { is_current?: boolean }) => is_current)) {
+      await setAsCurrentPlan(userId, last_one.id as string);
+    }
+  } catch (error) {
+    console.error('Failed to fetch checkUserPlanExists:', error);
   }
 }
 
@@ -313,7 +323,11 @@ export async function getUserPlans(locale: string, user_id?: string | null): Pro
   try {
     type planMod = Omit<Omit<Plan, 'tags'>, 'body_zones'> & { tags: string, body_zones: string, workouts_done: number, workout_days_done: number }
     const { rows, rowCount } = await sql<planMod>`
-      SELECT p.id, pl.name, pu.is_current, pu.current_day, pl.comments,
+      SELECT p.id, pl.name, pu.is_current, pl.comments,
+      (
+        SELECT plans_user_day.day FROM plans_user_day
+        WHERE plans_user_day.plan_id=p.id AND user_id=${user_id} AND is_current
+      ) as current_day,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.id), ',')
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
@@ -355,20 +369,28 @@ export async function getUserPlans(locale: string, user_id?: string | null): Pro
 
 export async function createUserPlan(user_id: string, plan_id: string, current_day?: number | null): Promise<void> {
   try {
-    const { rows } = await sql`
-      INSERT INTO plans_user_day (day, user_id, plan_id)
-      VALUES (${current_day ?? 1}, ${user_id}::uuid, ${plan_id}::uuid)
-      ON CONFLICT (day, user_id, plan_id) DO UPDATE
-      SET updated_at=NOW()
-      RETURNING day;
-    `;
-    await sql`
-      INSERT INTO plans_user (user_id, plan_id, current_day)
-      VALUES (${user_id}::uuid, ${plan_id}::uuid, ${rows[0].day ?? 1})
-      ON CONFLICT (user_id, plan_id) DO UPDATE
-      SET current_day=${rows[0].day ?? 1},
-          updated_at=NOW();
-    `;
+    const { rows, rowCount } = await sql`SELECT id FROM plans_user_day
+    WHERE user_id=${user_id} AND plan_id=${plan_id} AND day=${current_day ?? 1}`;
+
+    if ( !rowCount ) {
+      await sql`
+        INSERT INTO plans_user (user_id, plan_id)
+        VALUES (${user_id}::uuid, ${plan_id}::uuid)
+        ON CONFLICT (user_id, plan_id) DO UPDATE
+        SET updated_at=NOW();
+      `;
+      await sql`
+        INSERT INTO plans_user_day (day, user_id, plan_id, is_current)
+        VALUES (${current_day ?? 1}, ${user_id}::uuid, ${plan_id}::uuid, true)
+      `;
+    } else {
+      await sql`UPDATE plans_user_day SET is_current=false
+      WHERE user_id=${user_id} AND plan_id=${plan_id}`;
+
+      await sql`UPDATE plans_user_day SET updated_at=NOW(),
+        is_current=true WHERE id=${rows[0].id}`;
+    }
+
   } catch (error) {
     console.error('Failed to create plan:', error);
     throw new Error('Failed to create plan.');
@@ -387,11 +409,7 @@ export async function setAsCurrentPlan(user_id: string, plan_id: string): Promis
     `;
     await sql`
       UPDATE plans_user
-      SET is_current=true,
-          current_day=(
-            SELECT COALESCE(MAX(DISTINCT day), 0) FROM plans_user_day
-            WHERE user_id=${user_id} AND plan_id=${plan_id} AND completed
-          ) + 1
+      SET is_current=true
       WHERE user_id=${user_id} AND plan_id=${plan_id};
     `;
     return 'saved';
@@ -430,8 +448,8 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
       JOIN plans_user pu ON pu.user_id=${user.id} AND pu.is_current=true
       JOIN plans p ON pu.plan_id = p.id
-      LEFT JOIN plans_user_workouts_complex puwc ON puwc.plan_id = p.id AND puwc.workout_complex_id = wc.id
-        AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
+      JOIN plans_user_day pud ON pu.plan_id = p.id AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
+      LEFT JOIN plans_user_workouts_complex puwc ON puwc.plan_user_day_id = pud.id AND puwc.workout_complex_id = wc.id
       WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
         AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
       GROUP BY w.id, p.id, wc.id, wl.name, wl.description
@@ -461,7 +479,11 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
       return null;
     }
     const { rows, rowCount } = await sql`
-      SELECT p.*, pl.name, pl.comments, pu.current_day,
+      SELECT p.*, pl.name, pl.comments,
+      (
+        SELECT plans_user_day.day FROM plans_user_day
+        WHERE plans_user_day.plan_id=p.id AND user_id=${user.id} AND is_current
+      ) as current_day,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.id), ',')
         FROM tags JOIN tags_lang ON tags_lang.tag_id = tags.id
@@ -520,8 +542,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
         FROM workouts_complex
         JOIN plans ON workouts_complex.id=ANY((Array[plans.workouts_complex])::uuid[])
         LEFT JOIN plans_user ON plans_user.plan_id=plans.id
-        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.plan_id=plans.id
-          AND plans_user_workouts_complex.user_id=plans_user.user_id AND plans_user_workouts_complex.day=pud.day
+        LEFT JOIN plans_user_workouts_complex ON plans_user_workouts_complex.plan_user_day_id=pud.id
           AND plans_user_workouts_complex.workout_complex_id=workouts_complex.id
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
         AND p.body_zones[1][((pud.day - 1) % ARRAY_LENGTH(p.body_zones, 2)) + 1] = ANY((Array[workouts_complex.body_zones])::uuid[])
@@ -534,7 +555,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
         WHERE plans_user.plan_id=pud.plan_id AND plans_user.user_id=pud.user_id
         AND p.body_zones[1][((pud.day - 1) % ARRAY_LENGTH(p.body_zones, 2)) + 1] = ANY((Array[workouts_complex.body_zones])::uuid[])
       ) as workouts_total,
-      CASE WHEN pud.day = pu.current_day THEN true ELSE false END as current_day
+      pud.is_current as current_day
       FROM plans_user_day pud
       JOIN plans_user pu ON pud.plan_id = pu.plan_id AND pud.user_id = pu.user_id
       JOIN plans p ON pud.plan_id = p.id
@@ -552,7 +573,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
     return [
       ...rows.map((row: PlanDay) => ({
         ...row,
-        percentage: Math.round((row.workouts_done / row.workouts_total) * 100)
+        percentage: row.workouts_total ? Math.round((row.workouts_done / row.workouts_total) * 100) : 0
       })),
       ...Array.from({ length }, (_, d) => ({day: d + rowCount + 1}))
     ] as PlanDay[];
@@ -589,21 +610,29 @@ export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): 
       throw new Error('Day out of range.');
     }
 
+    const { rows, rowCount } = await sql<PlanDay>`
+      SELECT id FROM plans_user_day
+      WHERE plan_id=${<string>plan.id} AND user_id=${user?.id}
+      AND day=${parseInt(<string>form.day)}
+    ;`;
+
+    if ( rowCount === 0) {
+      throw new Error('Error searching id on plans_user_day')
+    }
+
     // TO DO: rest, rest_between, rest_sets I DON'T KNOW HOW TO HANDLE THIS YET
     await sql`INSERT INTO plans_user_workouts_complex
-      (day, plan_id, reps, time, time_unit,
-        weight, weight_unit, workout_id, workout_complex_id, user_id)
+      (plan_user_day_id, reps, time, time_unit,
+        weight, weight_unit, workout_id, workout_complex_id)
       VALUES (
-        ${<string>form.day},
-        ${<string>plan.id},
+        ${rows[0].id},
         ${<string>form.reps ?? null},
         ${<string>form.time ?? null},
         ${workoutComplex.time_unit},
         ${<string>form.weight ?? null},
         ${workoutComplex.weight_unit},
         ${workoutComplex.workout_id},
-        ${workoutComplex.id},
-        ${user?.id}
+        ${workoutComplex.id}
       )`;
     return 'saved';
   } catch (error) {
@@ -650,28 +679,22 @@ export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;
     }
 
     await sql`UPDATE plans_user_day
-      SET completed=true,
+      SET is_current=false,
+          completed=true,
           completed_at=NOW(),
           percentage=${workingDayData.percentage},
           updated_at=NOW()
-      WHERE day=${plan.current_day} AND plan_id=${plan.id} AND user_id=${user.id}
+      WHERE is_current AND plan_id=${plan.id} AND user_id=${user.id}
     `;
 
     const new_current_day = (plan.current_day ?? 1) + 1;
-
-    await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at)
-      VALUES (${new_current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW())
+    await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at, is_current)
+      VALUES (${new_current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW(), true)
       ON CONFLICT (day, plan_id, user_id) DO UPDATE
-      SET updated_at = NOW()
+      SET is_current=true, updated_at = NOW()
       RETURNING day
     ;`
 
-    await sql`UPDATE plans_user
-      SET current_day=${new_current_day},
-          updated_at=NOW()
-      WHERE plan_id=${plan.id} AND user_id=${user.id}
-      RETURNING current_day
-    `;
     return { status: 'success'};
   } catch (error: any) {
     return {
@@ -705,7 +728,7 @@ export async function getUserPlanStartedAt(): Promise<string | null> {
       JOIN plans p ON pu.plan_id=p.id
       JOIN plans_user_day pud ON pu.plan_id=pud.plan_id
         AND pud.user_id = ${user.id}
-        AND pud.day = pu.current_day
+        AND pud.is_current
       WHERE pu.user_id = ${user.id} AND pu.is_current
     `;
     return rowCount === 0 ? null : convertUTCToLocal(rows[0]?.started_at).toString();
@@ -723,7 +746,11 @@ export async function setUserPlanStartedAt(): Promise<string | null> {
     }
 
     const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
-      SELECT p.id, pu.current_day FROM plans_user pu
+      SELECT p.id, (
+        SELECT plans_user_day.day FROM plans_user_day
+        WHERE plans_user_day.plan_id=p.id AND user_id=${user.id} AND is_current
+      ) as current_day
+      FROM plans_user pu
       JOIN plans p ON pu.plan_id=p.id
       WHERE pu.user_id = ${user.id} AND pu.is_current
     `;

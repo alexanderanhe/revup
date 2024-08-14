@@ -1,27 +1,26 @@
 const { db } = require('@vercel/postgres');
 const { tags } = require('./data');
-// const { NotionSync } = require('../src/lib/notion');
 
 const sql = {
-  dropAll: [{ // TODO: Add drop tables for plans
-    dropUserInfo: 'DROP TABLE IF EXISTS users_info;',
-    dropAssessments: 'DROP TABLE IF EXISTS assessments;',
-    dropVerificationToken: 'DROP TABLE IF EXISTS verification_tokens;',
-    dropAuthSessions: 'DROP TABLE IF EXISTS auth_sessions;',
-    dropTagsLang: 'DROP TABLE IF EXISTS tags_lang;',
-    dropWorkoutsLang: 'DROP TABLE IF EXISTS workouts_lang;',
-    dropPlansUser: 'DROP TABLE IF EXISTS plans_user;',
-    dropPlansLang: 'DROP TABLE IF EXISTS plans_lang;',
-    dropPlansUserWC: 'DROP TABLE IF EXISTS plans_user_workouts_complex;',
-    dropPlansUserDay: 'DROP TABLE IF EXISTS plans_user_day;',
-    dropPlans: 'DROP TABLE IF EXISTS plans;',
-    dropWorkoutsComplex: 'DROP TABLE IF EXISTS workouts_complex;',
-    dropWorkoutsLiked: 'DROP TABLE IF EXISTS workouts_liked;',
-    dropWorkouts: 'DROP TABLE IF EXISTS workouts;',
-    dropTags: 'DROP TABLE IF EXISTS tags;',
-    dropAccounts: 'DROP TABLE IF EXISTS accounts;',
-    dropUsers: 'DROP TABLE IF EXISTS users;',
-    dropLanguages: 'DROP TABLE IF EXISTS languages;',
+  dropAll: [{
+    dropUserInfo: 'DROP TABLE IF EXISTS users_info CASCADE;',
+    dropAssessments: 'DROP TABLE IF EXISTS assessments CASCADE;',
+    dropVerificationToken: 'DROP TABLE IF EXISTS verification_tokens CASCADE;',
+    dropAuthSessions: 'DROP TABLE IF EXISTS auth_sessions CASCADE;',
+    dropTagsLang: 'DROP TABLE IF EXISTS tags_lang CASCADE;',
+    dropWorkoutsLang: 'DROP TABLE IF EXISTS workouts_lang CASCADE;',
+    dropPlansUser: 'DROP TABLE IF EXISTS plans_user CASCADE;',
+    dropPlansLang: 'DROP TABLE IF EXISTS plans_lang CASCADE;',
+    dropPlansUserWC: 'DROP TABLE IF EXISTS plans_user_workouts_complex CASCADE;',
+    dropPlansUserDay: 'DROP TABLE IF EXISTS plans_user_day CASCADE;',
+    dropPlans: 'DROP TABLE IF EXISTS plans CASCADE;',
+    dropWorkoutsComplex: 'DROP TABLE IF EXISTS workouts_complex CASCADE;',
+    dropWorkoutsLiked: 'DROP TABLE IF EXISTS workouts_liked CASCADE;',
+    dropWorkouts: 'DROP TABLE IF EXISTS workouts CASCADE;',
+    dropTags: 'DROP TABLE IF EXISTS tags CASCADE;',
+    dropAccounts: 'DROP TABLE IF EXISTS accounts CASCADE;',
+    dropUsers: 'DROP TABLE IF EXISTS users CASCADE;',
+    dropLanguages: 'DROP TABLE IF EXISTS languages CASCADE;',
     dropTypeGender: 'DROP TYPE IF EXISTS gender;',
     dropTypeTag: 'DROP TYPE IF EXISTS tagType;',
   }, 'Dropped all types and tables'],
@@ -155,7 +154,7 @@ const sql = {
       workouts_complex UUID[] DEFAULT NULL,
       days SMALLINT DEFAULT NULL,
       sets_per_week SMALLINT DEFAULT NULL,
-      custom_emails JSONB NULL,
+      custom_emails text[] NULL,
       type CHAR(10) DEFAULT 'public',
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
@@ -167,26 +166,33 @@ const sql = {
       language_id CHAR(2) REFERENCES languages(code) ON DELETE CASCADE,
       PRIMARY KEY (plan_id, language_id)
     );`,
+    createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      is_current BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (user_id, plan_id)
+    );`,
     createTableUsersDay: `CREATE TABLE IF NOT EXISTS plans_user_day (
-      day SMALLINT DEFAULT 1 UNIQUE,
-      user_id UUID REFERENCES users(id),
-      plan_id UUID REFERENCES plans(id),
+      id UUID DEFAULT uuid_generate_v4(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      day SMALLINT DEFAULT 1 CHECK (day > 0),
       name VARCHAR(100) NULL,
+      is_current BOOLEAN DEFAULT FALSE,
       percentage SMALLINT DEFAULT 0,
       started_at TIMESTAMP DEFAULT NULL,
       completed BOOLEAN DEFAULT FALSE,
       completed_at TIMESTAMP DEFAULT NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
-      PRIMARY KEY (user_id, plan_id, day),
-      UNIQUE (day, plan_id, user_id)
+      PRIMARY KEY (id)
     );`,
     createTableUserWorkoutsComplex: `
     CREATE TABLE IF NOT EXISTS plans_user_workouts_complex (
       id UUID DEFAULT uuid_generate_v4(),
-      day SMALLINT REFERENCES plans_user_day(day),
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
+      plan_user_day_id UUID REFERENCES plans_user_day(id) ON DELETE CASCADE,
       reps SMALLINT DEFAULT NULL,
       time SMALLINT DEFAULT NULL,
       time_unit CHAR(3) DEFAULT NULL,
@@ -199,17 +205,8 @@ const sql = {
       workout_complex_id UUID REFERENCES workouts_complex(id) DEFAULT NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
-      PRIMARY KEY (user_id, plan_id, day, id)
+      PRIMARY KEY (id)
     );`,
-    createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
-      is_current BOOLEAN DEFAULT FALSE,
-      current_day SMALLINT REFERENCES plans_user_day(day) DEFAULT 1,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW(),
-      PRIMARY KEY (user_id, plan_id)
-    );`
   }, 'Created "plans" table'],
   seedAccounts: [{
     createTable: `CREATE TABLE IF NOT EXISTS accounts (
@@ -281,6 +278,7 @@ async function seed(client, procedure) {
     Promise.all(result).then(() => {
       console.log(successMessage);
     }).catch((error) => {
+      console.error(`Error seeding ${procedure} on table ${currentTable}:`, error);
       throw error;
     });
     return result;
@@ -304,9 +302,6 @@ async function main() {
   })
   .finally(async () => {
     client.end();
-    // const notionPages = new NotionSync("seed");
-    // notionPages.database_filter = undefined;
-    // const sync = await notionPages.sync();
     console.log("FINISHED!");
   })
 }
