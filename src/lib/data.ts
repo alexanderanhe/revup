@@ -448,7 +448,7 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
       JOIN plans_user pu ON pu.user_id=${user.id} AND pu.is_current=true
       JOIN plans p ON pu.plan_id = p.id
-      JOIN plans_user_day pud ON pu.plan_id = p.id AND puwc.day=${workingDay.day} AND puwc.user_id=${user.id}
+      JOIN plans_user_day pud ON pu.plan_id = p.id AND pud.day=${workingDay.day} AND pud.user_id=${user.id}
       LEFT JOIN plans_user_workouts_complex puwc ON puwc.plan_user_day_id = pud.id AND puwc.workout_complex_id = wc.id
       WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
         AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
