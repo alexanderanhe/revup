@@ -69,7 +69,7 @@ if (!self.define) {
 }
 define(['./workbox-cca50194'], (function (workbox) { 'use strict';
 
-  importScripts("/fallback-development.js");
+  importScripts("/fallback-development.js", "/worker-development.js");
   self.skipWaiting();
   workbox.clientsClaim();
 

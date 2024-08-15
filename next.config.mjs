@@ -76,7 +76,7 @@ const nextConfigFunction = async (phase) => {
       },
       workboxOptions: {
         disableDevLogs: true,
-      },
+      }
       // ... other options you like
     });
     return withPWA(nextConfig);

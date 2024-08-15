@@ -875,6 +875,14 @@ export async function saveOnBoarding(): Promise<void>{
   }
 }
 
+export async function getNotification(user_id: string): Promise<any>{
+  const { rows, rowCount } = await sql`SELECT notification_json FROM notifications WHERE user_id=${user_id}`;
+  if (rowCount === 0) {
+    return null;
+  }
+  return rows[0];
+}
+
 export async function wait (ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

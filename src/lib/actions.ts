@@ -3,9 +3,24 @@
 import { cookies } from 'next/headers';
 import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
+import webpush from "web-push";
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt, saveDashboard, setAsCurrentPlan } from '@/lib/data';
+import {
+  createUser,
+  saveAssessment,
+  setWorkoutItem,
+  saveAssessmentById,
+  saveOnBoarding,
+  saveTheme,
+  setWorkoutsUserLiked,
+  wait,
+  setWorkoutCloseDay,
+  setUserPlanStartedAt,
+  saveDashboard,
+  setAsCurrentPlan,
+  getNotification
+} from '@/lib/data';
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
 import { PAGES } from '@/lib/routes';
@@ -321,3 +336,73 @@ export async function handleDeleteCookies(
   cookies().getAll().forEach((cookie) => cookies().delete(cookie.name));
   return 'done';
 }
+
+export const sendNotification = async (
+	message: string,
+	user_id: string,
+	icon: string,
+	name: string
+) => {
+	const vapidKeys = {
+		publicKey: process.env.NEXT_PUBLIC_VAPID_KEY!,
+		privateKey: process.env.VAPID_PRIVATE_KEY!,
+	};
+	//setting our previously generated VAPID keys
+	webpush.setVapidDetails(
+		"mailto:myuserid@email.com",
+		vapidKeys.publicKey,
+		vapidKeys.privateKey
+	);
+
+  const data = await getNotification(user_id);
+  if (data) {
+    try {
+      // get this info from the user's data
+      // const pushSubscription = {
+      //   endpoint: '.....',
+      //   keys: {
+      //     auth: '.....',
+      //     p256dh: '.....'
+      //   }
+      // };
+      const pushSubscription = JSON.parse(data.notification_json);
+      await webpush.sendNotification(
+        pushSubscription,
+        JSON.stringify({
+          message: name,
+          icon,
+          body: message,
+        })
+      );
+      return "{}";
+    } catch (e) {
+      return JSON.stringify({ error: "failed to send notification" });
+    }
+  }
+
+	// const supabase = createSupabaseServer();
+
+	// const { data, error } = await supabase
+	// 	.from("notification")
+	// 	.select("*")
+	// 	.eq("user_id", user_id)
+  //  .single();
+	// if (error) {
+	// 	return JSON.stringify({ error: error.message });
+	// } else if (data) {
+	// 	try {
+	// 		await webpush.sendNotification(
+	// 			JSON.parse(data.notification_json),
+	// 			JSON.stringify({
+	// 				message: name,
+	// 				icon,
+	// 				body: message,
+	// 			})
+	// 		);
+	// 		return "{}";
+	// 	} catch (e) {
+	// 		return JSON.stringify({ error: "failed to send notification" });
+	// 	}
+	// }
+	// return "{}";
+};
