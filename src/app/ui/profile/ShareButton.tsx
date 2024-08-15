@@ -9,8 +9,7 @@ type ShareButtonProps = {
 }
 
 function ShareButton({ children }: ShareButtonProps) {
-  if (!navigator.share) return null;
-  console.log(typeof navigator.share)
+  if (!navigator.canShare) return null;
 
   const handleSharing = async () => {
     try {
