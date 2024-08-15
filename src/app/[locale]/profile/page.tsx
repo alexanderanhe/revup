@@ -12,6 +12,7 @@ import Logout from "@/app/ui/profile/Logout"
 import { PAGES } from "@/lib/routes"
 import PopUpNotification from "@/app/ui/profile/PopUpNotification"
 import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
+import ShareButton from "@/app/ui/profile/ShareButton"
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -87,6 +88,7 @@ export default async function ProfilePage() {
             <span className="grow flex justify-start">{ t("other.privacyPolicy") }</span>
             <ArrowRightIcon className="size-5" />
           </Link>
+          <ShareButton>{ t("other.share") }</ShareButton>
           <Link href={`${PAGES.PROFILE}/settings`} className="btn btn-ghost w-full">
             <Cog6ToothIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("other.settings") }</span>
