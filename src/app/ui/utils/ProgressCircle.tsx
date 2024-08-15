@@ -17,7 +17,7 @@ export default function ProgressCircle({ progress, type, icon, size, className }
   } as React.CSSProperties;
   return (
     <div className={clsx(
-      "radial-progress text-sm font-semibold",
+      "radial-progress text-sm text-center font-semibold",
       typeClasses[type ?? 'neutral'],
       progress === 100 && 'after:hidden',
       !progress && 'before:hidden after:hidden',

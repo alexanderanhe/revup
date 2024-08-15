@@ -33,7 +33,7 @@ export default function PlanItem({ plan }: PlanItemProps) {
       <div className="absolute inset-0 bg-gradient-to-r from-primary z-[1] opacity-40"></div>
       <section className="grid grid-cols-[1fr_auto] grid-rows-auto items-center justify-start gap-1 [&>strong]:uppercase [&>strong]:line-clamp-2 w-full z-[1]">
         <strong className={cn(
-          "col-span-2",
+          "col-span-2 text-base text-left",
           !!plan.days && "sml:col-span-1"
         )}>{ plan.name }</strong>
         { !!plan.days && <ProgressCircle

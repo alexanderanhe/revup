@@ -50,6 +50,8 @@
     "editDashboardBtn": "Editar panel",
     "saveBtn": "Guardar",
     "closeBtn": "Cerrar",
+    "changePlanTitle": "Planes",
+    "changePlanNewBtn": "Crear nuevo plan",
     "dashboard": {
       "WorkoutSchedule": {
         "title": "Mi horario de entrenamiento",

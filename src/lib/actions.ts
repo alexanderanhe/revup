@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { Resend } from 'resend';
 
 import { auth, signIn, signOut } from '@/auth';
-import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt, saveDashboard } from '@/lib/data';
+import { createUser, saveAssessment, setWorkoutItem, saveAssessmentById, saveOnBoarding, saveTheme, setWorkoutsUserLiked, wait, setWorkoutCloseDay, setUserPlanStartedAt, saveDashboard, setAsCurrentPlan } from '@/lib/data';
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
 import { PAGES } from '@/lib/routes';
@@ -145,6 +145,26 @@ export async function authenticateGithub(
       }
     }
     throw error;
+  }
+}
+
+export async function handleSetCurrentPlan(
+  prevState: ActionFormState | null,
+  formData: FormData
+): Promise<ActionFormState> {
+  try {
+    const plan_id = formData.get('plan_id');
+    const session = await auth();
+    const user = (session?.user as User);
+    if (!plan_id) throw 'No plan id';
+    if (user) {
+      await setAsCurrentPlan(user.id as string, plan_id as string);
+      revalidatePath(`${PAGES.HOME}`);
+      return { status: 'success'};
+    }
+    return { status: 'error', message: 'There is no session'};
+  } catch (error: any) {
+    return { status: 'error', message: error.message};
   }
 }
 
