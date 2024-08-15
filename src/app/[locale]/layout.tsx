@@ -25,7 +25,8 @@ export async function generateMetadata() {
 export async function generateViewport() {
   const theme = await checkTheme();
   return {
-    themeColor: theme === 'dark' ? '#000000' :'#FFFFFF',
+    themeColor: theme === 'dark' ? '#000000'
+      : theme === '' ? '#53f074' : '#FFFFFF',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
@@ -41,7 +42,7 @@ async function checkTheme() {
   const session = await auth();
   const user: User | undefined = session?.user;
   const cookieStore = cookies()
-  return user?.info?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? 'light';
+  return user?.info?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? '';
 }
 
 export default async function LocaleLayout({
