@@ -3,6 +3,8 @@
 import { BellIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Drawer } from "vaul";
+import SubmitButton from "../utils/SubmitButton";
 
 type PopUpNotificationProps = {
   title: string;
@@ -10,10 +12,11 @@ type PopUpNotificationProps = {
 }
 
 export default function PopUpNotification({ title, text }: PopUpNotificationProps) {
-
 	const [notificationPermission, setNotificationPermission] = useState<
 		"granted" | "denied" | "default"
 	>("default");
+	const [open, setOpen] = useState<boolean>(false);
+	const [subscription, setSubscription] = useState<PushSubscription | null>();
 
   const showNotification = () => {
 		if ("Notification" in window) {
@@ -70,7 +73,7 @@ export default function PopUpNotification({ title, text }: PopUpNotificationProp
 		const subscription = await newRegistration.pushManager.subscribe(
 			options
 		);
-		console.log(subscription);
+		setSubscription(subscription);
 		//  TO DO: Save the subscription object to the database
 
 		// example code
@@ -101,6 +104,12 @@ export default function PopUpNotification({ title, text }: PopUpNotificationProp
 		}
 	}, [notificationPermission]);
 
+	useEffect(() => {
+		if (subscription) {
+			setOpen(true);
+		}
+	}, [subscription]);
+
   useEffect(() => {
 		setNotificationPermission(Notification.permission);
 	}, []);
@@ -117,6 +126,25 @@ export default function PopUpNotification({ title, text }: PopUpNotificationProp
           onChange={handleChange}
           checked={notificationPermission === "granted"}
         />
+				<Drawer.Root
+					open={open}
+					onOpenChange={setOpen}
+					// snapPoints={["148px"]}
+					// setActiveSnapPoint={"148px"}
+					shouldScaleBackground
+				>
+					<Drawer.Overlay className="fixed inset-0 bg-black/80" />
+					<Drawer.Portal>
+						<Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-30">
+							<div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" />
+							<div className="flex flex-col max-w-md mx-auto w-full p-4 pt-5 space-y-2">
+								<form action="">
+									<SubmitButton className="btn w-full">Subscribe</SubmitButton>
+								</form>
+							</div>
+						</Drawer.Content>
+					</Drawer.Portal>
+				</Drawer.Root>
       </label>
     </>
   )
