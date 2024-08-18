@@ -1,6 +1,6 @@
 'use client'
 
-import { PlusIcon, ReplaceIcon, SquareMousePointerIcon } from "lucide-react"
+import { PlusIcon, ReplaceIcon } from "lucide-react"
 import { Drawer } from "vaul"
 import { useFormState } from "react-dom"
 import { useTranslations } from "next-intl";
@@ -10,16 +10,24 @@ import PlanItem from "@/app/ui/home/PlanItem"
 import SubmitButton from "@/app/ui/utils/SubmitButton"
 
 import { Plan } from "@/lib/definitions"
+import { useEffect, useState } from "react";
 type ChangeDefaultPlanButtonProps = {
   plans: Plan[] | null;
 }
 export default function ChangeDefaultPlanButton({ plans }: ChangeDefaultPlanButtonProps) {
-  const [ formState, formAction ] = useFormState(handleSetCurrentPlan, null);
   const t = useTranslations('Home');
+  const [open, setOpen] = useState<boolean>(false);
+  const [ formState, formAction ] = useFormState(handleSetCurrentPlan, null);
+
+  useEffect(() => {
+    if (formState?.status === "success") {
+      setOpen(false);
+    }
+  }, [formState])
 
   return (
-    <Drawer.Root shouldScaleBackground>
-      <Drawer.Trigger className="btn btn-square rounded-lg">
+    <Drawer.Root open={open} onOpenChange={setOpen} shouldScaleBackground>
+      <Drawer.Trigger onClick={() => setOpen(true)} className="btn btn-square rounded-lg">
         <ReplaceIcon className="size-4" />
       </Drawer.Trigger>
       <Drawer.Portal>

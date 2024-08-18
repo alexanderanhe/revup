@@ -5,10 +5,10 @@ import { setSubscriptionNotification } from "@/lib/data";
 export async function POST(req: NextRequest) {
     try{
         const session = await auth()
-        if (!session?.user) return  NextResponse.json({ status:"fail", data: "Forbidden"});
+        if (!session?.user) return  NextResponse.json({ status:"fail", data: "Forbidden"}, { status: 403 });
 
         const payload = await req.json();
-        if (!payload.subscription) return  NextResponse.json({ status:"fail", data: "Incorrect params"});
+        if (!payload.subscription) return  NextResponse.json({ status:"fail", data: "Incorrect params"}, { status: 406 });
 
         const subscription = payload.subscription;
         await setSubscriptionNotification(subscription);

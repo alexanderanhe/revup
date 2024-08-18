@@ -72,24 +72,12 @@ export default function PopUpNotification({ title, text }: PopUpNotificationProp
 			options
 		);
 
-		const {data} = await axios.post('/api/save-subscription', { subscription })
-		console.log({ data })
-		
-		// formRef.current && formRef?.current?.submit()
-		//  TO DO: Save the subscription object to the database
+		try {
+			const {data} = await axios.post('/api/save-subscription', { subscription });
+		} catch (error: any) {
+			toast.error(error.message);
+		}
 
-		// example code
-		// const supabase = createSupabaseBrowser();
-
-		// const { error } = await supabase
-		// 	.from("notification")
-		// 	.insert({ notification_json: JSON.stringify(subscription) });
-
-		// if (error) {
-		// 	toast.error(error.message);
-		// } else {
-		// 	queryClient.invalidateQueries({ queryKey: ["user"] });
-		// }
 	};
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
