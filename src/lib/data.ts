@@ -875,8 +875,26 @@ export async function saveOnBoarding(): Promise<void>{
   }
 }
 
-export async function getNotification(user_id: string): Promise<any>{
-  const { rows, rowCount } = await sql`SELECT notification_json FROM notifications WHERE user_id=${user_id}`;
+export async function setSubscriptionNotification(subscription: any): Promise<void>{
+  const session = await auth();
+  const user = session?.user;
+  if (!user) throw new Error("Forbidden");
+  if (!subscription.keys.auth || !subscription.keys.p256dh) throw new Error("Subsciption error");
+
+  const { rows } = await sql`
+    SELECT subscription::json->'keys'->'auth' as auth, subscription::json->'keys'->'p256dh' as p256dh
+    FROM notification_subscriptions
+    WHERE user_id=${user.id}
+  ;`;
+  const alreadyInserted = rows.some(({auth, p256dh}) => (
+    auth == subscription.keys.auth && p256dh == subscription.keys.p256dh
+  ));
+  if (alreadyInserted) return;
+  await sql`INSERT INTO notification_subscriptions (subscription, user_id) VALUES (${subscription}, ${user.id})`;
+}
+
+export async function getSubscription(user_id: string): Promise<any>{
+  const { rows, rowCount } = await sql`SELECT subscription FROM notification_subscriptions WHERE user_id=${user_id}`;
   if (rowCount === 0) {
     return null;
   }

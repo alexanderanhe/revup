@@ -19,7 +19,7 @@ import {
   setUserPlanStartedAt,
   saveDashboard,
   setAsCurrentPlan,
-  getNotification
+  getSubscription
 } from '@/lib/data';
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
@@ -337,6 +337,26 @@ export async function handleDeleteCookies(
   return 'done';
 }
 
+export async function handleSendNotification(
+  prevState: ActionFormState | null,
+  formData: FormData
+): Promise<ActionFormState> {
+  try {
+    const message = formData.get("message") as string;
+    const user_id = formData.get("user_id") as string;
+    const icon    = formData.get("icon")    as string;
+    const name    = formData.get("name")    as string;
+
+    if (!message || !user_id || !icon || !name) {
+      return { status: "error", message: "invalid input(s)" };
+    }
+    await sendNotification(message, user_id, icon, name);
+    return { status: "success" };
+  } catch (error: any) {
+    return { status: "error", message: error.message };
+  }
+}
+
 export const sendNotification = async (
 	message: string,
 	user_id: string,
@@ -354,7 +374,7 @@ export const sendNotification = async (
 		vapidKeys.privateKey
 	);
 
-  const data = await getNotification(user_id);
+  const data = await getSubscription(user_id);
   if (data) {
     try {
       // get this info from the user's data
@@ -365,7 +385,7 @@ export const sendNotification = async (
       //     p256dh: '.....'
       //   }
       // };
-      const pushSubscription = JSON.parse(data.notification_json);
+      const pushSubscription = data.subscription;
       await webpush.sendNotification(
         pushSubscription,
         JSON.stringify({
@@ -374,35 +394,8 @@ export const sendNotification = async (
           body: message,
         })
       );
-      return "{}";
     } catch (e) {
-      return JSON.stringify({ error: "failed to send notification" });
+       throw new Error("failed to send notification");
     }
   }
-
-	// const supabase = createSupabaseServer();
-
-	// const { data, error } = await supabase
-	// 	.from("notification")
-	// 	.select("*")
-	// 	.eq("user_id", user_id)
-  //  .single();
-	// if (error) {
-	// 	return JSON.stringify({ error: error.message });
-	// } else if (data) {
-	// 	try {
-	// 		await webpush.sendNotification(
-	// 			JSON.parse(data.notification_json),
-	// 			JSON.stringify({
-	// 				message: name,
-	// 				icon,
-	// 				body: message,
-	// 			})
-	// 		);
-	// 		return "{}";
-	// 	} catch (e) {
-	// 		return JSON.stringify({ error: "failed to send notification" });
-	// 	}
-	// }
-	// return "{}";
 };

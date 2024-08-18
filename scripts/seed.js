@@ -19,6 +19,7 @@ const sql = {
     dropWorkouts: 'DROP TABLE IF EXISTS workouts CASCADE;',
     dropTags: 'DROP TABLE IF EXISTS tags CASCADE;',
     dropAccounts: 'DROP TABLE IF EXISTS accounts CASCADE;',
+    dropNotificationSubscriptions: 'DROP TABLE IF EXISTS notification_subscriptions CASCADE;',
     dropUsers: 'DROP TABLE IF EXISTS users CASCADE;',
     dropLanguages: 'DROP TABLE IF EXISTS languages CASCADE;',
     dropTypeGender: 'DROP TYPE IF EXISTS gender;',
@@ -208,6 +209,16 @@ const sql = {
       PRIMARY KEY (id)
     );`,
   }, 'Created "plans" table'],
+  seedNotifications: [{
+    createTable: `CREATE TABLE IF NOT EXISTS notification_subscriptions (
+      id UUID DEFAULT uuid_generate_v4(),
+      subscription JSONB NULL,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW(),
+      PRIMARY KEY (id)
+    );`,
+  }, 'Created "notification_subscriptions" table'],
   seedAccounts: [{
     createTable: `CREATE TABLE IF NOT EXISTS accounts (
       id SERIAL PRIMARY KEY,
