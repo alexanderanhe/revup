@@ -875,6 +875,17 @@ export async function saveOnBoarding(): Promise<void>{
   }
 }
 
+export async function getUsersWithSubscription(): Promise<User[]>{
+  try {
+    const { rows } = await sql`SELECT u.id, u.name, u.email, u.image FROM users u
+    JOIN notification_subscriptions ns ON u.id=ns.user_id`;
+    return rows;
+  } catch (error) {
+    console.error('Failed to fetch users with subscription:', error);
+    return [];
+  }
+}
+
 export async function setSubscriptionNotification(subscription: any): Promise<void>{
   const session = await auth();
   const user = session?.user;
