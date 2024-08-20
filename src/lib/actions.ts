@@ -350,8 +350,10 @@ export async function handleSendNotification(
     if (!message || !user_id || !icon || !name) {
       return { status: "error", message: "invalid input(s)" };
     }
-    await sendNotification(message, user_id, icon, name);
-    return { status: "success" };
+    const res = await sendNotification(message, user_id, icon, name);
+    const success = res?.filter((r) => r.status === "success").length;
+    const error = res?.filter((r) => r.status === "error").length;
+    return { status: "success", message: `notification sent to ${success} subs, failed for ${error} subs` };
   } catch (error: any) {
     return { status: "error", message: error.message };
   }
@@ -362,7 +364,7 @@ export const sendNotification = async (
 	user_id: string,
 	icon: string,
 	name: string
-) => {
+): Promise<ActionFormState[]> => {
 	const vapidKeys = {
 		publicKey: process.env.NEXT_PUBLIC_VAPID_KEY!,
 		privateKey: process.env.VAPID_PRIVATE_KEY!,
@@ -374,8 +376,9 @@ export const sendNotification = async (
 		vapidKeys.privateKey
 	);
 
-  const data = await getSubscription(user_id);
-  if (data) {
+  const subscriptions = await getSubscription(user_id);
+  const results: ActionFormState[] = [];
+  subscriptions && subscriptions.forEach(async ({ subscription }: { subscription: any }) => {
     try {
       // get this info from the user's data
       // const pushSubscription = {
@@ -385,17 +388,19 @@ export const sendNotification = async (
       //     p256dh: '.....'
       //   }
       // };
-      const pushSubscription = data.subscription;
       await webpush.sendNotification(
-        pushSubscription,
+        subscription,
         JSON.stringify({
           message: name,
           icon,
           body: message,
         })
       );
-    } catch (e) {
-       throw new Error("failed to send notification");
+      results.push({ status: "success" });
+    } catch (e: any) {
+      console.log("failed to send notification", e);
+      results.push({ status: "error", message: e.message });
     }
-  }
+  });
+  return results;
 };

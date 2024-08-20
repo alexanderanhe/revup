@@ -21,7 +21,7 @@ export default function ChangeDefaultPlanButton({ plans }: ChangeDefaultPlanButt
 
   useEffect(() => {
     if (formState?.status === "success") {
-      setOpen(false);
+      setTimeout(() => setOpen(false), 500);
     }
   }, [formState])
 

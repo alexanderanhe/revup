@@ -237,5 +237,9 @@
       "goodMorning": "Good Morning 👋",
       "goodEvening": "Good Evening 😊"
     }
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, es {🇪🇸} en {🇺🇸} other {🟦}}"
   }
 }

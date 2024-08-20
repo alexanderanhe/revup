@@ -4,6 +4,8 @@ import OpenLoginDialog from "@/app/ui/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
 import Nav from "@/app/ui/main-landing/Nav";
 import NavLogo from "@/app/ui/main-landing/NavLogo";
+import { LanguagesIcon } from "lucide-react";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 export default async function NavHeader() {
   let session = await auth();
@@ -27,6 +29,7 @@ export default async function NavHeader() {
           <NavLogo />
         </div>
         <div className="flex justify-end grow md:grow-0 md:order-last">
+          <LocaleSwitcher />
           <LoginBtn />
         </div>
         <div className="dropdown dropdown-bottom dropdown-end md:dropdown-open md:grow">
@@ -36,7 +39,7 @@ export default async function NavHeader() {
               <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
             </svg>
           </div>
-          <div tabIndex={0} className="w-full grow md:flex md:justify-end min-w-80 md:!static base-200 dropdown-content mt-2 md:mt-0 bg-transparent text-black p-4 md:p-0" id="nav-content">
+          <div tabIndex={0} className="w-full grow md:flex md:justify-end min-w-80 md:!static base-200 dropdown-content mt-2 md:mt-0 bg-white md:bg-transparent text-black md:text-white p-4 md:p-0" id="nav-content">
             <ul className="list-reset md:flex justify-end flex-1 items-center">
               { navigationKeys.map((key) => (
                 <Nav key={key} hash={key}>{ t(`navigation.${key}`) }</Nav>
@@ -44,14 +47,11 @@ export default async function NavHeader() {
               {!user && <li className="mr-3">
                 <OpenLoginDialog
                   state='signUp'
-                  className="inline-block text-white font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4"
+                  className="inline-block font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4"
                 >
                   { tAuth("signUp" )}
                 </OpenLoginDialog>
               </li>}
-              {/* <li className="hidden md:list-item">
-                <LoginBtn />
-              </li> */}
             </ul>
           </div>
         </div>

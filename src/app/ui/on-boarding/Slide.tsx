@@ -10,12 +10,7 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 type SlideProps = {
   title?: string;
   description?: string;
-  image?: {
-    src: string;
-    alt: string;
-    className?: string;
-    style?: React.CSSProperties;
-  };
+  image: React.ReactNode;
   index?: number;
   buttonClass?: string;
   buttonText?: string;
@@ -43,13 +38,7 @@ export default function Slide({ submit, ...slide }: SlideProps) {
     <Fragment>
       <section className="grid grid-cols-1 [&>p]:text-center [&>p]:text-lg" style={{ gridColumn: 'full-width'}}>
         <div className='flex justify-center'>
-          {slide.image && (
-            <Image
-              {...slide.image}
-              width={400}
-              height={400}
-            />
-          )}
+          { slide.image }
         </div>
         <div className='content-grid'>
           <h2 className="text-center py-4">{ slide.title }</h2>

@@ -1,54 +1,63 @@
 'use client'
 
+import TrackYourGoal from "./images/track-your-goal";
+import GetBurn from "./images/get-burn";
+import EatWell from "./images/eat-well";
+import ImproveSleepQuality from "./images/improve-sleep-quality";
 import Slide from "./Slide";
+
 
 const slides = [
   {
     key: 1,
     title: 'Track your goal',
     description: 'Don\'t worry if you have trouble determining your goals, We can help you determine your goals and track your goals',
-    image: {
-      src: '/images/on-boarding_track-your-goal.svg',
-      alt: 'Track your goal',
-      className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
-    },
-    buttonClass: 'btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full',
+    image: <TrackYourGoal className="max-h-[60svh] aspect-auto md:aspect-video md:bg-primary/70 text-primary" />,
+    // {
+    //   src: '/images/on-boarding_track-your-goal.svg',
+    //   alt: 'Track your goal',
+    //   className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
+    // },
+    buttonClass: 'btn btn-neutral w-full',
     buttonText: 'Siguiente',
   },
   {
     key: 2,
     title: 'Get Burn',
     description: 'Let\'s keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever',
-    image: {
-      src: '/images/on-boarding_get-burn.svg',
-      alt: 'Get Burn',
-      className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
-    },
-    buttonClass: 'btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full',
+    image: <GetBurn className="max-h-[60svh] aspect-auto md:aspect-video md:bg-primary/70 text-primary" />,
+    // {
+    //   src: '/images/on-boarding_get-burn.svg',
+    //   alt: 'Get Burn',
+    //   className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
+    // },
+    buttonClass: 'btn btn-neutral w-full',
     buttonText: 'Siguiente',
   },
   {
     key: 3,
     title: 'Eat Well',
     description: 'Let\'s start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun',
-    image: {
-      src: '/images/on-boarding_eat-well.svg',
-      alt: 'Eat Well',
-      className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
-    },
-    buttonClass: 'btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full',
+    image: <EatWell className="max-h-[60svh] aspect-auto md:aspect-video md:bg-primary/70 text-primary" />,
+    // {
+    //   src: '/images/on-boarding_eat-well.svg',
+    //   alt: 'Eat Well',
+    //   className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
+    // },
+    buttonClass: 'btn btn-neutral w-full',
     buttonText: 'Siguiente',
   },
   {
     key: 4,
     title: 'Improve Sleep Quality',
     description: 'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
-    image: {
-      src: '/images/on-boarding_improve-sleep-quality.svg',
-      alt: 'Improve Sleep Quality',
-      className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
-    },
-    buttonClass: 'btn btn-ghost blue-lineal text-white font-bold rounded-2xl w-full',
+    image: <ImproveSleepQuality className="max-h-[60svh] aspect-auto md:aspect-video md:bg-primary/70 text-primary" />,
+    // {
+    //   src: '/images/on-boarding_improve-sleep-quality.svg',
+    //   alt: 'Improve Sleep Quality',
+    //   className: "w-full h-[60svh] aspect-square md:aspect-square object-cover md:object-contain"
+    // },
+    buttonClass: 'btn btn-primary w-full',
     buttonText: 'Iniciar',
   },
   // {

@@ -14,7 +14,7 @@ export default function Nav({ hash, children }: { hash: string, children: React.
 
   return (
     <li className="mr-3">
-      <a href={`#${hash}`} onClick={handleClick} className="inline-block text-white font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4">{ children }</a>
+      <a href={`#${hash}`} onClick={handleClick} className="inline-block font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4">{ children }</a>
     </li>
   )
 }

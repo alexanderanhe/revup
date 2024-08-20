@@ -909,7 +909,7 @@ export async function getSubscription(user_id: string): Promise<any>{
   if (rowCount === 0) {
     return null;
   }
-  return rows[0];
+  return rows;
 }
 
 export async function wait (ms: number) {

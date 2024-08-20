@@ -217,7 +217,7 @@
     "skipBtn": "Saltar"
   },
   "auth": {
-    "login": "Log in",
+    "login": "Iniciar Sesión",
     "signUp": "Registro"
   },
   "pwa": {
@@ -238,5 +238,9 @@
       "goodMorning": "Buenos días 👋",
       "goodEvening": "Buenas tardes 😊"
     }
+  },
+  "LocaleSwitcher": {
+    "label": "Cambiar Idioma",
+    "locale": "{locale, select, es {🇪🇸} en {🇺🇸} other {🟦}}"
   }
 }

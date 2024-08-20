@@ -3,27 +3,27 @@
 import { Link, usePathname } from "@/navigation";
 import { MenuNavLinks } from "@/lib/definitions"
 import { menuNavLinks } from "@/lib/nav"
-import { clsx } from "clsx"
 import { cn } from "@/lib/utils";
 
 export default function Footer() {
   const pathname = usePathname();
   const navLinks = menuNavLinks.filter(({current}: MenuNavLinks) => current.includes('footer'));
   const gridCols = navLinks.length + 1;
+  const someActive = navLinks.some(({href}: MenuNavLinks) => pathname.startsWith(href));
 
   return (
     <>
       <div className="fixed bottom-0 content-grid backdrop-blur transition-colors duration-500 border-t border-slate-900/10 bg-base-100 w-full pb-4 z-50">
-        <div className={clsx(
+        <div className={cn(
             "grid place-items-center gap-4 mx-auto font-medium flex-none p-3",
-            gridCols > 1 && colStartClasses[gridCols - 1],
+            gridCols > 1 && colStartClasses[gridCols - 1 - (someActive ? 0 : 1)],
           )
         }>
           { navLinks.map(({name, href, Icon, animate}: MenuNavLinks) => (
             <Link
               href={href}
               key={`navLinkFooter${href}`}
-              className={clsx(
+              className={cn(
                 "btn p-3",
                 pathname.startsWith(href) && "btn-netral shadow-inner w-full grid grid-cols-[auto_1fr] place-items-center col-span-2",
                 !pathname.startsWith(href) && "btn-ghost [&>span]:hidden p-3",

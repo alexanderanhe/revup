@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useFormState } from "react-dom";
-import { Info, CircleXIcon } from "lucide-react";
+import { CircleCheckBigIcon, CircleXIcon, Send } from "lucide-react";
 
 import SubmitButton from "@/app/ui/utils/SubmitButton";
 import { handleSendNotification } from "@/lib/actions";
@@ -18,7 +18,7 @@ export default function SendNotification({ users }: { users: User[] }) {
   }, [formState]);
 
   return (
-    <form action={formAction} className="grid gap-2 w-full max-w-xs mx-auto">
+    <form action={formAction} className="grid gap-2 w-full">
       <select name="user_id" className="select select-bordered w-full" required>
         <option value="">Select user</option>
         { users.map(user => (
@@ -34,16 +34,17 @@ export default function SendNotification({ users }: { users: User[] }) {
       { ["success", "error"].includes(formState?.status ?? "") && (
         <div role="alert" className={cn(
           "alert shadow-lg",
+          formState?.status === "success" && "alert-success",
           formState?.status === "error" && "alert-error",
         )}>
-          { formState?.status === "error" ? <CircleXIcon className="size-6" /> : <Info className="size-6" />}
+          { formState?.status === "error" ? <CircleXIcon className="size-6" /> : <CircleCheckBigIcon className="size-6" />}
           <div>
             <h3 className="font-bold">{ formState?.status }</h3>
             <div className="text-xs">{ formState?.message }</div>
           </div>
         </div>
       )}
-      <SubmitButton className="btn">Enviar</SubmitButton>
+      <SubmitButton className="btn">Enviar <Send className="size-4" /></SubmitButton>
     </form>
   )
 }

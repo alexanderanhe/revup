@@ -20,7 +20,7 @@ export default function NavLogo() {
         src='/images/icons/icon-72x72.png'
         alt={ "bray.fit logo" }
         className="w-auto border-2 rounded-xl h-12"></Image>
-      <LogoIcon className="w-auto h-12 fill-current inline max-sm:hidden" />
+      <LogoIcon className="w-auto h-12 fill-current inline hidden sml:flex" />
     </a>
   )
 }
