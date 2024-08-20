@@ -34,7 +34,7 @@ export default function LocaleSwitcherSelect({
   return (
     <label
       className={clsx(
-        'relative font-semibold',
+        'relative text-xl font-semibold',
         isPending && 'transition-opacity [&:disabled]:opacity-30'
       )}
     >

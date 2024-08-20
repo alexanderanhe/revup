@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import Menu from "@/app/ui/explore/Menu";
 import Skeleton from "@/app/ui/explore/Skeleton";
 import { getTranslations } from "next-intl/server";
-import { getTagName } from "@/lib/data";
+import { getTagName, getTags } from "@/lib/data";
 
 type ExplorePageProps = {
   params: {
@@ -21,12 +21,13 @@ export default async function ExplorePage({
   const t = await getTranslations("Explore");
   const showWorkouts = searchParams && Boolean((searchParams?.query ?? '') || (searchParams?.tags ?? []).length);
   const tagName = await getTagName(searchParams?.tags, locale) ?? t("title");
+  const allTags = await getTags(null, null, locale);
 
   return (
     <LayoutContent
       title={ !showWorkouts ? t("title") : tagName }
       showBackButton={showWorkouts}
-      pageMenu={<Menu />}
+      pageMenu={<Menu tags={allTags} />}
       className="min-h-svh"
       footer
     >

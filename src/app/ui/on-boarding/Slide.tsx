@@ -6,6 +6,8 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { handleOnboarding } from "@/lib/actions";
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import FormOnBoarding from './FormOnBoarding';
+import { PAGES } from '@/lib/routes';
 
 type SlideProps = {
   title?: string;
@@ -18,21 +20,13 @@ type SlideProps = {
 };
 
 export default function Slide({ submit, ...slide }: SlideProps) {
-  const [ formState, formAction ] = useFormState(handleOnboarding, null);
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    
     const hash = event.currentTarget.hash;
     const path = `${window.location.origin}${window.location.pathname}`;
     window.location.replace(`${path}${hash}`)
   }
-
-  useEffect(() => {
-    if (formState === 'done') {
-      window.location.replace('/home');
-    }
-  }, [formState]);
 
   return (
     <Fragment>
@@ -52,11 +46,11 @@ export default function Slide({ submit, ...slide }: SlideProps) {
           ))}
         </div>
         { submit ? (
-          <form action={formAction}>
+          <FormOnBoarding onDone={() => window.location.replace(PAGES.HOME)}>
             <SubmitButton className={ slide.buttonClass }>
               { slide.buttonText }
             </SubmitButton>
-          </form>
+          </FormOnBoarding>
         ) : (
           <a href={`#slide${(slide.index ?? 0) + 1}`} onClick={handleClick} className={ slide.buttonClass }>
             { slide.buttonText }

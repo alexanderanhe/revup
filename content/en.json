@@ -152,6 +152,35 @@
       "health:HNON": "NO POSEO"
     }
   },
+  "OnBoarding": {
+    "title": "Welcome to bray Fit",
+    "description": "To get started, complete your profile",
+    "nextBtn": "Next",
+    "skipBtn": "Skip",
+    "finishBtn": "Finish",
+    "slides": [
+      {
+        "title": "Track your goal",
+        "description": "Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals",
+        "image": "track-your-goal"
+      },
+      {
+        "title": "Get Burn",
+        "description": "Let's keep burning, to achive yours goals, it hurts only temporarily, if you give up now you will be in pain forever",
+        "image": "get-burn"
+      },
+      {
+        "title": "Eat Well",
+        "description": "Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun",
+        "image": "eat-well"
+      },
+      {
+        "title": "Improve Sleep Quality",
+        "description": "Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning",
+        "image": "improve-sleep-quality"
+      }
+    ]
+  },
   "Profile": {
     "title": "Profile",
     "weight": "Weight",
@@ -217,7 +246,30 @@
   },
   "auth": {
     "login": "Log in",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "loginBtn": "Log in",
+    "registerBtn": "Sign up",
+    "signInLnk": "Sign in",
+    "registerLnk": "Register",
+    "sendBtn": "Send",
+    "acceptText": "By continuing you accept our ",
+    "acceptAndText": " and ",
+    "acceptPrivacyText": "Privacy Policy",
+    "acceptTermsText": "Terms of Service",
+    "welcome": "Welcome, {firstname}",
+    "welcomeSubtitle": "You are all set now, let’s reach your goals together with us.",
+    "welcomeAlreadyAuth": "You have authenticated with the user {email}",
+    "welcomeBtn": "Go to home",
+    "greeting": "Hey there,",
+    "greetingWelcomeBck": "Welcome back",
+    "register": "Create an Account",
+    "resetPwd": "Reset your Password",
+    "haveAlreadyAnAccount": "Don&apos;t have an account?",
+    "ihaveAlreadyAnAccount": "I have already an account",
+    "o": "Or"
   },
   "pwa": {
     "title": "App available!",

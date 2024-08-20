@@ -8,6 +8,7 @@ import { Form, MultipleLoginModal } from '@/app/ui/auth/AuthPanel';
 import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 import { forgetPassword } from '@/lib/actions';
+import { useTranslations } from 'next-intl';
 
 const FORM_INIT = {
   email: ""
@@ -19,9 +20,10 @@ type ForgotPasswordProps = {
   setGlobalForm: (form: Form) => void;
 }
 
-function ForgotPassword({ setModal, globalForm, setGlobalForm}: ForgotPasswordProps) {
+export default function ForgotPassword({ setModal, globalForm, setGlobalForm}: ForgotPasswordProps) {
   const [ form, setForm ] = useState<Form>(globalForm);
   const [ formState, formAction ] = useFormState(forgetPassword, undefined);
+  const t = useTranslations("auth");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -37,32 +39,37 @@ function ForgotPassword({ setModal, globalForm, setGlobalForm}: ForgotPasswordPr
   }, [formState]);
 
   return (
-    <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 h-full">
+    <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 mx-auto h-full">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1 text-center">
-          <p>Hey there,</p>
+          <p>{ t("greeting") }</p>
           <h4 className="text-lg font-bold leading-5">
-            Welcome back
+            { t("greetingWelcomeBck") }
           </h4>
         </div>
         <form className="flex flex-col gap-4" action={formAction}>
           <label className="input input-bordered flex items-center gap-2">
             <EnvelopeIcon className="h-4 w-4 opacity-70" />
-            <input type="text" name="email" onChange={handleChange} className="grow" placeholder="Email" defaultValue={form.email} />
+            <input
+              type="text"
+              name="email"
+              onChange={handleChange}
+              className="grow"
+              placeholder={ t("email") }
+              defaultValue={form.email}
+            />
           </label>
           {formState ?? ''}
           <SubmitButton className="btn btn-neutral w-full">
-            Send
+            { t("sendBtn") }
             <PaperAirplaneIcon className="h-4 w-4 opacity-70" />
           </SubmitButton>
         </form>
       </div>
       <div className="flex gap-2 text-center text-sm justify-center">
-        I have already an account
-        <button type='button' onClick={() => setModal('signIn')} className="font-medium text-secondary">Sign in</button>
+        { t("ihaveAlreadyAnAccount") }
+        <button type='button' onClick={() => setModal('signIn')} className="font-medium text-secondary">{ t("signInLnk") }</button>
       </div>
     </div>
   )
 }
-
-export default ForgotPassword

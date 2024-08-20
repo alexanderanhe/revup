@@ -181,6 +181,7 @@ export type Exercise = {
 export type GroupsWorkout = {
   id: UUID;
   name: string;
+  type: string;
   defaultname: string;
 }
 

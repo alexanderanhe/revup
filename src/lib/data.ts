@@ -159,7 +159,7 @@ export async function getStatsWeight(): Promise<WeightData[] | null> {
 //   return rows.map(({ id }: { id: string }) => id);
 // }
 
-export async function getTags(type: string, value: string | null, locale: string): Promise<GroupsWorkout[] | null> {
+export async function getTags(type: string | null, value: string | null, locale: string): Promise<GroupsWorkout[] | null> {
   try {
     const { rowCount, rows: groups } = await sql<GroupsWorkout>`
       SELECT tags.id, tags.type, tl.name,
@@ -168,7 +168,10 @@ export async function getTags(type: string, value: string | null, locale: string
       JOIN tags_lang tld ON tags.id = tld.tag_id AND tld.language_id=(
         SELECT code FROM languages WHERE is_default=true
       )
-      WHERE tags.type=${type} AND tags.value=${value} AND tl.language_id=${locale};
+      WHERE CASE WHEN ${typeof type !== "string"} THEN TRUE ELSE tags.type = ${type} END
+      AND CASE WHEN ${typeof value !== "string"} THEN TRUE ELSE tags.value = ${value} END
+      AND tl.language_id=${locale}
+      ORDER BY tags.type ASC, tl.name ASC;
     `;
     if (rowCount === 0) {
       return null
@@ -185,10 +188,23 @@ export async function getTagName(tagId: string | string[] | undefined, locale: s
     if (!tagId) {
       return null;
     }
+    // TO DO: Fix this code, to work with multiple tags
+    const [tId] = Array.isArray(tagId) ? tagId : [tagId];
+    // if (Array.isArray(tagId)) {
+    //   const { rowCount, rows: tags } = await sql<{ name: string }>`
+    //     SELECT tl.name
+    //     FROM tags_lang tl
+    //     WHERE tl.tag_id = ANY((Array[${tagId.join(',')}])::uuid[]) AND tl.language_id=${locale};
+    //   `;
+    //   if (rowCount === 0) {
+    //     return null
+    //   }
+    //   return tags.map(({ name }) => name).join(', ');
+    // }
     const { rowCount, rows: tags } = await sql<{ name: string }>`
       SELECT tl.name
       FROM tags_lang tl
-      WHERE tl.tag_id=${tagId.toString()} AND tl.language_id=${locale};
+      WHERE tl.tag_id=${tId.toString()} AND tl.language_id=${locale};
     `;
     if (rowCount === 0) {
       return null
@@ -237,7 +253,8 @@ export async function getWorkout(workoutId: string, locale: string): Promise<Wor
 
 export async function getWorkouts(searchParams: FilterSearchParams, locale: string): Promise<Workout[] | GroupsWorkout[] | null> {
   try {
-    const tag = String(searchParams?.tags ?? '');
+    // TO DO: Fix this code, to work with multiple tags
+    const [tag] = Array.isArray(searchParams?.tags) ? searchParams?.tags : [searchParams?.tags];
     type WorkoutMod = Omit<Workout, 'tags'> & { tags: string}
     let workouts;
     if (tag) {

@@ -153,6 +153,35 @@
       "health:HNON": "NO POSEO"
     }
   },
+  "OnBoarding": {
+    "title": "Bienvenido a bray Fit",
+    "description": "Para comenzar, complete su perfil",
+    "nextBtn": "Siguiente",
+    "skipBtn": "Saltar",
+    "finishBtn": "Finalizar",
+    "slides": [
+      {
+        "title": "Sigue tu objetivo",
+        "description": "No se preocupe si tiene problemas para determinar sus objetivos. Podemos ayudarlo a determinar sus objetivos y realizar un seguimiento de sus objetivos.",
+        "image": "track-your-goal"
+      },
+      {
+        "title": "Entrenamiento",
+        "description": "El dolor que sientes hoy será la fuerza que sientes mañana.",
+        "image": "get-burn"
+      },
+      {
+        "title": "Nutrición",
+        "description": "La nutrición adecuada es la clave para una vida saludable.",
+        "image": "eat-well"
+      },
+      {
+        "title": "Descanso",
+        "description": "El descanso es parte del entrenamiento.",
+        "image": "improve-sleep-quality"
+      }
+    ]
+  },
   "Profile": {
     "title": "Perfil",
     "weight": "Peso",
@@ -218,7 +247,30 @@
   },
   "auth": {
     "login": "Iniciar Sesión",
-    "signUp": "Registro"
+    "signUp": "Registro",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "loginBtn": "Iniciar Sesión",
+    "registerBtn": "Registrarse",
+    "signInLnk": "Iniciar Sesión",
+    "registerLnk": "Registrarse",
+    "sendBtn": "Enviar",
+    "acceptText": "Al registrarte, aceptas la ",
+    "acceptAndText": " y los ",
+    "acceptPrivacyText": "Politica de privacidad",
+    "acceptTermsText": "Términos y condiciones",
+    "welcome": "Bienvenido, {firstname}",
+    "welcomeSubtitle": "Ya está todo listo, alcancemos tus objetivos junto con nosotros.",
+    "welcomeAlreadyAuth": "Te has autenticado con el usuario {email}",
+    "welcomeBtn": "Ir al inicio",
+    "greeting": "Hola,",
+    "greetingWelcomeBck": "Bienvenido de nuevo",
+    "register": "Crear una cuenta",
+    "resetPwd": "Restablecer tu contraseña?",
+    "haveAlreadyAnAccount": "¿Ya tienes una cuenta?",
+    "ihaveAlreadyAnAccount": "Ya tengo una cuenta",
+    "o": "O"
   },
   "pwa": {
     "title": "App disponible!",
