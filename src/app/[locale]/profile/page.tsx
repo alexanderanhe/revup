@@ -5,7 +5,7 @@ import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
 import { auth } from "@/auth"
 import ProfileImage from "@/app/ui/utils/ProfileImage"
-import { User } from "@/lib/definitions"
+import { Measurements, User } from "@/lib/definitions"
 import { getTranslations } from "next-intl/server"
 import { PencilIcon } from "@heroicons/react/24/solid"
 import Logout from "@/app/ui/profile/Logout"
@@ -14,6 +14,8 @@ import PopUpNotification from "@/app/ui/profile/PopUpNotification"
 import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
 
 import dynamic from "next/dynamic";
+import MeasurementsDrawer from "@/app/ui/utils/MeasurementsDrawer"
+import { PencilRulerIcon } from "lucide-react"
 const DynamicShareButton = dynamic(() => import("@/app/ui/profile/ShareButton"), {
   ssr: false,
 });
@@ -24,12 +26,18 @@ export default async function ProfilePage() {
   const t = await getTranslations("Profile");
   const tAssessmentOpts = await getTranslations("Assessment.options");
 
+  const measurements = [{
+    weight: user?.info?.weight,
+    height: user?.info?.height,
+    created_at: new Date()
+  }] as Measurements[];
+
   return (
     <LayoutContent title={t("title")} footer>
       <ProfileNavImage user={user} subtitle={ tAssessmentOpts(`goal:${user?.info?.goal}`) }>
-        <Link href="/profile/edit" className="btn btn-sm btn-primary">
+        <Link href={`${PAGES.PROFILE}/edit`} className="btn btn-sm">
           <PencilIcon className="size-4" />
-          Edit
+          { t("editBtn") }
         </Link>
       </ProfileNavImage>
       <section className="grid grid-cols-3">
@@ -37,10 +45,12 @@ export default async function ProfilePage() {
           <strong>{ user?.info?.height }{ " " }{ t("height:unit") }</strong>
           { t("height") }
         </Card>
-        <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>{ user?.info?.weight }{ " " }{ t("weight:unit") }</strong>
-          { t("weight") }
-        </Card>
+        <MeasurementsDrawer measurements={measurements}>
+          <Card className="cursor-pointer [&>strong]:text-primary [&>strong]:font-medium">
+            <strong>{ user?.info?.weight }{ " " }{ t("weight:unit") }</strong>
+            { t("weight") }
+          </Card>
+        </MeasurementsDrawer>
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
           <strong>{ user?.info?.age }{ t("age:unit") }</strong>
           { t("age") }
@@ -69,6 +79,13 @@ export default async function ProfilePage() {
             <span className="grow flex justify-start">{ t("account.workoutProgress") }</span>
             <ArrowRightIcon className="size-5" />
           </button>
+          <MeasurementsDrawer measurements={measurements}>
+            <button type="button" className="btn btn-ghost w-full">
+              <PencilRulerIcon className="size-5 text-primary" />
+              <span className="grow flex justify-start">{ t("account.measurements") }</span>
+              <ArrowRightIcon className="size-5" />
+            </button>
+          </MeasurementsDrawer>
         </Card>
       </section>
       <section>

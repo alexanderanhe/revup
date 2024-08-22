@@ -8,8 +8,10 @@ import {
   ChartTooltipContent,
 } from "@/app/ui/utils/shadcn-ui/chart"
 
-import { WeightData } from "@/lib/definitions";
+import { Measurements, WeightData } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
+import MeasurementsDrawer from "../../utils/MeasurementsDrawer";
+import { PlusCircleIcon } from "lucide-react";
 
 export default function MyWeight({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
   if (!chartData) return null;
@@ -31,9 +33,19 @@ export default function MyWeight({ data: chartData, translate }: { data: WeightD
   const data = [...chartData, { date: new Date(), weight: lastWeight }]
     .map((d) => ({ ...d, weightLine: d.weight }));
 
+  const measurements = chartData.map(({ date, weight }) => ({
+    created_at: new Date(date),
+    weight,
+  })) as Measurements[];
+
   return (
     <div className="w-full space-y-1 py-2">
-      <div className="font-semibold">{ translate?.title ?? "-" }</div>
+      <div className="flex font-semibold">
+        <span className="grow">{ translate?.title ?? "-" }</span>
+        <MeasurementsDrawer className="btn btn-xs btn-link btn-square" measurements={measurements}>
+          <PlusCircleIcon className="size-4" />
+        </MeasurementsDrawer>
+      </div>
       <div className={cn(
         "grid",
         chartData.length > 1 && "grid-cols-[auto_1fr]",

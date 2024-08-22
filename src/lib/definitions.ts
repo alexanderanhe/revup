@@ -3,6 +3,7 @@ export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 export type User = {
   id?: string | null;
   name?: string | null;
+  lastName?: string | null;
   emailVerified?: boolean | null;
   email?: string | null;
   image?: string | null;
@@ -23,6 +24,12 @@ export type UserInfo = {
   theme: string;
   assessment: boolean;
   onboarding: boolean;
+}
+
+export type Measurements = {
+  weight?: number;
+  height?: number;
+  created_at: Date;
 }
 
 export type Question = {

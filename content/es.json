@@ -190,12 +190,14 @@
     "height:unit": "cm",
     "age": "Edad",
     "age:unit": "años",
+    "editBtn": "Editar",
     "account": {
       "title": "Cuenta",
       "personalData": "Datos Personales",
       "achievement": "Logros",
       "activityHistory": "Historial de Actividad",
-      "workoutProgress": "Progreso de Ejercicio"
+      "workoutProgress": "Progreso de Ejercicio",
+      "measurements": "Mediciones"
     },
     "notification": {
       "title": "Notificación",
@@ -215,6 +217,19 @@
       },
       "settings:deleteCookies": "Borrar Cookies",
       "logout": "Cerrar Sesión"
+    },
+    "Edit": {
+      "title": "Editar Perfil",
+      "saveBtn": "Guardar",
+      "cancelBtn": "Cancelar",
+      "name": "Nombre",
+      "namePlaceholder": "Escribe tu nombre *",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "Escribe tu apellido *",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Escribe tu correo electrónico *",
+      "birthdate": "Fecha de Nacimiento",
+      "birthdatePlaceholder": "Escribe tu fecha de nacimiento YYYY-MM-DD"
     }
   },
   "Explore": {
@@ -282,6 +297,10 @@
     "message": "Utilizamos cookies para funciones esenciales del sitio web y para comprender mejor cómo utiliza nuestro sitio, de modo que podamos crear la mejor experiencia posible para usted.",
     "accept": "Entiendo",
     "privacy": "Política de Privacidad"
+  },
+  "measurements": {
+    "title": "Mediciones",
+    "addBtn": "Añadir nueva medición"
   },
   "nav": {
     "greetings": {

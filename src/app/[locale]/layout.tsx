@@ -42,7 +42,8 @@ async function checkTheme() {
   const session = await auth();
   const user: User | undefined = session?.user;
   const cookieStore = cookies()
-  return user?.info?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? '';
+  const theme = user?.info?.theme ?? cookieStore.get(APPCOOKIES.THEME)?.value ?? '';
+  return theme || cookieStore.get(APPCOOKIES.THEME)?.value;
 }
 
 export default async function LocaleLayout({

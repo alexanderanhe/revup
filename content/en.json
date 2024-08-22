@@ -189,12 +189,14 @@
     "height:unit": "cm",
     "age": "Age",
     "age:unit": "yo",
+    "editBtn": "Edit",
     "account": {
       "title": "Account",
       "personalData": "Personal Data",
       "achievement": "Achievement",
       "activityHistory": "Activity History",
-      "workoutProgress": "Workout Progress"
+      "workoutProgress": "Workout Progress",
+      "measurements": "Measurements"
     },
     "notification": {
       "title": "Notification",
@@ -214,6 +216,19 @@
       },
       "settings:deleteCookies": "Delete Cookies",
       "logout": "Logout"
+    },
+    "Edit": {
+      "title": "Edit Profile",
+      "saveBtn": "Save",
+      "cancelBtn": "Cancel",
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your last name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "birthdate": "Birthdate",
+      "birthdatePlaceholder": "Enter your birthdate YYYY-MM-DD"
     }
   },
   "Explore": {
@@ -281,6 +296,10 @@
     "message": "We use cookies for essential website functions and to better understand how you use our site, so we can create the best possible experience for you.",
     "accept": "Got it",
     "privacy": "Privacy Policy"
+  },
+  "measurements": {
+    "title": "Measurements",
+    "addBtn": "Add new measurement"
   },
   "nav": {
     "greetings": {
