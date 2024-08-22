@@ -215,7 +215,8 @@
         "es": "Spanish"
       },
       "settings:deleteCookies": "Delete Cookies",
-      "logout": "Logout"
+      "logout": "Logout",
+      "admin": "Admin"
     },
     "Edit": {
       "title": "Edit Profile",

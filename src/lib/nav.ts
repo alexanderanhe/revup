@@ -1,6 +1,6 @@
 // import { AnalyticsIcon, ExploreIcon, HomeIcon, ProfileIcon } from "@/components/utils/icons/";
 // import { Squares2X2Icon, FilmIcon, ClockIcon, CalendarDaysIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { TrendingUp, HomeIcon, Rocket, Dumbbell, UserRoundCog } from "lucide-react"
+import { TrendingUp, HomeIcon, Rocket, Dumbbell, UserRoundCog, ShieldIcon } from "lucide-react"
 import { MenuNavLinks } from "./definitions";
 
 const menuNavLinks: MenuNavLinks[] = [

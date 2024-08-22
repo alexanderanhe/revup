@@ -103,7 +103,17 @@ const config: Config = {
           "neutral": "#000000",
         },
       },
-      'cmyk'
+      'cmyk',
+      {
+        black: {
+          ...require("daisyui/src/theming/themes")["black"],
+          "neutral": "#000000",
+          "--rounded-btn": "14px",
+        },
+      },
+      'night',
+      'forest',
+      'dim'
     ],
   },
   plugins: [

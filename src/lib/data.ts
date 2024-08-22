@@ -65,7 +65,7 @@ export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   try {
     type UserInfoMod = Omit<UserInfo, 'dashboard'> & { dashboard: string | null }
     const { rows, rowCount } = await sql<UserInfoMod>`
-      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment, ui.dashboard,
+      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment, ui.dashboard, ui.admin,
         CASE WHEN ua.gender = 'M' THEN 'male' WHEN ua.gender = 'F' THEN 'female' ELSE 'other' END AS gender,
         TO_CHAR(ua.birthdate, 'yyyy-mm-dd') as birthdate, ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
       FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${user_id}`;

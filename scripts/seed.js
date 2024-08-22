@@ -97,6 +97,7 @@ const sql = {
       assessment BOOLEAN DEFAULT false,
       onboarding BOOLEAN DEFAULT false,
       dashboard TEXT DEFAULT NULL,
+      admin BOOLEAN DEFAULT false,
       weight_unit CHAR(2) DEFAULT 'kg',
       height_unit CHAR(2) DEFAULT 'cm',
       user_id UUID NULL REFERENCES users(id)

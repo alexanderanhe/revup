@@ -11,7 +11,8 @@ export const PAGES = {
   CONTACT_US: '/contact-us',
   PRIVACY: '/privacy-policy',
   TERMS: '/terms-of-service',
-  COOKIES: '/cookie-policy'
+  COOKIES: '/cookie-policy',
+  ADMIN: '/admin',
 }
 
 export const ROOT = PAGES.ROOT;

@@ -24,6 +24,7 @@ export type UserInfo = {
   theme: string;
   assessment: boolean;
   onboarding: boolean;
+  admin: boolean;
 }
 
 export type Measurements = {
@@ -208,7 +209,7 @@ export type ActionFormState = {
   message?: string;
 }
 
-export const THEMES = ['', 'light', 'dark', 'pastel', 'cmyk'];
+export const THEMES = ['', 'light', 'dark', 'pastel', 'cmyk', 'black', 'night', 'forest', 'dim'];
 export const APPCOOKIES = {
   PWA: 'app.installpwa',
   ONBOARDING: 'app.onboarding',

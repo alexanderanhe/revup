@@ -19,6 +19,7 @@ export default function SendNotification({ users }: { users: User[] }) {
 
   return (
     <form action={formAction} className="grid gap-2 w-full">
+      <h2>Send Notification</h2>
       <select name="user_id" className="select select-bordered w-full" required>
         <option value="">Select user</option>
         { users.map(user => (

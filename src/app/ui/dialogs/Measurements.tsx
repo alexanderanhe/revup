@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Fragment } from "react";
 import { Drawer } from "vaul";
 
-type MeasurementsDrawerProps = {
+type MeasurementsDialogProps = {
   measurements: Measurements[];
   children: React.ReactNode;
   className?: string;
@@ -16,7 +16,7 @@ type MeasurementsGroup = {
   [key: string]: (Partial<Measurements> & { ts_time: string })[]
 }
 
-export default function MeasurementsDrawer({ measurements, children, ...props }: MeasurementsDrawerProps) {
+export default function MeasurementsDialog({ measurements, children, ...props }: MeasurementsDialogProps) {
   const t = useTranslations("measurements");
   const grouped = measurements?.reduce((acc, { created_at, ...rest }) => {
     const key = created_at?.toLocaleDateString();

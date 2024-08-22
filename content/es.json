@@ -216,7 +216,8 @@
         "es": "Español"
       },
       "settings:deleteCookies": "Borrar Cookies",
-      "logout": "Cerrar Sesión"
+      "logout": "Cerrar Sesión",
+      "admin": "Administrador"
     },
     "Edit": {
       "title": "Editar Perfil",

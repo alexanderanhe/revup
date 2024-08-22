@@ -14,8 +14,8 @@ import PopUpNotification from "@/app/ui/profile/PopUpNotification"
 import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
 
 import dynamic from "next/dynamic";
-import MeasurementsDrawer from "@/app/ui/utils/MeasurementsDrawer"
-import { PencilRulerIcon } from "lucide-react"
+import MeasurementsDrawer from "@/app/ui/dialogs/Measurements"
+import { PencilRulerIcon, ShieldIcon } from "lucide-react"
 const DynamicShareButton = dynamic(() => import("@/app/ui/profile/ShareButton"), {
   ssr: false,
 });
@@ -118,6 +118,18 @@ export default async function ProfilePage() {
           <Logout title={t("other.logout")} />
         </Card>
       </section>
+      { user?.info?.admin && (
+        <section>
+          <Card className="border-[#0099ff]">
+            <h3 className="text-lg font-semibold">{ t("other.admin") }</h3>
+            <Link href={ PAGES.ADMIN } className="btn btn-ghost w-full">
+              <ShieldIcon className="size-5 text-primary" />
+              <span className="grow flex justify-start">{ t("other.admin") }</span>
+              <ArrowRightIcon className="size-5" />
+            </Link>
+          </Card>
+        </section>
+      )}
     </LayoutContent>
   )
 }

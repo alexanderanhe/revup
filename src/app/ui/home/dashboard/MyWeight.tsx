@@ -10,7 +10,7 @@ import {
 
 import { Measurements, WeightData } from "@/lib/definitions";
 import { cn } from "@/lib/utils";
-import MeasurementsDrawer from "../../utils/MeasurementsDrawer";
+import MeasurementsDrawer from "@/app/ui/dialogs/Measurements";
 import { PlusCircleIcon } from "lucide-react";
 
 export default function MyWeight({ data: chartData, translate }: { data: WeightData[] | null, translate?: {[key: string]: string} }) {
