@@ -705,12 +705,20 @@ export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;
     `;
 
     const new_current_day = (plan.current_day ?? 1) + 1;
-    await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at, is_current)
-      VALUES (${new_current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW(), true)
-      ON CONFLICT (day, plan_id, user_id) DO UPDATE
-      SET is_current=true, updated_at = NOW()
-      RETURNING day
-    ;`
+    const {rowCount} = await sql`SELECT id FROM plans_user_day WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${user.id}`;
+    if (rowCount === 0) {
+      await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at, is_current)
+        VALUES (${new_current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW(), true)
+        RETURNING day
+      ;`
+    } else {
+      await sql`UPDATE plans_user_day
+        SET is_current=true,
+            updated_at=NOW()
+        WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${user.id}
+        RETURNING day
+      ;`
+    }
 
     return { status: 'success'};
   } catch (error: any) {
