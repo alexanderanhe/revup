@@ -24,6 +24,7 @@ import {
 import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
 import { PAGES } from '@/lib/routes';
+import { deleteImage, uploadImages } from './services/cloudflare';
  
 // ...
  
@@ -246,6 +247,37 @@ export async function handleFinishWorkoutDay(
     return "saved";
   } catch (error) {
     return 'error';
+  }
+}
+
+export async function handleUploadImages(
+  prevState: ActionFormState | null,
+  formData: FormData
+): Promise<ActionFormState> {
+  // Mutate data
+  const images = formData.getAll('images') as unknown as FileList;
+  try {
+    const promises = await uploadImages(images);
+    revalidatePath(PAGES.ADMIN);
+    return {status: 'success'};
+  } catch (error) {
+    return {status: 'error', message: 'Error uploading images'};
+  }
+}
+
+export async function handleDeleteImage(
+  prevState: ActionFormState | null,
+  formData: FormData
+): Promise<ActionFormState> {
+  try {
+    const imageId = formData.get('imageId');
+    if (!imageId) throw 'No image id';
+    const status = await deleteImage(imageId as string);
+    if (!status) throw 'Error deleting image';
+    revalidatePath(PAGES.ADMIN);
+    return { status: 'success'};
+  } catch (error) {
+    return { status: 'error', message: 'Error deleting image'};
   }
 }
 
