@@ -9,9 +9,10 @@ import { useEffect, useRef } from "react";
 
 type DeleteImageProps = {
   imageId: string;
+  children?: React.ReactNode;
   className?: string;
 }
-export default function DeleteImage({imageId, ...props}: DeleteImageProps) {
+export default function DeleteImage({imageId, children, ...props}: DeleteImageProps) {
   const [ formState, formAction ] = useFormState(handleDeleteImage, {status: 'idle'});
   const formRef = useRef<HTMLFormElement>(null);
   const handleClick = () => {
@@ -36,7 +37,7 @@ export default function DeleteImage({imageId, ...props}: DeleteImageProps) {
     <form action={formAction} ref={formRef}>
       <input type='hidden' name='imageId' placeholder='Image ID' value={imageId} />
       <button onClick={handleClick} {...props}>
-        <Trash2Icon className='size-4' />
+        {children || <Trash2Icon className='size-4' />}
       </button>
       <SubmitButton className="hidden">Delete</SubmitButton>
     </form>

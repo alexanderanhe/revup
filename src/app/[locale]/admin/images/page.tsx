@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import UploadImages from "@/app/ui/admin/UploadImages";
+import ListImages from "@/app/ui/admin/ListImages";
 import { User } from "@/lib/definitions";
 
 export default async function AdminPage() {
@@ -7,6 +9,9 @@ export default async function AdminPage() {
     return null;
   }
   return (
-    <></>
+    <>
+      <UploadImages />
+      <ListImages />
+    </>
   )
 }

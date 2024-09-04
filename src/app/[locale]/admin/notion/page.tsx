@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import NotionButtonSync from "@/app/ui/admin/NotionButtonSync";
+import { getUsersWithSubscription } from "@/lib/data";
 import { User } from "@/lib/definitions";
 
 export default async function AdminPage() {
@@ -7,6 +9,6 @@ export default async function AdminPage() {
     return null;
   }
   return (
-    <></>
+    <NotionButtonSync />
   )
 }
