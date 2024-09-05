@@ -7,7 +7,7 @@ import { ArrowPathIcon, ChevronDoubleDownIcon, ChevronDoubleUpIcon } from "@hero
 
 // source: https://blog.logrocket.com/implementing-pull-to-refresh-react-tailwind-css/
 
-const PULL_LENGTH_TO_REFRESH = 90;
+const PULL_LENGTH_TO_REFRESH = 40;
 const SENSIVILITY = 0.7;
 
 export default function PullToRefresh() {

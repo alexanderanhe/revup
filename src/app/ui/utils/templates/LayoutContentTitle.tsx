@@ -32,7 +32,7 @@ export default function LayoutContentTitle({
   return title && (
     <div className={`${ titleFixed ? 'fixed' : 'sticky' } top-0 full-width bg-base-100 w-full z-30 backdrop-blur bg-base-100/75`}>
       { pullToRefresh && <PullToRefresh />}
-      <div className="grid grid-cols-[104px_1fr_104px] place-items-center w-full py-4">
+      <div className="grid grid-cols-[104px_1fr_104px] place-items-center w-full min-h-20 py-4">
         <div className="flex gap-2 w-full">
           {(isChild || !hasMenu || showBackButton) && (
             <BackButton className="btn btn-square rounded-lg">
