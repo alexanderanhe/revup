@@ -8,6 +8,7 @@ import LayoutContentTitle from '@/app/ui/utils/templates/LayoutContentTitle';
 type Props = {
   title?: React.ReactNode | string;
   titleFixed?: boolean;
+  titleTransparent?: boolean;
   pageMenu?: ReactNode;
   children?: ReactNode;
   bg?: string;
@@ -19,7 +20,7 @@ type Props = {
   headerButton?: ReactNode;
 }
 
-export default function LayoutContent({ title, titleFixed, pageMenu, bg, children, className, head, footer, showBackButton, pullToRefresh, headerButton }: Props) {
+export default function LayoutContent({ title, titleFixed, titleTransparent, pageMenu, bg, children, className, head, footer, showBackButton, pullToRefresh, headerButton }: Props) {
   return (
     <main className={clsx('min-h-[calc(100svh_-_6rem)]', footer && 'mb-24')}>
       {bg && <div className={`absolute inset-0 ${ bg } bg-cover bg-center z-[-1]`} />}
@@ -31,6 +32,7 @@ export default function LayoutContent({ title, titleFixed, pageMenu, bg, childre
         <LayoutContentTitle
           title={title}
           titleFixed={Boolean(titleFixed)}
+          titleTransparent
           pageMenu={pageMenu}
           hasMenu={Boolean(head || footer)}
           showBackButton={Boolean(showBackButton)}

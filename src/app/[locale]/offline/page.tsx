@@ -1,9 +1,14 @@
-import React from 'react'
+'use client'
 
-function OfflinePage() {
+import React from 'react'
+import LayoutContent from '@/app/ui/utils/templates/LayoutContent'
+import { useTranslations } from 'next-intl';
+
+export default function OfflinePage() {
+  const t = useTranslations("Offline");
   return (
-    <div>OfflinePage</div>
+    <LayoutContent title={t("title")} footer>
+      <div>{t("description")}</div>
+    </LayoutContent>
   )
 }
-
-export default OfflinePage

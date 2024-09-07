@@ -5,10 +5,12 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 import BackButton from '@/app/ui/utils/BackButton';
 import PullToRefresh from "@/app/ui/utils//PullToRefresh";
+import { cn } from "@/lib/utils";
 
 type LayoutContentTitleProps = {
   title?: React.ReactNode | string;
   titleFixed?: boolean;
+  titleTransparent?: boolean | string;
   LeftPageMenu?: React.ReactNode;
   pageMenu?: React.ReactNode;
   hasMenu?: boolean;
@@ -19,6 +21,7 @@ type LayoutContentTitleProps = {
 export default function LayoutContentTitle({
   title,
   titleFixed,
+  titleTransparent,
   LeftPageMenu,
   pageMenu,
   hasMenu,
@@ -30,7 +33,11 @@ export default function LayoutContentTitle({
   const isChild = paths.length > 1;
 
   return title && (
-    <div className={`${ titleFixed ? 'fixed' : 'sticky' } top-0 full-width bg-base-100 w-full z-30 backdrop-blur bg-base-100/75`}>
+    <div className={cn(
+      titleFixed ? 'fixed' : 'sticky',
+      "top-0 full-width w-full z-30",
+      !titleTransparent && 'backdrop-blur bg-base-100/0'
+    )}>
       { pullToRefresh && <PullToRefresh />}
       <div className="grid grid-cols-[104px_1fr_104px] place-items-center w-full min-h-20 py-4">
         <div className="flex gap-2 w-full">

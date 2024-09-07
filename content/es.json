@@ -261,6 +261,10 @@
     "startBtn": "Empezar",
     "skipBtn": "Saltar"
   },
+  "Offline": {
+    "title": "Sin conexión",
+    "description": "Parece que no tienes conexión a internet. Por favor, comprueba tu conexión e inténtalo de nuevo."
+  },
   "auth": {
     "login": "Iniciar Sesión",
     "signUp": "Registro",

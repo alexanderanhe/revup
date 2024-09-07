@@ -260,6 +260,10 @@
     "startBtn": "Start",
     "skipBtn": "Skip"
   },
+  "Offline": {
+    "title": "Offline",
+    "description": "You are offline, please check your internet connection"
+  },
   "auth": {
     "login": "Log in",
     "signUp": "Sign up",
