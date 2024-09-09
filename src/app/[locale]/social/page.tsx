@@ -31,7 +31,7 @@ const videos = [
 export default function SocialPage() {
   return (
     <LayoutContent title={<span className={`text-5xl ${jersey10.className}`}>bray.fit</span>} titleFixed titleTransparent>
-      <div className="max-w-md w-full h-full mx-auto" style={{ gridColumn: 'full-width', marginBlock: 0}}>
+      <div className="max-w-md w-full h-full mx-auto no-scrollbar" style={{ gridColumn: 'full-width', marginBlock: 0}}>
         {videos.map((video, index) => (
           <VideoPlayer key={index} {...video} />
         ))}
