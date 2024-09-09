@@ -35,7 +35,8 @@ export default function VideoPlayer (props: VideoPlayerProps) {
       <video
         className={styles.video}
         controls={false}
-        controlsList="nofullscreen"
+        playsInline
+        autoPlay
         loop
         onClick={handlePlay}
         ref={video}

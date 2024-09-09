@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, Share, MessageCircle } from 'lucide-react'
+import { HeartIcon, ChatBubbleOvalLeftIcon, ArrowUpOnSquareIcon } from '@heroicons/react/24/solid'
 
 import styles from './styles.module.css'
 
@@ -34,17 +34,17 @@ export default function VideoPlayerActions ({ username, avatar, likes = 2041, co
       </div>
 
       <button onClick={handleLike} className={styles.action}>
-        <Heart className='size-8' />
+        <HeartIcon className='size-8' />
         <span title='like'>{likes}</span>
       </button>
 
       <button onClick={handleComment} className={styles.action}>
-        <MessageCircle className='size-8' />
+        <ChatBubbleOvalLeftIcon className='size-8' />
         <span title='comments'>{comments}</span>
       </button>
 
       <button onClick={handleShare} className={styles.action}>
-        <Share className='size-8' />
+        <ArrowUpOnSquareIcon className='size-8' />
         <span title='shares'>{shares}</span>
       </button>
     </aside>

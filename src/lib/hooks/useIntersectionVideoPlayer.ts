@@ -38,7 +38,7 @@ export default function useIntersectionVideoPlayer ({ video }: UseIntersectionVi
         ? videoEl?.play()
         : videoEl?.pause()
 
-      setPlaying(!videoEl.paused)
+      setPlaying(!videoEl?.paused)
     }
   }, [video.current])
 
