@@ -44,8 +44,9 @@
 }
 
 .textWrapper {
-  max-width: 275px;
+  /* max-width: 275px; */
   padding-right: 32px;
+  flex: 1;
 }
 
 @keyframes rotate {

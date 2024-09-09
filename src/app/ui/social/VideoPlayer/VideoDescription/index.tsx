@@ -1,8 +1,8 @@
 'use client'
 
+import SongTicker from '../SongTicker/index'
 import AlbumDisk from './AlbumDisk'
 import styles from './styles.module.css'
-// import SongTicker from '../SongTicker/index'
 
 type VideoDescriptionProps = {
   albumCover: string
@@ -25,7 +25,7 @@ export default function VideoDescription ({ albumCover, username, description, s
             {description}
           </p>
         </section>
-        {/* <SongTicker songTitle={songTitle} /> */}
+        <SongTicker songTitle={songTitle} />
       </div>
 
       <div>
