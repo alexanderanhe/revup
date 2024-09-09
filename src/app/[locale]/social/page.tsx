@@ -16,7 +16,7 @@ const videos = [
     songTitle: 'songTitle'
   },
   {
-    src: '/assets/video.mp4',
+    src: '/assets/video2.mp4',
     username: 'username',
     avatar: 'https://placehold.co/150',
     likes: 2041,
@@ -30,8 +30,8 @@ const videos = [
 ]
 export default function SocialPage() {
   return (
-    <LayoutContent title={<span className={`text-xl ${jersey10.className}`}>bray.fit</span>} titleFixed titleTransparent>
-      <div className="max-w-md w-full h-full mx-auto" style={{ gridColumn: 'full-width', margin: 0}}>
+    <LayoutContent title={<span className={`text-5xl ${jersey10.className}`}>bray.fit</span>} titleFixed titleTransparent>
+      <div className="max-w-md w-full h-full mx-auto" style={{ gridColumn: 'full-width', marginBlock: 0}}>
         {videos.map((video, index) => (
           <VideoPlayer key={index} {...video} />
         ))}

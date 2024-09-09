@@ -2,18 +2,23 @@
 
 import { useEffect, useState } from 'react'
 
+let observer: IntersectionObserver | null = null
+const isClient = typeof window !== "undefined";
+
 const options = {
-  root: document?.querySelector('main')!,
+  root: null,
   rootMargin: '0px',
   threshold: 0.9
 }
-const observer = new window.IntersectionObserver((entries) => {
-  entries
-    ?.forEach(entry => {
-      const { target, isIntersecting } = entry as { target: any, isIntersecting: boolean }
-      target._handleIntersect(isIntersecting)
-    })
-}, options)
+if (isClient) {
+  observer = new window.IntersectionObserver((entries) => {
+    entries
+      ?.forEach(entry => {
+        const { target, isIntersecting } = entry as { target: any, isIntersecting: boolean }
+        target._handleIntersect(isIntersecting)
+      })
+  }, options);
+}
 
 type UseIntersectionVideoPlayerProps = {
   video: any
@@ -25,7 +30,7 @@ export default function useIntersectionVideoPlayer ({ video }: UseIntersectionVi
   useEffect(() => {
     if (!video.current) return
 
-    observer.observe(video.current)
+    observer?.observe(video.current)
     video.current._handleIntersect = (isIntersecting: boolean) => {
       const { current: videoEl } = video
 
