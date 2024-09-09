@@ -27,6 +27,30 @@ const videos = [
     description: 'description',
     songTitle: 'songTitle'
   },
+  {
+    src: '/assets/video.mp4',
+    username: 'username',
+    avatar: 'https://placehold.co/150',
+    likes: 2041,
+    comments: 333,
+    shares: 520,
+    hearted: false,
+    albumCover: 'https://placehold.co/150',
+    description: 'description',
+    songTitle: 'songTitle'
+  },
+  {
+    src: '/assets/video2.mp4',
+    username: 'username',
+    avatar: 'https://placehold.co/150',
+    likes: 2041,
+    comments: 333,
+    shares: 520,
+    hearted: false,
+    albumCover: 'https://placehold.co/150',
+    description: 'description',
+    songTitle: 'songTitle'
+  },
 ]
 export default function SocialPage() {
   const title = <span className={`text-5xl ${jersey10.className}`}>bray.fit</span>;
