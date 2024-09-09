@@ -29,9 +29,20 @@ const videos = [
   },
 ]
 export default function SocialPage() {
+  const title = <span className={`text-5xl ${jersey10.className}`}>bray.fit</span>;
+  const mainStyle = {
+    gridColumn: 'full-width',
+    marginBlock: 0,
+    scrollSnapPointsY: 'repeat(100vh)',
+    scrollSnapType: 'y mandatory'
+  } as React.CSSProperties;
+
   return (
-    <LayoutContent title={<span className={`text-5xl ${jersey10.className}`}>bray.fit</span>} titleFixed titleTransparent>
-      <div className="max-w-md w-full h-full mx-auto no-scrollbar" style={{ gridColumn: 'full-width', marginBlock: 0}}>
+    <LayoutContent title={title} titleFixed titleTransparent>
+      <div
+        className="max-w-md w-full mx-auto h-svh overflow-auto no-scrollbar"
+        style={mainStyle}
+      >
         {videos.map((video, index) => (
           <VideoPlayer key={index} {...video} />
         ))}

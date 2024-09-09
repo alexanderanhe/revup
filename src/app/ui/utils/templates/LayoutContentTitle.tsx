@@ -48,7 +48,10 @@ export default function LayoutContentTitle({
           )}
           { LeftPageMenu }
         </div>
-        <h1 className="text-base font-bold text-center [&::first-letter]:capitalize">{ title }</h1>
+        <h1 className={cn(
+          "text-base font-bold text-center",
+          typeof title === "string" && "[&::first-letter]:capitalize"
+          )}>{ title }</h1>
         <div className="flex justify-end gap-2 w-full">
           { pageMenu }
         </div>
