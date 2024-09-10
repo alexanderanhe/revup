@@ -28,7 +28,7 @@ const videos = [
     songTitle: 'songTitle'
   },
   {
-    src: 'https://krkpraegwzrqcmgbgzce.supabase.co/storage/v1/object/public/videos/video.mp4',
+    src: 'https://krkpraegwzrqcmgbgzce.supabase.co/storage/v1/object/public/videos/video4.mp4',
     username: 'bray.fit',
     avatar: 'https://placehold.co/150',
     likes: 2041,
@@ -40,7 +40,7 @@ const videos = [
     songTitle: 'songTitle'
   },
   {
-    src: 'https://krkpraegwzrqcmgbgzce.supabase.co/storage/v1/object/public/videos/video2.mp4?t=2024-09-10T17%3A35%3A56.678Z',
+    src: 'https://krkpraegwzrqcmgbgzce.supabase.co/storage/v1/object/public/videos/video3.mp4',
     username: 'bray.fit',
     avatar: 'https://placehold.co/150',
     likes: 2041,

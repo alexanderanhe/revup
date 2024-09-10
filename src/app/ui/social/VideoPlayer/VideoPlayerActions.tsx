@@ -4,6 +4,9 @@ import { HeartIcon, ChatBubbleOvalLeftIcon, ArrowUpOnSquareIcon } from '@heroico
 
 import styles from './styles.module.css'
 import { Drawer } from 'vaul'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { Link } from '@/navigation'
 
 type VideoPlayerActionsProps = {
   username: string
@@ -39,11 +42,11 @@ export default function VideoPlayerActions ({ username, avatar, likes = 2041, co
         <span title='like'>{likes}</span>
       </button>
 
-      <button onClick={handleComment} className={styles.action}>
+      {/* <button onClick={handleComment} className={styles.action}>
         <ChatBubbleOvalLeftIcon className='size-8' />
         <span title='comments'>{comments}</span>
-      </button>
-      {/* <CommentButton comments={comments} /> */}
+      </button> */}
+      <CommentButton comments={comments} />
 
       <button onClick={handleShare} className={styles.action}>
         <ArrowUpOnSquareIcon className='size-8' />
@@ -58,6 +61,8 @@ type CommentButtonProps = {
 }
 
 function CommentButton({ comments }: CommentButtonProps) {
+  const { data: session } = useSession();
+  const user = session?.user;
   return (
     <Drawer.Root
       shouldScaleBackground
@@ -71,39 +76,22 @@ function CommentButton({ comments }: CommentButtonProps) {
         <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[80%] mx-[-1px] z-30">
           {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" /> */}
           <div className="content-grid mx-auto w-full h-full p-4 pt-5">
-            <div className="grid grid-rows-[auto_1fr_auto] gap-2 w-full h-full">
+            <div className="flex flex-col gap-2 w-full h-full">
               <div className="flex justify-center font-medium">{ comments } comentarios</div>
-              <div className="overflow-auto">
-              <div className="chat chat-start">
-                  <div className="chat-image avatar">
-                    <div className="w-10 rounded-full">
-                      <img
-                        alt="Tailwind CSS chat bubble component"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+              <div className="overflow-auto grow">
+                { Array.from({ length: 5 }).map((_, i) => (
+                  <div key={`comment${i}`} className="flex items-start w-full font-medium gap-2">
+                    <Link href={`/user/${user?.id}`} className="avatar">
+                      <div className="size-10 rounded-full">
+                        <Image width={40} height={40} alt={user?.name ?? ""} src={user?.image ?? ""} />
+                      </div>
+                    </Link>
+                    <div>
+                      <a href="#" className="text-gray-700">{user?.name ?? ""}</a>
+                      <p>Este es un comentario Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC</p>
                     </div>
                   </div>
-                  <div className="chat-bubble chat-bubble-secondary">It was said that you would, destroy the Sith, not join them.</div>
-                </div>
-                <div className="chat chat-start">
-                  <div className="chat-image avatar">
-                    <div className="w-10 rounded-full">
-                      <img
-                        alt="Tailwind CSS chat bubble component"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                    </div>
-                  </div>
-                  <div className="chat-bubble chat-bubble-secondary">It was you who would bring balance to the Force</div>
-                </div>
-                <div className="chat chat-start">
-                  <div className="chat-image avatar">
-                    <div className="w-10 rounded-full">
-                      <img
-                        alt="Tailwind CSS chat bubble component"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                    </div>
-                  </div>
-                  <div className="chat-bubble chat-bubble-secondary">Not leave it in Darkness</div>
-                </div>
+                ))}
               </div>
               <div className="flex flex-col text-2xl gap-3">
                 <ul className='flex justify-between'>
@@ -117,12 +105,12 @@ function CommentButton({ comments }: CommentButtonProps) {
                 </ul>
                 <div className="flex items-center w-full gap-2">
                   <div className="avatar">
-                    <div className="size-8 rounded-full">
-                      <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <div className="size-10 rounded-full">
+                      <Image width={40} height={40} alt={user?.name ?? ""} src={user?.image ?? ""} />
                     </div>
                   </div>
-                  <label className="input input-bordered input-sm bg-secondary rounded-full grow flex items-center gap-2">
-                    <input type="text" className="grow" placeholder="Daisy" />
+                  <label className="input input-bordered input-md bg-secondary rounded-full grow flex items-center gap-2">
+                    <input type="text" className="grow" placeholder="Añadir comentario..." />
                   </label>
                 </div>
               </div>
