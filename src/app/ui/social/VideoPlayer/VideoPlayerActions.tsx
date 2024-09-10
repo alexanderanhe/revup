@@ -39,11 +39,11 @@ export default function VideoPlayerActions ({ username, avatar, likes = 2041, co
         <span title='like'>{likes}</span>
       </button>
 
-      {/* <button onClick={handleComment} className={styles.action}>
+      <button onClick={handleComment} className={styles.action}>
         <ChatBubbleOvalLeftIcon className='size-8' />
         <span title='comments'>{comments}</span>
-      </button> */}
-      <CommentButton comments={comments} />
+      </button>
+      {/* <CommentButton comments={comments} /> */}
 
       <button onClick={handleShare} className={styles.action}>
         <ArrowUpOnSquareIcon className='size-8' />
