@@ -209,7 +209,18 @@ export type ActionFormState = {
   message?: string;
 }
 
-export const THEMES = ['', 'light', 'dark', 'pastel', 'cmyk', 'black', 'night', 'forest', 'dim'];
+import daisyui from "daisyui/src/theming/themes";
+export const THEMES = [
+  { name: '', bgcolor: '' },
+  { name: 'light', bgcolor: daisyui.light["base-100"] },
+  { name: 'dark', bgcolor: '#1d232a' },
+  { name: 'pastel', bgcolor: daisyui.pastel["base-100"] },
+  { name: 'cmyk', bgcolor: daisyui.cmyk["base-100"] },
+  { name: 'black', bgcolor: daisyui.black["base-100"] },
+  { name: 'night', bgcolor: daisyui.night["base-100"] },
+  { name: 'forest', bgcolor: daisyui.forest["base-100"] },
+  { name: 'dim', bgcolor: daisyui.dim["base-100"] },  
+];
 export const APPCOOKIES = {
   PWA: 'app.installpwa',
   ONBOARDING: 'app.onboarding',

@@ -9,7 +9,7 @@ import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import Banners from "@/components/utils/Banners";
 import { auth } from "@/auth";
 import { poppins } from "@/app/ui/fonts";
-import { APPCOOKIES, User } from "@/lib/definitions";
+import { APPCOOKIES, THEMES, User } from "@/lib/definitions";
 import { getMessages } from 'next-intl/server';
 import { Toaster } from "sonner";
 
@@ -24,9 +24,9 @@ export async function generateMetadata() {
 
 export async function generateViewport() {
   const theme = await checkTheme();
+  const themeColor = THEMES.find(({ name }) => name === theme)?.bgcolor ?? '#53f074';
   return {
-    themeColor: theme === 'dark' ? '#000000'
-      : theme === '' ? '#53f074' : '#FFFFFF',
+    themeColor: themeColor,
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,

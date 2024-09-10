@@ -873,7 +873,7 @@ export async function saveTheme(formData: FormData): Promise<{theme: string, use
   const user = session?.user;
   try {
     const theme = <string>form['theme-dropdown'];
-    if (THEMES.includes(theme) && user) {
+    if (THEMES.map(({name}) => name).includes(theme) && user) {
       await sql`UPDATE users_info
         SET theme=${theme}
         WHERE user_id=${user.id}`;
