@@ -32,7 +32,7 @@ export default function LayoutContent({ title, titleFixed, titleTransparent, pag
         <LayoutContentTitle
           title={title}
           titleFixed={Boolean(titleFixed)}
-          titleTransparent
+          titleTransparent={titleTransparent}
           pageMenu={pageMenu}
           hasMenu={Boolean(head || footer)}
           showBackButton={Boolean(showBackButton)}
