@@ -1,5 +1,6 @@
 'use client'
 
+// import { useState } from 'react'
 import { HeartIcon, ChatBubbleOvalLeftIcon, ArrowUpOnSquareIcon } from '@heroicons/react/24/solid'
 
 import styles from './styles.module.css'
@@ -7,7 +8,6 @@ import { Drawer } from 'vaul'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { Link } from '@/navigation'
-import { useState } from 'react'
 
 type VideoPlayerActionsProps = {
   username: string
@@ -63,7 +63,7 @@ type CommentButtonProps = {
 
 function CommentButton({ comments }: CommentButtonProps) {
   const { data: session } = useSession();
-  const [snap, setSnap] = useState<number | string | null>("355px");
+  // const [snap, setSnap] = useState<number | string | null>("355px");
   const user = session?.user;
   return (
     <Drawer.Root

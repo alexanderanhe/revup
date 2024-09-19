@@ -8,13 +8,9 @@ type AlbumDiskProps = {
   muted: [boolean, (value: boolean) => void]
 }
 export default function AlbumDisk ({ albumCover, muted: [muted, useMuted] }: AlbumDiskProps) {
-  const handleUnMuted = () => {
-    useMuted(!muted);
-  };
-
   return (
     muted ? (
-      <button className="btn btn-ghost btn-circle" onClick={handleUnMuted} >
+      <button className="btn btn-ghost btn-circle" onClick={() => useMuted(!muted)} >
         <VolumeXIcon className="size-6" />
       </button>
     ): (
