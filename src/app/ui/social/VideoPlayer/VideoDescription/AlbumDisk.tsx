@@ -10,7 +10,7 @@ type AlbumDiskProps = {
 export default function AlbumDisk ({ albumCover, muted: [muted, useMuted] }: AlbumDiskProps) {
   return (
     muted ? (
-      <button className="btn btn-ghost btn-circle" onClick={() => useMuted(!muted)} >
+      <button className="btn btn-ghost btn-circle" >
         <VolumeXIcon className="size-6" />
       </button>
     ): (
