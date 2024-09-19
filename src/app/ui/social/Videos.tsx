@@ -21,7 +21,7 @@ export default function Videos({ videos }: VideosProps) {
   const [muted, setMuted] = useState<boolean>(true);
   const handleChangeMute = useCallback(() => {
     setMuted(!muted);
-  }, [muted]);
+  }, []);
   const mainStyle = {
     gridColumn: 'full-width',
     marginBlock: 0,

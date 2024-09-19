@@ -22,9 +22,9 @@ export default function VideoPlayerActions ({ username, avatar, likes = 2041, co
     window.alert('like')
   }
 
-  const handleComment = () => {
-    window.alert('comment')
-  }
+  // const handleComment = () => {
+  //   window.alert('comment')
+  // }
 
   const handleShare = () => {
     window.alert('share')
