@@ -6,7 +6,7 @@ import AlbumDisk from './AlbumDisk'
 import styles from './styles.module.css'
 
 type VideoDescriptionProps = Video & {
-  muted: [boolean, (value: boolean) => void]
+  muted: [boolean, () => void]
 }
 
 export default function VideoDescription ({ albumCover, username, description, songTitle, muted }: VideoDescriptionProps) {

@@ -9,7 +9,7 @@ import useIntersectionVideoPlayer from '@/lib/hooks/useIntersectionVideoPlayer'
 import { Video } from '@/lib/definitions'
 
 type VideoPlayerProps = Video & {
-  muted: [boolean, (value: boolean) => void]
+  muted: [boolean, () => void]
 }
 
 export default function VideoPlayer (props: VideoPlayerProps) {
