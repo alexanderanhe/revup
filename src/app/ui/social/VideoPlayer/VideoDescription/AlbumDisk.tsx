@@ -1,6 +1,5 @@
 'use client'
 
-import { useCallback } from 'react'
 import { VolumeXIcon } from 'lucide-react'
 import styles from './styles.module.css'
 
@@ -9,17 +8,17 @@ type AlbumDiskProps = {
   muted: [boolean, (value: boolean) => void]
 }
 export default function AlbumDisk ({ albumCover, muted: [muted, useMuted] }: AlbumDiskProps) {
-  const handleMuted = useCallback(() => {
+  const handleUnMuted = () => {
     useMuted(!muted);
-  }, [muted]);
+  };
 
   return (
     muted ? (
-      <button className="btn btn-ghost btn-circle" onClick={handleMuted} >
+      <button className="btn btn-ghost btn-circle" onClick={handleUnMuted} >
         <VolumeXIcon className="size-6" />
       </button>
     ): (
-      <div className={styles.album} onClick={handleMuted}>
+      <div className={styles.album}>
         <img className={styles.albumImage} src={albumCover} />
       </div>
     )

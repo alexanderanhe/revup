@@ -7,6 +7,7 @@ import { Drawer } from 'vaul'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { Link } from '@/navigation'
+import { useState } from 'react'
 
 type VideoPlayerActionsProps = {
   username: string
@@ -62,23 +63,26 @@ type CommentButtonProps = {
 
 function CommentButton({ comments }: CommentButtonProps) {
   const { data: session } = useSession();
+  const [snap, setSnap] = useState<number | string | null>("355px");
   const user = session?.user;
   return (
     <Drawer.Root
-      shouldScaleBackground
+      // snapPoints={["355px", 1]}
+      // activeSnapPoint={snap}
+      // setActiveSnapPoint={setSnap}
     >
-      <Drawer.Overlay className="fixed inset-0 bg-black/60" />
+      <Drawer.Overlay className="fixed inset-0 bg-black/10" />
       <Drawer.Trigger className={styles.action}>
         <ChatBubbleOvalLeftIcon className='size-8' />
         <span title='comments'>{comments}</span>
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[80%] mx-[-1px] z-30">
+        <Drawer.Content className="fixed flex flex-col bg-base-100 border border-base-300 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[60%] mx-[-1px] z-30">
           {/* <div className="flex-none mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-base-300 mb-6 mt-4" /> */}
           <div className="content-grid mx-auto w-full h-full p-4 pt-5">
             <div className="flex flex-col gap-2 w-full h-full">
               <div className="flex justify-center font-medium">{ comments } comentarios</div>
-              <div className="overflow-auto grow">
+              <div className="overflow-y-auto grow max-h-96">
                 { Array.from({ length: 5 }).map((_, i) => (
                   <div key={`comment${i}`} className="flex items-start w-full font-medium gap-2">
                     <Link href={`/user/${user?.id}`} className="avatar">
@@ -109,7 +113,7 @@ function CommentButton({ comments }: CommentButtonProps) {
                       <Image width={40} height={40} alt={user?.name ?? ""} src={user?.image ?? ""} />
                     </div>
                   </div>
-                  <label className="input input-bordered input-md bg-secondary rounded-full grow flex items-center gap-2">
+                  <label className="input input-bordered input-md rounded-full grow flex items-center gap-2">
                     <input type="text" className="grow" placeholder="Añadir comentario..." />
                   </label>
                 </div>
