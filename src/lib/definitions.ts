@@ -209,6 +209,19 @@ export type ActionFormState = {
   message?: string;
 }
 
+export type Video = {
+  src: string
+  username: string
+  avatar: string
+  likes?: number
+  comments?: number
+  shares?: number
+  hearted?: boolean
+  albumCover: string
+  description: string
+  songTitle: string
+}
+
 import daisyui from "daisyui/src/theming/themes";
 export const THEMES = [
   { name: '', bgcolor: '' },

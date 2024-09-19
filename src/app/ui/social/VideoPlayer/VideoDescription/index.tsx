@@ -1,17 +1,15 @@
 'use client'
 
+import { Video } from '@/lib/definitions'
 import SongTicker from '../SongTicker/index'
 import AlbumDisk from './AlbumDisk'
 import styles from './styles.module.css'
 
-type VideoDescriptionProps = {
-  albumCover: string
-  username: string
-  description: string
-  songTitle: string
+type VideoDescriptionProps = Video & {
+  muted: [boolean, (value: boolean) => void]
 }
 
-export default function VideoDescription ({ albumCover, username, description, songTitle }: VideoDescriptionProps) {
+export default function VideoDescription ({ albumCover, username, description, songTitle, muted }: VideoDescriptionProps) {
   return (
     <footer className={styles.description}>
       <div className={styles.textWrapper}>
@@ -29,7 +27,7 @@ export default function VideoDescription ({ albumCover, username, description, s
       </div>
 
       <div>
-        <AlbumDisk albumCover={albumCover} />
+        <AlbumDisk albumCover={albumCover} muted={muted} />
       </div>
 
     </footer>

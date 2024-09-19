@@ -21,17 +21,19 @@ if (isClient) {
 }
 
 type UseIntersectionVideoPlayerProps = {
-  video: any
+  video: any;
+  muted: [boolean, (value: boolean) => void];
 }
 
-export default function useIntersectionVideoPlayer ({ video }: UseIntersectionVideoPlayerProps) {
+export default function useIntersectionVideoPlayer ({ video, muted: [, useMuted] }: UseIntersectionVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     if (!video.current) return
+    const videoRef = video.current;
 
-    observer?.observe(video.current)
-    video.current._handleIntersect = (isIntersecting: boolean) => {
+    observer?.observe(videoRef)
+    videoRef._handleIntersect = (isIntersecting: boolean) => {
       const { current: videoEl } = video
 
       isIntersecting
@@ -39,6 +41,17 @@ export default function useIntersectionVideoPlayer ({ video }: UseIntersectionVi
         : videoEl?.pause()
 
       setPlaying(!videoEl?.paused)
+    }
+
+    const handleVolumeChanged = () => {
+      useMuted(false);
+    }
+
+    videoRef.addEventListener("volumechange", handleVolumeChanged);
+
+    return () => {
+      observer?.unobserve(videoRef)
+      videoRef.removeEventListener("volumechange", handleVolumeChanged);
     }
   }, [video.current])
 
