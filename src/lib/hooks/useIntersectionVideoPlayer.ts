@@ -22,10 +22,10 @@ if (isClient) {
 
 type UseIntersectionVideoPlayerProps = {
   video: any;
-  muted: [boolean, (value: boolean) => void];
+  muted: [boolean, () => void];
 }
 
-export default function useIntersectionVideoPlayer ({ video, muted: [, useMuted] }: UseIntersectionVideoPlayerProps) {
+export default function useIntersectionVideoPlayer ({ video, muted: [, handleChangeMute] }: UseIntersectionVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function useIntersectionVideoPlayer ({ video, muted: [, useMuted]
     }
 
     const handleVolumeChanged = () => {
-      useMuted(false);
+      handleChangeMute();
     }
 
     videoRef.addEventListener("volumechange", handleVolumeChanged);

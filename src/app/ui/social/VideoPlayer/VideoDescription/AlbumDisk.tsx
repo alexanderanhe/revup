@@ -5,12 +5,16 @@ import styles from './styles.module.css'
 
 type AlbumDiskProps = {
   albumCover: string,
-  muted: [boolean, (value: boolean) => void]
+  muted: [boolean, () => void]
 }
-export default function AlbumDisk ({ albumCover, muted: [muted, useMuted] }: AlbumDiskProps) {
+export default function AlbumDisk ({ albumCover, muted: [muted, handleChangeMute] }: AlbumDiskProps) {
+  const handleUnMuted = () => {
+    handleChangeMute();
+  };
+
   return (
     muted ? (
-      <button className="btn btn-ghost btn-circle" >
+      <button className="btn btn-ghost btn-circle" onClick={(handleUnMuted)} >
         <VolumeXIcon className="size-6" />
       </button>
     ): (

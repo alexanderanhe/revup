@@ -1,7 +1,7 @@
 'use client'
 
 import VideoPlayer from '@/app/ui/social/VideoPlayer';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type VideosProps = {
   videos: {
@@ -19,6 +19,9 @@ type VideosProps = {
 }
 export default function Videos({ videos }: VideosProps) {
   const [muted, setMuted] = useState<boolean>(true);
+  const handleChangeMute = useCallback(() => {
+    setMuted(!muted);
+  }, [muted]);
   const mainStyle = {
     gridColumn: 'full-width',
     marginBlock: 0,
@@ -32,7 +35,7 @@ export default function Videos({ videos }: VideosProps) {
       style={mainStyle}
     >
       {videos.map((video, index) => (
-        <VideoPlayer key={index} muted={[muted, setMuted]} {...video} />
+        <VideoPlayer key={index} muted={[muted, handleChangeMute]} {...video} />
       ))}
     </div>
   )
