@@ -60,11 +60,11 @@ export default async function ProfilePage() {
       <section>
         <Card>
           <h3 className="text-lg font-semibold">{ t("account.title") }</h3>
-          <button className="btn btn-ghost w-full">
+          {/* <button className="btn btn-ghost w-full">
             <UserIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("account.personalData") }</span>
             <ArrowRightIcon className="size-5" />
-          </button>
+          </button> */}
           <button className="btn btn-ghost w-full">
             <StarIcon className="size-5 text-primary" />
             <span className="grow flex justify-start">{ t("account.achievement") }</span>

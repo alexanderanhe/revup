@@ -6,7 +6,7 @@ const DynamicSendNotification = dynamic(() => import("@/app/ui/admin/SendNotific
   loading: () => <p>Loading...</p>,
 });
 
-function Notification({ users }: { users: any[] }) {
+function Notification({ users }: { users: User[] }) {
   return (
     <DynamicSendNotification users={users} />
   )

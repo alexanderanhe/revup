@@ -7,7 +7,7 @@ import { CircleCheckBigIcon, CircleXIcon, Send } from "lucide-react";
 import SubmitButton from "@/app/ui/utils/SubmitButton";
 import { handleSendNotification } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { User } from "@clerk/nextjs/server";
+import { User } from "@/lib/definitions";
 
 export default function SendNotification({ users }: { users: User[] }) {
   const [ formState, formAction ] = useFormState(handleSendNotification, null);
@@ -26,7 +26,7 @@ export default function SendNotification({ users }: { users: User[] }) {
           <option
             key={user.id}
             value={user.id as string}
-          >{ user.firstName?.substring(0, 20) }({ user.emailAddresses.at(0)?.emailAddress })</option>
+          >{ user.firstname?.substring(0, 20) }({ user.email })</option>
         ))}
       </select>
       <input type="text" name="name" placeholder="Title*" className="input input-bordered w-full" />

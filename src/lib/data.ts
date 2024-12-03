@@ -893,11 +893,11 @@ export async function saveTheme(formData: FormData): Promise<{theme: string, use
   }
 }
 
-export async function getUsersWithSubscription(): Promise<User[]>{
+export async function getUsersWithSubscription(): Promise<LocalUser[]>{
   try {
-    // const { rows } = await sql`SELECT u.id, u.name, u.email, u.image FROM users u
-    // JOIN notification_subscriptions ns ON u.id=ns.user_id`;
-    return [];
+    const { rows } = await sql`SELECT u.id, u.firstname, u.email, u.image FROM users u
+    JOIN notification_subscriptions ns ON u.id=ns.user_id`;
+    return rows;
   } catch (error) {
     console.error('Failed to fetch users with subscription:', error);
     return [];
