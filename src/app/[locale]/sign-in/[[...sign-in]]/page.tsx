@@ -1,7 +1,7 @@
 import LayoutContent from '@/app/ui/utils/templates/LayoutContent'
 import { SignIn } from '@clerk/nextjs'
 
-export default function Page() {
+export default async function SignInPage() {
   return <LayoutContent
     title="Sign In"
     // showBackButton={showWorkouts}
