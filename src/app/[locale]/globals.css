@@ -131,3 +131,9 @@ input {
 *, :not([data-scrollable]) {
   overscroll-behavior-y: contain;
 }
+
+/* Custom clerk styles */
+.custom-clerk .cl-avatarBox {
+  width: 100%;
+  height: auto;
+}

@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 
-import { auth } from "@/auth";
-
 import Dashboard from "@/app/ui/home/Dashboard";
 import AssessmentBanner from "@/app/ui/home/AssessmentBanner";
-import { APPCOOKIES, User } from "@/lib/definitions";
+import { APPCOOKIES } from "@/lib/definitions";
 import CurrentPlan from "@/app/ui/home/CurrentPlan";
+import { auth, currentUser, User } from "@clerk/nextjs/server";
+import { checkUserPlanExists } from "@/lib/data";
 
 export default async function HomePage({
   params: { locale }
@@ -15,11 +15,17 @@ export default async function HomePage({
     locale: string;
   };
 }) {
-  const session = await auth();
-  const user = session?.user;
+  const { userId, sessionClaims } = await auth();
+  const authenticated = !(userId === null || sessionClaims === null);
+  if (!authenticated) {
+    return null;
+  }
+  const user = await currentUser() as User;
+  await checkUserPlanExists(userId);
+  const userHasAssessment = (user?.publicMetadata as any)?.assessment;
 
   const Assessment = async () => {
-    const hasAssessment = (user as User)?.info?.assessment || cookies().has(APPCOOKIES.ASSESSMENT);
+    const hasAssessment = userHasAssessment || cookies().has(APPCOOKIES.ASSESSMENT);
     if (hasAssessment) {
       return;
     }

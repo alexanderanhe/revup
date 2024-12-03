@@ -1,9 +1,9 @@
-import { User } from "@/lib/definitions";
 import { getTranslations } from "next-intl/server";
 import { getStatsWeight } from "@/lib/data";
 import EditDashboard from "@/app/ui/home/EditDashboard";
 
 import * as dashboardComponents from "./dashboard/";
+import { User } from "@clerk/nextjs/server";
 
 const fetchs: {[key: string]: any} = {
   MyWeight: getStatsWeight,
@@ -18,7 +18,9 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
   const t = await getTranslations("Home");
   const t_dashboard = t.raw("dashboard");
   const t_dashboard_keys = Object.keys(t_dashboard);
-  const user_info_dashboard = user?.info?.dashboard ?? ["Recommendations", "MyWeight"];
+  const dashboard = (user.unsafeMetadata?.dashboard as string)?.split(";") ?? [];
+  const user_info_dashboard = dashboard.length ? dashboard : ["Recommendations", "MyWeight"];
+  const userDashboard = (user.unsafeMetadata?.dashboard || []) as string[];
   const orderedUniqDashbordItemKeys = user_info_dashboard.concat(t_dashboard_keys)
     .reduce((acc: string[], key) => {
       if (!acc.includes(key)) {
@@ -30,7 +32,7 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
     .map((key) => ({
       id: key,
       name: t_dashboard[key].title,
-      category: user.info?.dashboard?.includes(key) ? 1 : 2,
+      category: userDashboard?.includes(key) ? 1 : 2,
       Component: async () => {
         if (!dashboardComponents[key as keyof typeof dashboardComponents]) return <div />;
         let fetchData = async () => null;

@@ -2,9 +2,8 @@ export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type User = {
   id?: string | null;
-  name?: string | null;
-  lastName?: string | null;
-  emailVerified?: boolean | null;
+  firstname?: string | null;
+  lastname?: string | null;
   email?: string | null;
   image?: string | null;
   password?: string | null;

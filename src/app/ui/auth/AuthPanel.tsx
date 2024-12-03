@@ -4,17 +4,20 @@ import { useEffect, useState } from 'react';
 
 import { useSession } from 'next-auth/react';
 import { LoginModal } from '@/lib/features/app';
-import SignIn from '@/app/ui/auth/SignIn';
-import SignUp from '@/app/ui/auth/SignUp';
-import ForgotPassword from '@/app/ui/auth/ForgotPassword';
-import WelcomeBack from '@/app/ui/auth/WelcomeBack';
+// import SignIn from '@/app/ui/auth/SignIn';
+// import SignUp from '@/app/ui/auth/SignUp';
+// import ForgotPassword from '@/app/ui/auth/ForgotPassword';
+// import WelcomeBack from '@/app/ui/auth/WelcomeBack';
 import Loader from '@/app/ui/utils/Loader';
+import { PAGES } from '@/lib/routes';
 
 const FORM_INIT = {
   name: "",
   email: "",
   password: "",
-  confirm: ""
+  confirm: "",
+  stay_signed_in: "false",
+  redirectTo: PAGES.HOME,
 }
 
 export type Form = {
@@ -42,17 +45,17 @@ export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
     return <Loader show />;
   }
 
-  if (status === "authenticated") {
-    return <WelcomeBack {...props} />;
-  }
+  // if (status === "authenticated") {
+  //   return <WelcomeBack {...props} />;
+  // }
 
   switch(modal) {
-    case 'signIn':
-      return <SignIn {...props} />;
-    case 'signUp':
-      return <SignUp {...props} />;
-    case 'Forgot':
-      return <ForgotPassword {...props} />;
+    // case 'signIn':
+    //   return <SignIn {...props} />;
+    // case 'signUp':
+    //   return <SignUp {...props} />;
+    // case 'Forgot':
+    //   return <ForgotPassword {...props} />;
     default:
       return null;
   }

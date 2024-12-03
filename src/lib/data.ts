@@ -1,11 +1,11 @@
+'use server'
 import { format } from "date-fns";
 import bcrypt from 'bcryptjs';
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID, SimplePlan, ActionFormState } from "@/lib/definitions";
-import { auth } from "@/auth";
 import { sql } from "@vercel/postgres";
-import { User } from "next-auth";
+import { auth, clerkClient, currentUser, User } from "@clerk/nextjs/server";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');
@@ -51,24 +51,17 @@ export async function fetchEvents(date: Date) {
   ];
 }
 
-export async function findUserByEmail({email, includePassword}: {email: string, includePassword: boolean}): Promise<any> {
-  try {
-    const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-    return user.rows[0];
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
-}
 
-export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
+export async function getUserInfo(): Promise<UserInfo | null> {
   try {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
+      throw new Error('User session not found.');
+    }
     type UserInfoMod = Omit<UserInfo, 'dashboard'> & { dashboard: string | null }
     const { rows, rowCount } = await sql<UserInfoMod>`
-      SELECT TRIM(ui.theme) as theme, ui.onboarding, ui.assessment, ui.dashboard, ui.admin,
-        CASE WHEN ua.gender = 'M' THEN 'male' WHEN ua.gender = 'F' THEN 'female' ELSE 'other' END AS gender,
-        TO_CHAR(ua.birthdate, 'yyyy-mm-dd') as birthdate, ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
-      FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${user_id}`;
+      SELECT ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
+      FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${userId}`;
     if (rowCount === 0) {
       return null
     }
@@ -83,10 +76,9 @@ export async function getUserInfo(user_id: string): Promise<UserInfo | null> {
   }
 }
 
-// TODO: MAKE THIS FUNCTION WORK
 export async function checkUserPlanExists(userId: string): Promise<void> {
   try {
-    const user = await sql<User>`SELECT email FROM users WHERE id=${userId}`;
+    const user = await sql`SELECT email FROM users WHERE id=${userId}`;
     if (!user.rowCount) return;
     const email = user.rows[0].email;
     const current_plans = (await getUserPlans('en', userId) ?? []).map(({ id }: { id: string }) => id);
@@ -109,28 +101,31 @@ export async function checkUserPlanExists(userId: string): Promise<void> {
   }
 }
 
-export async function createUser({name, email, password}: LocalUser): Promise<User> {
-  try {
-    const salt = bcrypt.genSaltSync(10);
-    const passwordEncrypt = password ? bcrypt.hashSync(password, salt) : '';
-    const result = await sql<User>`INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${passwordEncrypt}) RETURNING *`;
-    return result.rows[0] as User;
-  } catch (error) {
-    console.error('Failed to create user:', error);
-    throw new Error('Failed to create user.');
-  }
+export async function createUser(user: User): Promise<LocalUser> {
+  const { id, firstName, lastName, primaryEmailAddress, imageUrl } = user
+  // const salt = bcrypt.genSaltSync(10);
+  // const passwordEncrypt = password ? bcrypt.hashSync(password, salt) : '';
+  // const emailVerifiedString = primaryEmailAddress?.verification?.status;
+  const { rows } = await sql<LocalUser>`
+    INSERT INTO users (id, firstname, lastname, email, image) 
+    VALUES (${id}, ${firstName}, ${lastName}, ${primaryEmailAddress?.emailAddress}, ${imageUrl}) 
+    RETURNING id, firstname, lastname, email, image`;
+  // BRAYFIT: Create user info
+  await sql`INSERT INTO users_info (user_id) VALUES (${id})`;
+  return rows[0];
 }
 
 export async function getSession() {
-  const session = await auth();
-  if (!session) return null;
-  return session.user;
+  const { sessionClaims, userId } = await auth();
+
+  if (userId === null || sessionClaims === null) return null;
+  const user = await currentUser();
+  return user;
 }
 
 export async function getStatsWeight(): Promise<WeightData[] | null> {
   try {
-    const session = await auth();
-    const user_id = session?.user?.id;
+    const { userId: user_id } = await auth();
     if (!user_id) {
       throw new Error('User session not found.');
     }
@@ -295,14 +290,13 @@ export async function getWorkouts(searchParams: FilterSearchParams, locale: stri
 
 export async function getWorkoutsLiked(): Promise<string[] | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims} = await auth();
+    if (userId === null || sessionClaims === null) {
       return null;
     }
     const { rows } = await sql`
       SELECT workout_id FROM workouts_liked
-      WHERE user_id=${user.id} AND enabled=true
+      WHERE user_id=${userId} AND enabled=true
     `;
     return rows.map(({ workout_id }: any) => workout_id);
   } catch (error) {
@@ -313,9 +307,8 @@ export async function getWorkoutsLiked(): Promise<string[] | null> {
 
 export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean): Promise<boolean> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims} = await auth();
+    if (userId === null || sessionClaims === null) {
       throw new Error('User session not found.');
     }
     if (!workoutId) {
@@ -324,7 +317,7 @@ export async function setWorkoutsUserLiked(workoutId: string, enabled: boolean):
 
     await sql`
       INSERT INTO workouts_liked (user_id, workout_id, enabled)
-      VALUES (${user.id}, ${workoutId}, ${enabled})
+      VALUES (${userId}, ${workoutId}, ${enabled})
       ON CONFLICT (user_id, workout_id) DO UPDATE
       SET enabled=${enabled};
     `;
@@ -392,13 +385,13 @@ export async function createUserPlan(user_id: string, plan_id: string, current_d
     if ( !rowCount ) {
       await sql`
         INSERT INTO plans_user (user_id, plan_id)
-        VALUES (${user_id}::uuid, ${plan_id}::uuid)
+        VALUES (${user_id}, ${plan_id}::uuid)
         ON CONFLICT (user_id, plan_id) DO UPDATE
         SET updated_at=NOW();
       `;
       await sql`
         INSERT INTO plans_user_day (day, user_id, plan_id, is_current)
-        VALUES (${current_day ?? 1}, ${user_id}::uuid, ${plan_id}::uuid, true)
+        VALUES (${current_day ?? 1}, ${user_id}, ${plan_id}::uuid, true)
       `;
     } else {
       await sql`UPDATE plans_user_day SET is_current=false
@@ -438,9 +431,8 @@ export async function setAsCurrentPlan(user_id: string, plan_id: string): Promis
 
 export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelected?: number): Promise<Exercise[] | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       return null;
     }
     const plan = await getUserCurrentPlan(locale);
@@ -463,9 +455,9 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
       FROM workouts_complex wc
       JOIN workouts w ON wc.workout_id = w.id
       JOIN workouts_lang wl ON wl.workout_id = w.id AND wl.language_id=${locale}
-      JOIN plans_user pu ON pu.user_id=${user.id} AND pu.is_current=true
+      JOIN plans_user pu ON pu.user_id=${userId} AND pu.is_current=true
       JOIN plans p ON pu.plan_id = p.id
-      JOIN plans_user_day pud ON pu.plan_id = p.id AND pud.day=${workingDay.day} AND pud.user_id=${user.id}
+      JOIN plans_user_day pud ON pu.plan_id = p.id AND pud.day=${workingDay.day} AND pud.user_id=${userId}
       LEFT JOIN plans_user_workouts_complex puwc ON puwc.plan_user_day_id = pud.id AND puwc.workout_complex_id = wc.id
       WHERE wc.id = ANY((Array[p.workouts_complex])::uuid[])
         AND ${body_zone_id} = ANY((Array[wc.body_zones])::uuid[])
@@ -490,16 +482,15 @@ export async function getUserCurrentPlanWorkouts(locale: string, workingDaySelec
 
 export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       return null;
     }
     const { rows, rowCount } = await sql`
       SELECT p.*, pl.name, pl.comments,
       (
         SELECT plans_user_day.day FROM plans_user_day
-        WHERE plans_user_day.plan_id=p.id AND user_id=${user.id} AND is_current
+        WHERE plans_user_day.plan_id=p.id AND user_id=${userId} AND is_current
       ) as current_day,
       (
         SELECT string_agg(CONCAT(tags_lang.name, ':', tags.id), ',')
@@ -513,16 +504,16 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
       ) as tags,
       (
         SELECT COUNT(DISTINCT day)
-        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user.id} AND completed
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${userId} AND completed
       ) as workouts_done,
       (
         SELECT COUNT(DISTINCT day)
-        FROM plans_user_day WHERE plan_id=p.id AND user_id=${user.id}
+        FROM plans_user_day WHERE plan_id=p.id AND user_id=${userId}
       ) as workout_days_done
       FROM plans_user pu
       JOIN plans p ON pu.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
-      WHERE pu.user_id=${user.id} AND pu.is_current=true LIMIT 1;
+      WHERE pu.user_id=${userId} AND pu.is_current=true LIMIT 1;
     `;
     if (rowCount === 0) {
       return null;
@@ -547,9 +538,8 @@ export async function getUserCurrentPlan(locale: string): Promise<Plan | null> {
 
 export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanDay[] | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       return null;
     }
     const { rows, rowCount } = await sql<PlanDay>`
@@ -577,7 +567,7 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
       JOIN plans_user pu ON pud.plan_id = pu.plan_id AND pud.user_id = pu.user_id
       JOIN plans p ON pud.plan_id = p.id
       JOIN plans_lang pl ON pl.plan_id = p.id AND pl.language_id=${locale}
-      WHERE pud.user_id=${user.id} AND pud.plan_id=${plan.id}
+      WHERE pud.user_id=${userId} AND pud.plan_id=${plan.id}
       ORDER BY pud.day ASC;
     `;
     if (rowCount === 0) {
@@ -602,9 +592,8 @@ export async function getUserPlanDays(plan: Plan, locale: string): Promise<PlanD
 
 export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): Promise<string> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       throw new Error('User session not found.');
     }
 
@@ -629,7 +618,7 @@ export async function setWorkoutItem(form: {[k: string]: FormDataEntryValue;}): 
 
     const { rows, rowCount } = await sql<PlanDay>`
       SELECT id FROM plans_user_day
-      WHERE plan_id=${<string>plan.id} AND user_id=${user?.id}
+      WHERE plan_id=${<string>plan.id} AND user_id=${userId}
       AND day=${parseInt(<string>form.day)}
     ;`;
 
@@ -679,9 +668,8 @@ export async function getWorkoutItems(workout_id: string): Promise<WorkoutComple
 
 export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;}): Promise<ActionFormState> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       throw new Error('User session not found.');
     }
 
@@ -701,21 +689,21 @@ export async function setWorkoutCloseDay(form: {[k: string]: FormDataEntryValue;
           completed_at=NOW(),
           percentage=${workingDayData.percentage},
           updated_at=NOW()
-      WHERE is_current AND plan_id=${plan.id} AND user_id=${user.id}
+      WHERE is_current AND plan_id=${plan.id} AND user_id=${userId}
     `;
 
     const new_current_day = (plan.current_day ?? 1) + 1;
-    const {rowCount} = await sql`SELECT id FROM plans_user_day WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${user.id}`;
+    const {rowCount} = await sql`SELECT id FROM plans_user_day WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${userId}`;
     if (rowCount === 0) {
       await sql`INSERT INTO plans_user_day (day, plan_id, user_id, completed, percentage, created_at, updated_at, is_current)
-        VALUES (${new_current_day}, ${plan.id}, ${user.id}, false, 0, NOW(), NOW(), true)
+        VALUES (${new_current_day}, ${plan.id}, ${userId}, false, 0, NOW(), NOW(), true)
         RETURNING day
       ;`
     } else {
       await sql`UPDATE plans_user_day
         SET is_current=true,
             updated_at=NOW()
-        WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${user.id}
+        WHERE day=${new_current_day} AND plan_id=${plan.id} AND user_id=${userId}
         RETURNING day
       ;`
     }
@@ -742,9 +730,8 @@ function convertUTCToLocal(date: Date): Date {
 
 export async function getUserPlanStartedAt(): Promise<string | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       throw new Error('User session not found.');
     }
 
@@ -752,9 +739,9 @@ export async function getUserPlanStartedAt(): Promise<string | null> {
       SELECT pud.started_at FROM plans_user pu
       JOIN plans p ON pu.plan_id=p.id
       JOIN plans_user_day pud ON pu.plan_id=pud.plan_id
-        AND pud.user_id = ${user.id}
+        AND pud.user_id = ${userId}
         AND pud.is_current
-      WHERE pu.user_id = ${user.id} AND pu.is_current
+      WHERE pu.user_id = ${userId} AND pu.is_current
     `;
     return rowCount === 0 ? null : convertUTCToLocal(rows[0]?.started_at).toString();
   } catch (error) {
@@ -764,20 +751,19 @@ export async function getUserPlanStartedAt(): Promise<string | null> {
 
 export async function setUserPlanStartedAt(): Promise<string | null> {
   try {
-    const session = await auth();
-    const user = session?.user;
-    if (!user) {
+    const { userId, sessionClaims } = await auth();
+    if (userId === null || sessionClaims === null) {
       throw new Error('User session not found.');
     }
 
     const { rows: planRows, rowCount: planRowsCount } = await sql<Plan>`
       SELECT p.id, (
         SELECT plans_user_day.day FROM plans_user_day
-        WHERE plans_user_day.plan_id=p.id AND user_id=${user.id} AND is_current
+        WHERE plans_user_day.plan_id=p.id AND user_id=${userId} AND is_current
       ) as current_day
       FROM plans_user pu
       JOIN plans p ON pu.plan_id=p.id
-      WHERE pu.user_id = ${user.id} AND pu.is_current
+      WHERE pu.user_id = ${userId} AND pu.is_current
     `;
     if (planRowsCount === 0) {
       throw new Error('Workout complex not found.');
@@ -785,7 +771,7 @@ export async function setUserPlanStartedAt(): Promise<string | null> {
     const plan = planRows[0];
     const { rows, rowCount } =  await sql`UPDATE plans_user_day
       SET started_at=NOW()
-      WHERE day=${plan.current_day} AND plan_id=${plan.id} AND user_id=${user.id}
+      WHERE day=${plan.current_day} AND plan_id=${plan.id} AND user_id=${userId}
       RETURNING started_at;
     `;
     return rowCount === 0 ? null : convertUTCToLocal(rows[0]?.started_at).toString()
@@ -796,8 +782,10 @@ export async function setUserPlanStartedAt(): Promise<string | null> {
 
 export async function saveAssessment(formData: FormData): Promise<{assessment_id: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));
-  const session = await auth();
-  const user = session?.user;
+  const { userId, sessionClaims } = await auth();
+  if (userId === null || sessionClaims === null) {
+    throw new Error('User session not found.');
+  }
   try {
     const [weight, height] = (<string>form['weight&height']).split(',').map((v) => parseInt(v));
     const result = await sql`INSERT INTO assessments
@@ -812,16 +800,25 @@ export async function saveAssessment(formData: FormData): Promise<{assessment_id
         ${<string>form.gym},
         ${<string>form.frequency},
         ${<string>form.health},
-        ${user?.id}
+        ${userId}
       ) RETURNING id, gender, birthdate`;
     const { id, gender, birthdate } = result.rows[0];
-    if (user) {
-      await sql`UPDATE users
-        SET gender=${<string>gender}, birthdate=${<string>birthdate}
-        WHERE id=${user.id}`;
-      await sql`UPDATE users_info SET assessment=${true} WHERE user_id=${user.id}`;
-    }
-    return {assessment_id: id, user_id: user?.id};
+    
+    // clerk update
+    const user = await currentUser();
+    const clerk = await clerkClient();
+    await clerk.users.updateUser(userId, {
+      publicMetadata: {
+        ...user?.publicMetadata,
+        assessment: true,
+      },
+      privateMetadata: {
+        ...user?.privateMetadata,
+        gender,
+        birthdate,
+      },
+    });
+    return {assessment_id: id, user_id: userId};
   } catch (error) {
     console.error('Failed to insert assessment:', error);
     throw new Error('Failed to insert assessment.');
@@ -829,12 +826,11 @@ export async function saveAssessment(formData: FormData): Promise<{assessment_id
 }
 
 export async function saveAssessmentById(assessmentCookie: RequestCookie | undefined): Promise<void>{
-  const session = await auth();
-  const user = session?.user;
+  const { userId, sessionClaims } = await auth();
+  if (userId === null || sessionClaims === null) {
+    throw new Error('User session not found.');
+  }
   try {
-    if (!user) {
-      throw new Error('User session not found.');
-    }
     const assessmentId = assessmentCookie?.value;
     console.log('assessmentId:', assessmentId);
     if (assessmentId) { 
@@ -844,7 +840,7 @@ export async function saveAssessmentById(assessmentCookie: RequestCookie | undef
       }
       await sql`UPDATE users_info
         SET assessment=${true}
-        WHERE user_id=${user.id}`;
+        WHERE user_id=${userId}`;
     }
   } catch (error) {
     console.error('Failed to update user assessment:', error);
@@ -853,13 +849,15 @@ export async function saveAssessmentById(assessmentCookie: RequestCookie | undef
 }
 
 export async function saveDashboard(dashboard?: string): Promise<ActionFormState>{
-  const session = await auth();
-  const user = session?.user;
+  const { userId, sessionClaims } = await auth();
   try {
-    if (dashboard && user) {
+    if (userId === null || sessionClaims === null) {
+      throw new Error('User session not found.');
+    }
+    if (dashboard) {
       await sql`UPDATE users_info
         SET dashboard=${dashboard}
-        WHERE user_id=${user.id}`;
+        WHERE user_id=${userId}`;
     }
     return { status: 'success' };
   } catch (error) {
@@ -869,42 +867,38 @@ export async function saveDashboard(dashboard?: string): Promise<ActionFormState
 }
 export async function saveTheme(formData: FormData): Promise<{theme: string, user_id: string | undefined}>{
   const form = Object.fromEntries(Array.from(formData.entries()));
-  const session = await auth();
-  const user = session?.user;
+  const { userId, sessionClaims } = await auth();
   try {
+    if (userId === null || sessionClaims === null) {
+      throw new Error('User session not found.');
+    }
     const theme = <string>form['theme-dropdown'];
-    if (THEMES.map(({name}) => name).includes(theme) && user) {
+    if (THEMES.map(({name}) => name).includes(theme)) {
       await sql`UPDATE users_info
         SET theme=${theme}
-        WHERE user_id=${user.id}`;
+        WHERE user_id=${userId}`;
+      // clerk update
+      const user = await currentUser();
+      const clerk = await clerkClient();
+      await clerk.users.updateUser(userId, {
+        unsafeMetadata: {
+          ...user?.unsafeMetadata,
+          theme,
+        },
+      });
     }
-    return { theme, user_id: user?.id };
+    return { theme, user_id: userId };
   } catch (error) {
     console.error('Failed to update user theme:', error);
     throw new Error('Failed to update user theme.');
   }
 }
-export async function saveOnBoarding(): Promise<void>{
-  const session = await auth();
-  const user = session?.user;
-  try {
-    if (!user) {
-      throw new Error('User session not found.');
-    }
-    await sql`UPDATE users_info
-      SET onboarding=${true}
-      WHERE user_id=${user.id}`;
-  } catch (error) {
-    console.error('Failed to update user onboarding:', error);
-    throw new Error('Failed to update user onboarding.');
-  }
-}
 
 export async function getUsersWithSubscription(): Promise<User[]>{
   try {
-    const { rows } = await sql`SELECT u.id, u.name, u.email, u.image FROM users u
-    JOIN notification_subscriptions ns ON u.id=ns.user_id`;
-    return rows;
+    // const { rows } = await sql`SELECT u.id, u.name, u.email, u.image FROM users u
+    // JOIN notification_subscriptions ns ON u.id=ns.user_id`;
+    return [];
   } catch (error) {
     console.error('Failed to fetch users with subscription:', error);
     return [];
@@ -912,21 +906,20 @@ export async function getUsersWithSubscription(): Promise<User[]>{
 }
 
 export async function setSubscriptionNotification(subscription: any): Promise<void>{
-  const session = await auth();
-  const user = session?.user;
-  if (!user) throw new Error("Forbidden");
+  const { userId, sessionClaims } = await auth();
+  if (userId === null || sessionClaims === null) throw new Error("Forbidden");
   if (!subscription.keys.auth || !subscription.keys.p256dh) throw new Error("Subsciption error");
 
   const { rows } = await sql`
     SELECT subscription::json->'keys'->'auth' as auth, subscription::json->'keys'->'p256dh' as p256dh
     FROM notification_subscriptions
-    WHERE user_id=${user.id}
+    WHERE user_id=${userId}
   ;`;
   const alreadyInserted = rows.some(({auth, p256dh}) => (
     auth == subscription.keys.auth && p256dh == subscription.keys.p256dh
   ));
   if (alreadyInserted) return;
-  await sql`INSERT INTO notification_subscriptions (subscription, user_id) VALUES (${subscription}, ${user.id})`;
+  await sql`INSERT INTO notification_subscriptions (subscription, user_id) VALUES (${subscription}, ${userId})`;
 }
 
 export async function getSubscription(user_id: string): Promise<any>{

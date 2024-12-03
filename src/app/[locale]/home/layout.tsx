@@ -2,10 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "@/navigation";
 import { PAGES } from "@/lib/routes";
 import { APPCOOKIES, User } from "@/lib/definitions";
-import { auth } from "@/auth";
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent";
 import { getUserPlans } from "@/lib/data";
 import ChangeDefaultPlanButton from "@/app/ui/home/ChangeDefaultPlanButton";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 type HomeLayoutProps = {
   children: React.ReactNode;
@@ -15,25 +15,26 @@ type HomeLayoutProps = {
 };
 
 export default async function HomeLayout({ children, params: { locale } }: HomeLayoutProps) {
-  const session = await auth();
-  const user = (session?.user as User);
+  const { userId, sessionClaims } = await auth();
+  const authenticated = !(userId === null || sessionClaims === null);
+  const user = await currentUser();
   const cookieStore = cookies();
 
-  const userHasOnboarding = user?.info?.onboarding;
-  const userAssessment = user?.info?.assessment;
+  const userHasOnboarding = (user?.publicMetadata as any)?.onboarded;
+  const userAssessment = (user?.publicMetadata as any)?.assessment;
   const cookiesHasOnBoarding = cookieStore.has(APPCOOKIES.ONBOARDING);
   const { ON_BOARDING, ASSESSMENT } = PAGES;
 
   if (
-    user && !userHasOnboarding
-    || !user && !cookiesHasOnBoarding) {
+    authenticated && !userHasOnboarding
+    || !authenticated && !cookiesHasOnBoarding) {
     redirect(ON_BOARDING);
   }
   if (
-    user && !userAssessment) {
+    authenticated && !userAssessment) {
     redirect(ASSESSMENT);
   }
-  const plans = await getUserPlans(locale, user?.id);
+  const plans = await getUserPlans(locale, userId);
 
   return (
     <LayoutContent

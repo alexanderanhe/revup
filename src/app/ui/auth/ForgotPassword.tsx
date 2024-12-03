@@ -7,7 +7,7 @@ import SubmitButton from '../utils/SubmitButton';
 import { Form, MultipleLoginModal } from '@/app/ui/auth/AuthPanel';
 import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
-import { forgetPassword } from '@/lib/actions';
+// import { forgetPassword } from '@/lib/actions';
 import { useTranslations } from 'next-intl';
 
 const FORM_INIT = {
@@ -22,21 +22,21 @@ type ForgotPasswordProps = {
 
 export default function ForgotPassword({ setModal, globalForm, setGlobalForm}: ForgotPasswordProps) {
   const [ form, setForm ] = useState<Form>(globalForm);
-  const [ formState, formAction ] = useFormState(forgetPassword, undefined);
+  // const [ formState, formAction ] = useFormState(forgetPassword, undefined);
   const t = useTranslations("auth");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
 
-  useEffect(() => {
-    if (formState === 'done') {
-      toast.success('Check your email for further instructions');
-      setGlobalForm(form);
-      setModal('signIn');
-      setForm(FORM_INIT);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (formState === 'done') {
+  //     toast.success('Check your email for further instructions');
+  //     setGlobalForm(form);
+  //     setModal('signIn');
+  //     setForm(FORM_INIT);
+  //   }
+  // }, [formState]);
 
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 mx-auto h-full">
@@ -47,7 +47,7 @@ export default function ForgotPassword({ setModal, globalForm, setGlobalForm}: F
             { t("greetingWelcomeBck") }
           </h4>
         </div>
-        <form className="flex flex-col gap-4" action={formAction}>
+        {/* <form className="flex flex-col gap-4" action={formAction}>
           <label className="input input-bordered flex items-center gap-2">
             <EnvelopeIcon className="h-4 w-4 opacity-70" />
             <input
@@ -64,7 +64,7 @@ export default function ForgotPassword({ setModal, globalForm, setGlobalForm}: F
             { t("sendBtn") }
             <PaperAirplaneIcon className="h-4 w-4 opacity-70" />
           </SubmitButton>
-        </form>
+        </form> */}
       </div>
       <div className="flex gap-2 text-center text-sm justify-center">
         { t("ihaveAlreadyAnAccount") }

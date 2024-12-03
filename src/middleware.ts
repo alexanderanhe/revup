@@ -1,47 +1,43 @@
 import createIntlMiddleware from 'next-intl/middleware';
-import { locales } from '@/i18n';
-import { PUBLIC_ROUTES, DEFAULT_REDIRECT, ROOT, UNAUTHORIZED_REDIRECT } from '@/lib/routes';
-
-import { auth } from '@/auth';
-
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { PUBLIC_ROUTES } from './lib/routes'
+import { locales } from './i18n'
 
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale: "es"
 });
 
-export default auth((request) => {
-  const { nextUrl } = request;
-  const session = request.auth;
-  const isAuthenticated = !!session?.user;
+const publicPathnameRegex = RegExp(
+  `^(/(${locales.join('|')}))?(${PUBLIC_ROUTES
+    .flatMap((p) => (p === '/' ? ['', '/'] : p))
+    .join('|')})/?$`,
+  'i'
+);
+const isPublicRoute = createRouteMatcher(publicPathnameRegex)
 
-  const publicPathnameRegex = RegExp(
-    `^(/(${locales.join('|')}))?(${PUBLIC_ROUTES
-      .flatMap((p) => (p === '/' ? ['', '/'] : p))
-      .join('|')})/?$`,
-    'i'
-  );
-  const rootPathnameRegex = RegExp(
-    `^(/(${locales.join('|')}))?(${ROOT === '/' ? '|/' : ROOT})/?$`,
-    'i'
-  );
-  const isPublicPage = publicPathnameRegex.test(
-    // Ignoring the child pathnames
-    nextUrl.pathname.split("/").slice(0, 3).join('/')
-  );
-  const isRootPage = rootPathnameRegex.test(nextUrl.pathname);
+// const isProtectedRoute = createRouteMatcher([
+//   "/:locale/dashboard(.*)",
+//   "/:locale/my-account(.*)",
+// ]);
 
-  if (isPublicPage && isAuthenticated && isRootPage) {
-    return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
+export default clerkMiddleware(async (auth, request) => {
+  if (!isPublicRoute(request)) {
+    await auth.protect()
   }
-  if (!isAuthenticated && !isPublicPage) {
-    return Response.redirect(new URL(UNAUTHORIZED_REDIRECT, nextUrl));
-  }
+
   return intlMiddleware(request);
 })
 
 export const config = {
-  matcher: ['/((?!api|_next|favicon.ico|.*\\..*).*)']
-  // Match only internationalized pathnames
-  // matcher: ['/', '/(es|en)/:path*']
-};
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|json)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+}
+
+// export const config = {
+//   matcher: "/((?!static|.*\\..*|_next).*)",
+// };

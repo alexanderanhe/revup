@@ -1,7 +1,8 @@
 export const PAGES = {
   ROOT: '/',
   HOME: '/home',
-  LOGIN: '/login',
+  LOGIN: '/sign-in',
+  SIGN_UP: '/sign-up',
   ON_BOARDING: '/on-boarding',
   ASSESSMENT: '/assessment',
   EXPLORE: '/explore',
@@ -18,12 +19,13 @@ export const PAGES = {
 export const ROOT = PAGES.ROOT;
 export const PUBLIC_ROUTES = [
   PAGES.ROOT,
+  `${PAGES.LOGIN}(.*)`,
+  `${PAGES.SIGN_UP}(.*)`,,
   PAGES.ON_BOARDING,
   // PAGES.HOME,
   // PAGES.ASSESSMENT,
   PAGES.EXPLORE,
   PAGES.WORKOUT,
-  PAGES.LOGIN,
   "/forgot-password",
   "/reset-password",
   "/unauthorized",

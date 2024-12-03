@@ -10,13 +10,7 @@ const nextConfig = withNextIntl()({
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        port: '',
-        pathname: '/u/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.googleusercontent.com',
+        hostname: 'img.clerk.com',
         port: '',
         pathname: '/**',
       },

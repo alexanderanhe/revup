@@ -3,9 +3,7 @@ import { ArrowRightIcon, ChartBarSquareIcon, ChartPieIcon, Cog6ToothIcon, Envelo
 
 import Card from "@/app/ui/Card"
 import { Link } from "@/navigation"
-import { auth } from "@/auth"
-import ProfileImage from "@/app/ui/utils/ProfileImage"
-import { Measurements, User } from "@/lib/definitions"
+import { Measurements } from "@/lib/definitions"
 import { getTranslations } from "next-intl/server"
 import { PencilIcon } from "@heroicons/react/24/solid"
 import Logout from "@/app/ui/profile/Logout"
@@ -16,25 +14,28 @@ import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
 import dynamic from "next/dynamic";
 import MeasurementsDrawer from "@/app/ui/dialogs/Measurements"
 import { PencilRulerIcon, ShieldIcon } from "lucide-react"
+import { currentUser, User } from "@clerk/nextjs/server"
+import { getUserInfo } from "@/lib/data"
 const DynamicShareButton = dynamic(() => import("@/app/ui/profile/ShareButton"), {
   ssr: false,
 });
 
 export default async function ProfilePage() {
-  const session = await auth();
-  const user = session?.user as User;
+  const user = await currentUser() as User;
   const t = await getTranslations("Profile");
   const tAssessmentOpts = await getTranslations("Assessment.options");
+  const userInfo = await getUserInfo();
+  const isAdmin = (user?.publicMetadata?.roles as string[])?.includes('admin');
 
   const measurements = [{
-    weight: user?.info?.weight,
-    height: user?.info?.height,
+    weight: userInfo?.weight,
+    height: userInfo?.height,
     created_at: new Date()
   }] as Measurements[];
 
   return (
     <LayoutContent title={t("title")} footer>
-      <ProfileNavImage user={user} subtitle={ tAssessmentOpts(`goal:${user?.info?.goal}`) }>
+      <ProfileNavImage user={user} subtitle={ tAssessmentOpts(`goal:${userInfo?.goal}`) }>
         <Link href={`${PAGES.PROFILE}/edit`} className="btn btn-sm">
           <PencilIcon className="size-4" />
           { t("editBtn") }
@@ -42,17 +43,17 @@ export default async function ProfilePage() {
       </ProfileNavImage>
       <section className="grid grid-cols-3">
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>{ user?.info?.height }{ " " }{ t("height:unit") }</strong>
+          <strong>{ userInfo?.height }{ " " }{ t("height:unit") }</strong>
           { t("height") }
         </Card>
         <MeasurementsDrawer measurements={measurements}>
           <Card className="cursor-pointer [&>strong]:text-primary [&>strong]:font-medium">
-            <strong>{ user?.info?.weight }{ " " }{ t("weight:unit") }</strong>
+            <strong>{ userInfo?.weight }{ " " }{ t("weight:unit") }</strong>
             { t("weight") }
           </Card>
         </MeasurementsDrawer>
         <Card className="[&>strong]:text-primary [&>strong]:font-medium">
-          <strong>{ user?.info?.age }{ t("age:unit") }</strong>
+          <strong>{ userInfo?.age }{ t("age:unit") }</strong>
           { t("age") }
         </Card>
       </section>
@@ -118,7 +119,7 @@ export default async function ProfilePage() {
           <Logout title={t("other.logout")} />
         </Card>
       </section>
-      { user?.info?.admin && (
+      { isAdmin && (
         <section>
           <Card className="border-[#0099ff]">
             <h3 className="text-lg font-semibold">{ t("other.admin") }</h3>

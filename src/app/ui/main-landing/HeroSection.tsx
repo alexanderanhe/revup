@@ -2,13 +2,13 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
 import { Link } from "@/navigation";
-import { auth } from "@/auth";
 import { jersey10 } from "@/app/ui/fonts";
 import { PAGES } from "@/lib/routes";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function HeroSection() {
-  let session = await auth();
-  let user = session?.user?.email;
+  let { userId, sessionClaims } = await auth();
+  let authenticated = !(userId === null || sessionClaims === null);
   const { HOME, ON_BOARDING } = PAGES;
 
   const t = await getTranslations("MainLangingPage");
@@ -26,7 +26,7 @@ export default async function HeroSection() {
             <p className="leading-normal text-2xl mb-8">
               { t("hero.description") }
             </p>
-            <Link href={ user ? HOME : ON_BOARDING } className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+            <Link href={ authenticated ? HOME : ON_BOARDING } className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
               { t("hero.getstartedbtn") }
             </Link>
           </div>

@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+// import { getTranslations } from 'next-intl/server';
 
 import NavHeader from '@/app/ui/main-landing/NavHeader';
 import HeroSection from '@/app/ui/main-landing/HeroSection';
@@ -10,8 +10,7 @@ import FooterSection from '@/app/ui/main-landing/FooterSection';
 import GetInstalledRelatedApps from '@/app/ui/utils/GetInstalledRelatedApps';
 
 export default async function IndexPage() {
-  const t = await getTranslations("MainLangingPage"); // Await the getTranslations function call
-
+  // const t = await getTranslations("MainLangingPage"); // Await the getTranslations function call
   return (
     <div className="leading-normal tracking-normal text-white gradient">
       <NavHeader />

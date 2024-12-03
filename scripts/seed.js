@@ -80,11 +80,11 @@ const sql = {
   }, 'Created "tags" table'],
   seedUsers: [{
     createTable: `CREATE TABLE IF NOT EXISTS users (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      name VARCHAR(255) NOT NULL,
+      id CHAR(32) PRIMARY KEY,
+      firstname VARCHAR(100) NOT NULL,
+      lastname VARCHAR(100) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
       password TEXT NULL,
-      email_verified TIMESTAMPTZ NULL,
       image TEXT,
       gender gender NULL,
       birthdate DATE NULL,
@@ -100,7 +100,7 @@ const sql = {
       admin BOOLEAN DEFAULT false,
       weight_unit CHAR(2) DEFAULT 'kg',
       height_unit CHAR(2) DEFAULT 'cm',
-      user_id UUID NULL REFERENCES users(id)
+      user_id CHAR(32) NULL REFERENCES users(id)
     );`
   }, 'Created "users" table'],
   seedWorkouts: [{
@@ -141,7 +141,7 @@ const sql = {
     );`,
     createUsersLikedTable: `CREATE TABLE IF NOT EXISTS workouts_liked (
       workout_id UUID NULL REFERENCES workouts(id),
-      user_id UUID NULL REFERENCES users(id),
+      user_id CHAR(32) NULL REFERENCES users(id),
       enabled BOOLEAN DEFAULT TRUE,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
@@ -169,7 +169,7 @@ const sql = {
       PRIMARY KEY (plan_id, language_id)
     );`,
     createTableUsers: `CREATE TABLE IF NOT EXISTS plans_user (
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      user_id CHAR(32) REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
       is_current BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT NOW(),
@@ -178,7 +178,7 @@ const sql = {
     );`,
     createTableUsersDay: `CREATE TABLE IF NOT EXISTS plans_user_day (
       id UUID DEFAULT uuid_generate_v4(),
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      user_id CHAR(32) REFERENCES users(id) ON DELETE CASCADE,
       plan_id UUID REFERENCES plans(id) ON DELETE CASCADE,
       day SMALLINT DEFAULT 1 CHECK (day > 0),
       name VARCHAR(100) NULL,
@@ -214,7 +214,7 @@ const sql = {
     createTable: `CREATE TABLE IF NOT EXISTS notification_subscriptions (
       id UUID DEFAULT uuid_generate_v4(),
       subscription JSONB NULL,
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      user_id CHAR(32) REFERENCES users(id) ON DELETE CASCADE,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
       PRIMARY KEY (id)
@@ -223,7 +223,7 @@ const sql = {
   seedAccounts: [{
     createTable: `CREATE TABLE IF NOT EXISTS accounts (
       id SERIAL PRIMARY KEY,
-      user_id UUID NOT NULL REFERENCES users(id),
+      user_id CHAR(32) NOT NULL REFERENCES users(id),
       provider_id VARCHAR(255) NOT NULL,
       provider_type VARCHAR(255) NOT NULL,
       provider_account_id VARCHAR(255) NOT NULL,
@@ -241,7 +241,7 @@ const sql = {
       id SERIAL PRIMARY KEY,
       expires TIMESTAMP WITH TIME ZONE NOT NULL,
       session_token TEXT NOT NULL,
-      user_id UUID NOT NULL REFERENCES users(id)
+      user_id CHAR(32) NOT NULL REFERENCES users(id)
     );`
   }, 'Created "sessions" table'],
   seedVerificationToken: [{
@@ -265,7 +265,7 @@ const sql = {
       gym CHAR(4) NOT NULL,
       frequency CHAR(4) NOT NULL,
       health CHAR(4) NOT NULL,
-      user_id UUID NULL REFERENCES users(id),
+      user_id CHAR(32) NULL REFERENCES users(id),
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );`

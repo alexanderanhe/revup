@@ -10,8 +10,7 @@ import { useFormState } from "react-dom";
 import { handleDashboard } from "@/lib/actions";
 import SubmitButton from "../utils/SubmitButton";
 import { useTranslations } from "next-intl";
-import { useSession } from "next-auth/react";
-import { User } from "@/lib/definitions";
+import { useUser } from "@clerk/nextjs";
 
 export type DroppableItem = {
   id: number | string;
@@ -27,11 +26,11 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
     { id: 1, name: 'You can change the order of widgets on the Dashboard by pulling the icon on the right', onHome: true },
     { id: 2, name: 'More widgets', onHome: false },
   ]);
+  const { user } = useUser();
+
   const [items, setItems] = useState<DroppableItem[]>(dashboardItems);
   const [ formState, formAction ] = useFormState(handleDashboard, { status: "idle" });
   const t = useTranslations('Home');
-  const { data: session, update } = useSession();
-  const user = session?.user as User;
 
   const rearangeArr = (arr: DroppableItem[], sourceIndex: number, destIndex: number) => {
     const arrCopy = [...arr];
@@ -86,9 +85,9 @@ export default function EditDashboard({ dashboardItems }: { dashboardItems: Drop
   }
 
   const updateDashboard = async () => {
-    await update({
-      info: {
-        ...user?.info,
+    user?.update({
+      unsafeMetadata: {
+        ...user?.unsafeMetadata,
         dashboard: items.filter(i => i.category === 1).map(i => i.id).join(";"),
       },
     });

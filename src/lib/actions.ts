@@ -1,17 +1,14 @@
 'use server'
 
 import { cookies } from 'next/headers';
-import { AuthError } from 'next-auth';
-import { Resend } from 'resend';
+// import { Resend } from 'resend';
 import webpush from "web-push";
 
-import { auth, signIn, signOut } from '@/auth';
 import {
   createUser,
   saveAssessment,
   setWorkoutItem,
   saveAssessmentById,
-  saveOnBoarding,
   saveTheme,
   setWorkoutsUserLiked,
   wait,
@@ -25,144 +22,9 @@ import { ActionFormState, APPCOOKIES, User } from '@/lib/definitions';
 import { revalidatePath } from 'next/cache';
 import { PAGES } from '@/lib/routes';
 import { deleteImage, uploadImages } from './services/cloudflare';
+import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
  
 // ...
- 
-export async function authenticate(
-  prevState: ActionFormState | undefined,
-  formData: FormData,
-): Promise<ActionFormState> {
-  try {
-    const response = await signIn('credentials', formData);
-    console.log(response);
-    return { status: 'success' };
-  } catch (error: any) {
-    let message = error?.message;
-    return { status: 'error', message };
-  }
-}
-
-export async function forgetPassword(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  try {
-    const user: User = Object.fromEntries(Array.from(formData.entries()));
-    if (!user.email) return
-
-    const resend = new Resend(process.env.AUTH_RESEND_KEY);
-
-    resend.emails.send({
-      from: 'brayfit@angulo.dev',
-      to: user.email,
-      subject: 'Hello World',
-      html: '<p>Forget your password!</p>'
-    });
-    return 'done';
-  } catch (error) {
-    return 'error';
-  }
-}
-
-export async function logOut(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  try {
-    await signOut();
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
-
-export async function registerUser(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  try {
-    const user: User = Object.fromEntries(Array.from(formData.entries()));
-    if (!user.name || !user.email || !user.password) return
-    await createUser(user);
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
-
-export async function authenticateGoogle(
-  prevState: string | null,
-  formData: FormData,
-) {
-  try {
-    await signIn('google');
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
-export async function authenticateFacebook(
-  prevState: string | null,
-  formData: FormData,
-) {
-  try {
-    await signIn('facebook');
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
-export async function authenticateGithub(
-  prevState: string | null,
-  formData: FormData,
-) {
-  try {
-    await signIn('github');
-    return 'done';
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
 
 export async function handleSetCurrentPlan(
   prevState: ActionFormState | null,
@@ -170,15 +32,14 @@ export async function handleSetCurrentPlan(
 ): Promise<ActionFormState> {
   try {
     const plan_id = formData.get('plan_id');
-    const session = await auth();
-    const user = (session?.user as User);
-    if (!plan_id) throw 'No plan id';
-    if (user) {
-      await setAsCurrentPlan(user.id as string, plan_id as string);
-      revalidatePath(`${PAGES.HOME}`);
-      return { status: 'success'};
+    const { userId, sessionClaims} = await auth();
+    if (userId === null || sessionClaims === null) {
+      return { status: 'error', message: 'No session'};
     }
-    return { status: 'error', message: 'There is no session'};
+    if (!plan_id) throw 'No plan id';
+    await setAsCurrentPlan(userId as string, plan_id as string);
+    revalidatePath(`${PAGES.HOME}`);
+    return { status: 'success'};
   } catch (error: any) {
     return { status: 'error', message: error.message};
   }
@@ -313,13 +174,21 @@ export async function handleOnboarding(
   formData: FormData
 ) {
   try {
-    const session = await auth();
-    const user = (session?.user as User);
-    if (!user) {
-      cookies().set(APPCOOKIES.ONBOARDING, '1', { httpOnly: true });
+    const { userId, sessionClaims } = await auth();
+    const authenticated = !(userId === null || sessionClaims === null);
+    if (authenticated) {
+      // clerk update
+      const user = await currentUser();
+      const clerk = await clerkClient();
+      await clerk.users.updateUser(userId, {
+        publicMetadata: {
+          ...user?.publicMetadata,
+          onboarded: true,
+        },
+      });
       return 'done';
     }
-    await saveOnBoarding();
+    cookies().set(APPCOOKIES.ONBOARDING, '1', { httpOnly: true });
     return 'done';
   } catch (error) {
     return 'error';

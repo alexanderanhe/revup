@@ -2,11 +2,11 @@ import { getUserCurrentPlan } from "@/lib/data";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 
-import { User } from "next-auth";
 import { Plan } from "@/lib/definitions";
 import NextWorkout from "@/app/ui/exercises/NextWorkout";
 import CurrentPlanWorkingDays from "@/app/ui/home/CurrentPlanWorkingDays";
 import PlanItem from "@/app/ui/home/PlanItem";
+import { User } from "@clerk/nextjs/server";
 
 export default async function CurrentPlan({ user, locale }: { user?: User, locale: string}) {
   if (!user) {

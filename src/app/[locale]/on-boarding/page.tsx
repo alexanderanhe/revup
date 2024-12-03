@@ -2,14 +2,15 @@ import { cookies } from "next/headers";
 import Slides from "@/app/ui/on-boarding/Slides";
 import Login from "@/app/ui/on-boarding/Login";
 import { APPCOOKIES, User } from "@/lib/definitions";
-import { auth } from "@/auth";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function OnBoardingPage() {
-  const session = await auth();
-  const user = (session?.user as User);
+  const { userId, sessionClaims} = await auth();
+  const authenticated = !(userId === null || sessionClaims === null);
+  const user = await currentUser();
   const cookieStore = cookies();
-  const hasOnBoarding = user && user?.info?.onboarding
-    || !user && cookieStore.has(APPCOOKIES.ONBOARDING);
+  const hasOnBoarding = authenticated && (user?.publicMetadata as any)?.onboarded
+    || !authenticated && cookieStore.has(APPCOOKIES.ONBOARDING);
 
   return (
     !hasOnBoarding ? <Slides />

@@ -1,26 +1,29 @@
-import { Link } from "@/navigation";
-import { auth } from "@/auth";
-import OpenLoginDialog from "@/app/ui/dialogs/buttons/OpenLoginDialog";
 import { getTranslations } from "next-intl/server";
 import Nav from "@/app/ui/main-landing/Nav";
 import NavLogo from "@/app/ui/main-landing/NavLogo";
-import { LanguagesIcon } from "lucide-react";
 import LocaleSwitcher from "./LocaleSwitcher";
+import { auth } from "@clerk/nextjs/server";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default async function NavHeader() {
-  let session = await auth();
-  let user = session?.user?.email;
+  const { userId, sessionClaims } = await auth();
+  const authenticated = !(userId === null || sessionClaims === null);
   const t = await getTranslations("MainLangingPage"); // Await the getTranslations function call
   const tAuth = await getTranslations("auth");
   const navigationKeys = Object.keys(t.raw("navigation"));
 
-  const LoginBtn = () => !user
-    ? <OpenLoginDialog state='signIn' className="hover:underline bg-white text-gray-800 font-bold rounded-full text-sm py-2 px-4 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-        { tAuth("login" )}
-      </OpenLoginDialog>
-    : <Link href='/home' className="hover:underline bg-white text-gray-800 font-bold rounded-full text-sm py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
-        { t("loggedBtn") }
-      </Link>
+  const LoginBtn = () => (
+    <>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
+      <SignedOut>
+        <button className="hover:underline bg-white text-gray-800 font-bold rounded-full text-sm py-2 px-4 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+          <SignInButton />
+        </button>
+      </SignedOut>
+    </>
+  )
 
   return (
     <nav id="header" className="sticky w-full top-0 text-white backdrop-blur transition-colors duration-500 bg-gray-400/50 z-[1]">
@@ -44,14 +47,6 @@ export default async function NavHeader() {
               { navigationKeys.map((key) => (
                 <Nav key={key} hash={key}>{ t(`navigation.${key}`) }</Nav>
               ))}
-              {!user && <li className="mr-3">
-                <OpenLoginDialog
-                  state='signUp'
-                  className="inline-block font-semibold no-underline hover:text-primary hover:text-underline py-2 px-4"
-                >
-                  { tAuth("signUp" )}
-                </OpenLoginDialog>
-              </li>}
             </ul>
           </div>
         </div>

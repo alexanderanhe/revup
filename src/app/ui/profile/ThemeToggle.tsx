@@ -7,7 +7,8 @@ import { ArrowRightIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 import { handleSetTheme } from "@/lib/actions";
 import { THEMES, User } from "@/lib/definitions";
 import SubmitButton from "../utils/SubmitButton";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import { useUser } from '@clerk/nextjs'
 import clsx from "clsx";
 import { CheckIcon } from "@heroicons/react/24/solid";
 
@@ -16,9 +17,11 @@ type ThemeToggleProps = {
 }
 
 const ThemeToggle = ({ title }: ThemeToggleProps) => {
-  const { data: session, update } = useSession();
-  const user = session?.user as User;
-  const theme = user?.info?.theme.trim();
+  // const { data: session, update } = useSession();
+  // const user = session?.user as User;
+  const { user } = useUser();
+
+  const theme = user?.unsafeMetadata?.theme as string;
 
   const [ selectedTheme, setSelectedTheme] = useState<string>(theme || '');
   const [ state, setState] = useState<string | null>(null);
@@ -35,9 +38,8 @@ const ThemeToggle = ({ title }: ThemeToggleProps) => {
   };
 
   const updateTheme = async () => {
-    await update({
-      info: {
-        ...user?.info,
+    user?.update({
+      unsafeMetadata: {
         theme: selectedTheme,
       },
     });
