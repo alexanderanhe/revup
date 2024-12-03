@@ -1,14 +1,12 @@
 import LayoutContent from "@/app/ui/utils/templates/LayoutContent"
 import { getTranslations } from "next-intl/server";
-import { auth } from "@/auth";
-import { User } from "@/lib/definitions";
 import { SaveIcon } from "lucide-react";
 import { redirect } from "@/navigation";
+import { auth, currentUser, User } from "@clerk/nextjs/server";
 
 export default async function ProfileEditPage() {
   const t = await getTranslations("Profile.Edit");
-  const session = await auth();
-  const user = session?.user as User;
+  const user = await currentUser() as User;
 
   async function update(formData: FormData) {
     'use server'
@@ -41,7 +39,7 @@ export default async function ProfileEditPage() {
               className="grow font-semibold placeholder:font-light placeholder:text-base-300"
               name="name"
               placeholder={t("namePlaceholder")}
-              defaultValue={ user?.name ?? '' }
+              defaultValue={ user?.firstName ?? '' }
             />
           </label>
           <label className="input flex items-center gap-2 w-full">
@@ -61,7 +59,7 @@ export default async function ProfileEditPage() {
               className="grow font-semibold placeholder:font-light placeholder:text-base-300"
               name="email"
               placeholder={t("emailPlaceholder")}
-              defaultValue={ user?.email ?? '' }
+              defaultValue={ user?.emailAddresses?.at(0)?.emailAddress ?? '' }
               readOnly
             />
           </label>
@@ -72,7 +70,7 @@ export default async function ProfileEditPage() {
               className="grow font-semibold placeholder:font-light placeholder:text-base-300"
               name="birthdate"
               placeholder={t("birthdatePlaceholder")}
-              defaultValue={ user?.info?.birthdate ?? '' }
+              defaultValue={ (user?.privateMetadata?.birthdate as string) ?? '' }
             />
           </label>
         </section>
