@@ -14,7 +14,10 @@ const publicPathnameRegex = RegExp(
     .join('|')})/?$`,
   'i'
 );
-const isPublicRoute = createRouteMatcher(publicPathnameRegex)
+const isPublicRoute = createRouteMatcher([
+  publicPathnameRegex,
+  '/api(.*)',
+]);
 
 // const isProtectedRoute = createRouteMatcher([
 //   "/:locale/dashboard(.*)",
@@ -24,6 +27,12 @@ const isPublicRoute = createRouteMatcher(publicPathnameRegex)
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
     await auth.protect()
+  }
+
+  // do not localize api routes
+  const path = request.nextUrl.pathname;
+  if (path.includes("/api")) {
+    return;
   }
 
   return intlMiddleware(request);
