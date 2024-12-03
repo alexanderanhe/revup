@@ -5,7 +5,8 @@ import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 import { THEMES, User as LocalUser, UserInfo, Workout, GroupsWorkout, FilterSearchParams, Plan, PlanDay, Exercise, WorkoutComplex, WeightData, UUID, SimplePlan, ActionFormState } from "@/lib/definitions";
 import { sql } from "@vercel/postgres";
-import { auth, clerkClient, currentUser, User } from "@clerk/nextjs/server";
+import { User } from '@clerk/nextjs/server';
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 
 export async function fetchEvents(date: Date) {
   const dateFormatted = format(date, 'yyyy-MM-dd');

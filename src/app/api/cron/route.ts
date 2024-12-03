@@ -1,7 +1,7 @@
 import { sendNotification } from '@/lib/actions';
 import { getUsersWithSubscription } from '@/lib/data';
-import { User } from '@/lib/definitions';
 import { NotionSync } from '@/lib/notion';
+import { User } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -12,11 +12,11 @@ export async function GET(req: NextRequest) {
     const notionPages = new NotionSync(req.url);
     const sync = await notionPages.sync();
 
-    const users = await getUsersWithSubscription() as Readonly<Pick<User, 'id' | 'name'>>[];
+    const users = await getUsersWithSubscription() as Readonly<Pick<User, 'id' | 'firstName'>>[];
     for (const user of users) {
       if (!user.id) continue;
       await sendNotification(
-        `Hoy es un buen día ${user.name}`,
+        `Hoy es un buen día ${user.firstName}`,
         user.id,
         'https://www.bray.fit/images/muscle_pngegg.webp',
         'Ejercítate'

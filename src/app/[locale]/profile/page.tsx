@@ -6,7 +6,7 @@ import { Link } from "@/navigation"
 import { Measurements } from "@/lib/definitions"
 import { getTranslations } from "next-intl/server"
 import { PencilIcon } from "@heroicons/react/24/solid"
-import Logout from "@/app/ui/profile/Logout"
+// import Logout from "@/app/ui/profile/Logout"
 import { PAGES } from "@/lib/routes"
 import PopUpNotification from "@/app/ui/profile/PopUpNotification"
 import ProfileNavImage from "@/app/ui/utils/menus/ProfileNavImage"
@@ -116,7 +116,7 @@ export default async function ProfilePage() {
             <span className="grow flex justify-start">{ t("other.settings") }</span>
             <ArrowRightIcon className="size-5" />
           </Link>
-          <Logout title={t("other.logout")} />
+          {/* <Logout title={t("other.logout")} /> */}
         </Card>
       </section>
       { isAdmin && (

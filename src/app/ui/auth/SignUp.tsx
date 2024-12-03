@@ -8,7 +8,7 @@ import { EyeIcon, EyeSlashIcon, LockClosedIcon, UserIcon, EnvelopeIcon } from '@
 import { useEffect, useState } from 'react';
 import Input from '@/app/ui/Input';
 import { useFormState } from 'react-dom';
-import { registerUser } from '@/lib/actions';
+// import { registerUser } from '@/lib/actions';
 import { Form } from '@/app/ui/auth/AuthPanel';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -29,21 +29,21 @@ type SignUpProps = {
 export default function SignUp({ setModal, globalForm, setGlobalForm }: SignUpProps) {
   const [ form, setForm ] = useState<Form>(globalForm);
   const [ showPassword, setShowPassword] = useState<boolean>(false);
-  const [ formState, formAction ] = useFormState(registerUser, undefined);
+  // const [ formState, formAction ] = useFormState(registerUser, undefined);
   const t = useTranslations("auth");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
-  useEffect(() => {
-    if (formState === 'done') {
-      toast.success('Check your email for further instructions');
-      setGlobalForm(form);
-      setModal('signIn');
-      setForm(FORM_INIT);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (formState === 'done') {
+  //     toast.success('Check your email for further instructions');
+  //     setGlobalForm(form);
+  //     setModal('signIn');
+  //     setForm(FORM_INIT);
+  //   }
+  // }, [formState]);
 
   return (
     <div className="grid grid-rows-[1fr_auto] form-control gap-3 w-full max-w-96 mx-auto h-full">
@@ -91,7 +91,7 @@ export default function SignUp({ setModal, globalForm, setGlobalForm }: SignUpPr
               { showPassword ? <EyeIcon className="size-5" /> : <EyeSlashIcon className="size-5" /> }
             </button>
           </Input>
-          { formState ?? ''}
+          {/* { formState ?? ''} */}
           <label className="flex items-start text-xs gap-3">
             <input className="checkbox" type="checkbox" name="confirm" />
             <span className="grown text-sm text-gray-400">
@@ -104,7 +104,7 @@ export default function SignUp({ setModal, globalForm, setGlobalForm }: SignUpPr
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4">
-        <form action={formAction}>
+        <form>
           { Object.keys(form).map((key) => (
             <input key={key} type="hidden" name={key} value={form[key] ?? ''} />
           )) }

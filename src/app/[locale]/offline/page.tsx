@@ -1,11 +1,9 @@
-'use client'
-
 import React from 'react'
 import LayoutContent from '@/app/ui/utils/templates/LayoutContent'
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export default function OfflinePage() {
-  const t = useTranslations("Offline");
+export default async function OfflinePage() {
+  const t = await getTranslations("Offline");
   return (
     <LayoutContent title={t("title")} footer>
       <div>{t("description")}</div>

@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation';
 import { ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
-import { authenticate } from '@/lib/actions';
 import { SocialButtons } from '@/app/ui/auth/SocialButtons';
 import SubmitButton from '@/app/ui/utils/SubmitButton';
 import { Form, MultipleLoginModal } from '@/app/ui/auth/AuthPanel';
@@ -28,7 +27,7 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
   const [ form, setForm ] = useState<Form>(globalForm);
   const [ error, setError ] = useState<string>('');
   const [ showPassword, setShowPassword] = useState<boolean>(false);
-  const [ formState, formAction ] = useFormState(authenticate, { status: 'idle' });
+  // const [ formState, formAction ] = useFormState(authenticate, { status: 'idle' });
   const searchParams = useSearchParams();
   const t = useTranslations("auth");
 
@@ -38,13 +37,13 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
     setForm({ ...form, [keyName]: event.target.value });
   };
 
-  useEffect(() => {
-    if (formState.status === 'success') {
-      setGlobalForm(form);
-      setModal('signIn');
-      setForm(FORM_INIT);
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (formState.status === 'success') {
+  //     setGlobalForm(form);
+  //     setModal('signIn');
+  //     setForm(FORM_INIT);
+  //   }
+  // }, [formState]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -92,14 +91,14 @@ export default function SignIn({ setModal, globalForm, setGlobalForm }: SignInPr
           <p className="text-sm text-center">
             <button type='button' onClick={() => setModal('Forgot')} className="underline text-gray-400">{ t("resetPwd") }</button>
           </p>
-          {error || formState?.status === "error" ? <div className="label">
+          {/* {error || formState?.status === "error" ? <div className="label">
             <span className="label-text-alt text-error font-semibold">Error: { error || formState?.message }</span>
             <span className="label-text-alt"></span>
-          </div> : null}
+          </div> : null} */}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4">
-        <form action={formAction}>
+        <form>
           { Object.keys(form).map((key) => (
             <input key={key} type="hidden" name={key} value={form[key] ?? ''} />
           )) }
