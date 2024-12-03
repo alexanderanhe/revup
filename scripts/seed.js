@@ -81,8 +81,8 @@ const sql = {
   seedUsers: [{
     createTable: `CREATE TABLE IF NOT EXISTS users (
       id CHAR(32) PRIMARY KEY,
-      firstname VARCHAR(100) NOT NULL,
-      lastname VARCHAR(100) NOT NULL,
+      firstname VARCHAR(100) DEFAULT NULL,
+      lastname VARCHAR(100) DEFAULT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
       password TEXT NULL,
       image TEXT,
@@ -93,11 +93,6 @@ const sql = {
     );`,
     createInfoTable: `CREATE TABLE IF NOT EXISTS users_info (
       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      theme CHAR(10) NOT NULL DEFAULT 'light',
-      assessment BOOLEAN DEFAULT false,
-      onboarding BOOLEAN DEFAULT false,
-      dashboard TEXT DEFAULT NULL,
-      admin BOOLEAN DEFAULT false,
       weight_unit CHAR(2) DEFAULT 'kg',
       height_unit CHAR(2) DEFAULT 'cm',
       user_id CHAR(32) NULL REFERENCES users(id)

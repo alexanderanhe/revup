@@ -31,7 +31,7 @@ export default clerkMiddleware(async (auth, request) => {
 
   // do not localize api routes
   const path = request.nextUrl.pathname;
-  if (path.includes("/api")) {
+  if (path.includes("/api") || path.includes("/~offline")) {
     return;
   }
 

@@ -63,7 +63,7 @@ const nextConfigFunction = async (phase) => {
       dest: "public",
       fallbacks: {
         //image: "/static/images/fallback.png",
-        document: "/offline", // if you want to fallback to a custom page rather than /_offline
+        document: "/~offline", // if you want to fallback to a custom page rather than /_offline
         // font: '/static/font/fallback.woff2',
         // audio: ...,
         // video: ...,

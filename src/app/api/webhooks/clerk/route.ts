@@ -64,10 +64,7 @@ export async function POST(req: Request) {
         },
         unsafeMetadata: {
           theme: 'light',
-          dashboard: [
-            "Recommendations",
-            "MyWeight"
-          ]
+          dashboard: "Recommendations;MyWeight"
         },
       });
       const user = await clerk.users.getUser(evt.data.id)

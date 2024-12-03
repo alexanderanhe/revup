@@ -5,9 +5,10 @@ import { HeartIcon, ChatBubbleOvalLeftIcon, ArrowUpOnSquareIcon } from '@heroico
 
 import styles from './styles.module.css'
 import { Drawer } from 'vaul'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { Link } from '@/navigation'
+import { useUser } from '@clerk/nextjs'
 
 type VideoPlayerActionsProps = {
   username: string
@@ -62,9 +63,7 @@ type CommentButtonProps = {
 }
 
 function CommentButton({ comments }: CommentButtonProps) {
-  const { data: session } = useSession();
-  // const [snap, setSnap] = useState<number | string | null>("355px");
-  const user = session?.user;
+  const { user } = useUser();
   return (
     <Drawer.Root
       // snapPoints={["355px", 1]}
@@ -87,11 +86,11 @@ function CommentButton({ comments }: CommentButtonProps) {
                   <div key={`comment${i}`} className="flex items-start w-full font-medium gap-2">
                     <Link href={`/user/${user?.id}`} className="avatar">
                       <div className="size-10 rounded-full">
-                        <Image width={40} height={40} alt={user?.name ?? ""} src={user?.image ?? ""} />
+                        <Image width={40} height={40} alt={user?.firstName ?? ""} src={user?.imageUrl ?? ""} />
                       </div>
                     </Link>
                     <div>
-                      <a href="#" className="text-gray-700">{user?.name ?? ""}</a>
+                      <a href="#" className="text-gray-700">{user?.firstName ?? ""}</a>
                       <p>Este es un comentario Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC</p>
                     </div>
                   </div>
@@ -110,7 +109,7 @@ function CommentButton({ comments }: CommentButtonProps) {
                 <div className="flex items-center w-full gap-2">
                   <div className="avatar">
                     <div className="size-10 rounded-full">
-                      <Image width={40} height={40} alt={user?.name ?? ""} src={user?.image ?? ""} />
+                      <Image width={40} height={40} alt={user?.firstName ?? ""} src={user?.imageUrl ?? ""} />
                     </div>
                   </div>
                   <label className="input input-bordered input-md rounded-full grow flex items-center gap-2">

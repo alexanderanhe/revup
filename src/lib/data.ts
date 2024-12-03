@@ -63,14 +63,8 @@ export async function getUserInfo(): Promise<UserInfo | null> {
     const { rows, rowCount } = await sql<UserInfoMod>`
       SELECT ua.weight, ua.height, ua.goal, date_part('year', age(ua.birthdate)) as age
       FROM users_info ui LEFT OUTER JOIN assessments ua ON ui.user_id = ua.user_id WHERE ui.user_id=${userId}`;
-    if (rowCount === 0) {
-      return null
-    }
-    const userInfo = rows[0];
-    return {
-      ...userInfo,
-      dashboard: userInfo.dashboard?.split(';') ?? ['MyWeight', 'Recommendations']
-    } as UserInfo;
+    if (rowCount === 0) return null
+    return rows[0] as UserInfo;
   } catch (error) {
     console.error('Failed to fetch user:', error);
     return null;
@@ -111,7 +105,7 @@ export async function createUser(user: User): Promise<LocalUser> {
     INSERT INTO users (id, firstname, lastname, email, image) 
     VALUES (${id}, ${firstName}, ${lastName}, ${primaryEmailAddress?.emailAddress}, ${imageUrl}) 
     RETURNING id, firstname, lastname, email, image`;
-  // BRAYFIT: Create user info
+  // // BRAYFIT: Create user info
   await sql`INSERT INTO users_info (user_id) VALUES (${id})`;
   return rows[0];
 }
@@ -826,6 +820,7 @@ export async function saveAssessment(formData: FormData): Promise<{assessment_id
   }
 }
 
+// Should be deleted in the future
 export async function saveAssessmentById(assessmentCookie: RequestCookie | undefined): Promise<void>{
   const { userId, sessionClaims } = await auth();
   if (userId === null || sessionClaims === null) {
@@ -839,9 +834,9 @@ export async function saveAssessmentById(assessmentCookie: RequestCookie | undef
       if (rowCount === 0) {
         throw new Error('Assessment not found.');
       }
-      await sql`UPDATE users_info
-        SET assessment=${true}
-        WHERE user_id=${userId}`;
+      // await sql`UPDATE users_info
+      //   SET assessment=${true}
+      //   WHERE user_id=${userId}`;
     }
   } catch (error) {
     console.error('Failed to update user assessment:', error);
@@ -856,9 +851,15 @@ export async function saveDashboard(dashboard?: string): Promise<ActionFormState
       throw new Error('User session not found.');
     }
     if (dashboard) {
-      await sql`UPDATE users_info
-        SET dashboard=${dashboard}
-        WHERE user_id=${userId}`;
+      // clerk update
+      const user = await currentUser();
+      const clerk = await clerkClient();
+      await clerk.users.updateUser(userId, {
+        unsafeMetadata: {
+          ...user?.unsafeMetadata,
+          dashboard,
+        },
+      });
     }
     return { status: 'success' };
   } catch (error) {
@@ -875,9 +876,6 @@ export async function saveTheme(formData: FormData): Promise<{theme: string, use
     }
     const theme = <string>form['theme-dropdown'];
     if (THEMES.map(({name}) => name).includes(theme)) {
-      await sql`UPDATE users_info
-        SET theme=${theme}
-        WHERE user_id=${userId}`;
       // clerk update
       const user = await currentUser();
       const clerk = await clerkClient();

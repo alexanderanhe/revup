@@ -19,7 +19,6 @@ export type UserInfo = {
   height?: number;
   goal?: string | null;
   age?: string | null | number;
-  dashboard?: string[];
   theme: string;
   assessment: boolean;
   onboarding: boolean;

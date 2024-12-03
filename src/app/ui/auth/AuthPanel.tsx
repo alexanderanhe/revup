@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 import { LoginModal } from '@/lib/features/app';
 // import SignIn from '@/app/ui/auth/SignIn';
 // import SignUp from '@/app/ui/auth/SignUp';
@@ -32,7 +32,7 @@ type AuthPanelProps = {
 export default function AuthPanel({ modal: initModal }: AuthPanelProps) {
   const [ modal, setModal ] = useState<MultipleLoginModal>(initModal);
   const [ form, setForm ] = useState<Form>(FORM_INIT);
-  const { status } = useSession();
+  // const { status } = useSession();
   const props = {
     setModal,
     globalForm: form,

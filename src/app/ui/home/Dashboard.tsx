@@ -18,9 +18,9 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
   const t = await getTranslations("Home");
   const t_dashboard = t.raw("dashboard");
   const t_dashboard_keys = Object.keys(t_dashboard);
-  const dashboard = (user.unsafeMetadata?.dashboard as string)?.split(";") ?? [];
-  const user_info_dashboard = dashboard.length ? dashboard : ["Recommendations", "MyWeight"];
-  const userDashboard = (user.unsafeMetadata?.dashboard || []) as string[];
+  const dashboard = user.unsafeMetadata?.dashboard as string;
+  const userDashboard = dashboard ? dashboard.split(";") : [];
+  const user_info_dashboard = userDashboard.length ? userDashboard : ["Recommendations", "MyWeight"];
   const orderedUniqDashbordItemKeys = user_info_dashboard.concat(t_dashboard_keys)
     .reduce((acc: string[], key) => {
       if (!acc.includes(key)) {
@@ -31,8 +31,8 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
   const dashboardItems = orderedUniqDashbordItemKeys
     .map((key) => ({
       id: key,
-      name: t_dashboard[key].title,
-      category: userDashboard?.includes(key) ? 1 : 2,
+      name: t_dashboard[key]?.title ?? key,
+      category: user_info_dashboard?.includes(key) ? 1 : 2,
       Component: async () => {
         if (!dashboardComponents[key as keyof typeof dashboardComponents]) return <div />;
         let fetchData = async () => null;
@@ -43,7 +43,7 @@ export default async function Dashboard ({ user, locale }: { user?: User, locale
         return <Widget translate={ t_dashboard[key] } data={await fetchData()} />
       },
     }));
-    const visibleDashboard = user_info_dashboard.filter((key) => t_dashboard_keys.includes(key))
+    // const visibleDashboard = user_info_dashboard.filter((key) => t_dashboard_keys.includes(key))
   return (
     <>
       { dashboardItems.filter((di) => di.category === 1).map(async ({ id, Component }) => (
